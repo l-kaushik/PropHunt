@@ -73,3 +73,6 @@ Plugins/*/Intermediate/*
 # Cache files for the editor to use
 DerivedDataCache/*
 /Content/MilitaryWeapSilver
+
+# Allow files with "Assault" or "assault" in their names
+!/Content/MilitaryWeapSilver/*Assault*
