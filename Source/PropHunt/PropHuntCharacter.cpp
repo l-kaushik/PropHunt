@@ -127,3 +127,15 @@ void APropHuntCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+
+void APropHuntCharacter::Jump() {
+	Super::Jump();
+	isJumping = true;
+}
+
+void APropHuntCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit); 
+	isJumping = false;
+}
+

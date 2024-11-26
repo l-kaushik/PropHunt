@@ -50,6 +50,11 @@ public:
 
 protected:
 
+	virtual void Jump() override;
+
+	virtual void Landed(const FHitResult& Hit) override;
+
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
@@ -68,5 +73,10 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool isJumping;
 };
 
