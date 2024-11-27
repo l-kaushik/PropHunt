@@ -52,6 +52,10 @@ APropHuntCharacter::APropHuntCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Create weapon mesh
+	RifleMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RifleMesh"));
+	RifleMesh->SetupAttachment(GetMesh(), TEXT("RifleSocket"));
+
 	// enable replication
 	SetReplicates(true);
 	SetReplicateMovement(true);
@@ -223,4 +227,8 @@ void APropHuntCharacter::PerformLineTrace(FRotator CameraRotation) {
 
 	// perform the line trace
 	bool bHit = UKismetSystemLibrary::LineTraceSingle(World, Start, End, TraceChannel, bTraceComplex, ActorsToIgnore, DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
+}
+
+void APropHuntCharacter::FireMulticast_Implementation() {
+
 }

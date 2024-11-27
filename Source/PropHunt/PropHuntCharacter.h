@@ -48,6 +48,10 @@ class APropHuntCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ShootAction;
 
+	/** Weapon Mesh Component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Gun", meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* RifleMesh;
+
 public:
 	APropHuntCharacter();
 	
@@ -80,10 +84,6 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-public:
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool isJumping;
 
 public:
 	UFUNCTION(Server, Reliable)
@@ -97,11 +97,20 @@ public:
 	UFUNCTION(Server, Reliable)
 	void LineTraceOnServer(FRotator CameraRotation);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void FireMulticast();
+
 protected:
 	UFUNCTION()
 	void Fire();
 
 	void PerformLineTrace(FRotator CameraRotation);
+
+
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool isJumping;
 
 private:
 	FTimerHandle TimerHandle;
