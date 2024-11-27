@@ -44,6 +44,10 @@ class APropHuntCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Weapon Shoot Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ShootAction;
+
 public:
 	APropHuntCharacter();
 	
@@ -54,6 +58,8 @@ protected:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
+	void Shoot();
+	void StopShooting();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -78,5 +84,18 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool isJumping;
+
+public:
+	UFUNCTION(Server, Reliable)
+	void FireOnServer();
+	UFUNCTION(Server, Reliable)
+	void StopFireOnServer();
+
+protected:
+	UFUNCTION()
+	void Fire();
+
+private:
+	FTimerHandle TimerHandle;
 };
 

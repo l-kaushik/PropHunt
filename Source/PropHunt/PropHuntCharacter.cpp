@@ -50,6 +50,11 @@ APropHuntCharacter::APropHuntCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// enable replication
+	SetReplicates(true);
+	SetReplicateMovement(true);
+
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -85,6 +90,11 @@ void APropHuntCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APropHuntCharacter::Look);
+
+		// Shooting
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &APropHuntCharacter::Shoot);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &APropHuntCharacter::StopShooting);
+
 	}
 	else
 	{
@@ -139,3 +149,46 @@ void APropHuntCharacter::Landed(const FHitResult& Hit)
 	isJumping = false;
 }
 
+/*
+	Shoot and StopShooting will get called after the "ShootAction" triggers a valid event.
+
+	!HasAuthority make sure only client calls the RPCs.
+*/
+
+void APropHuntCharacter::Shoot() {
+
+	if (!HasAuthority()){
+		FireOnServer();
+	}
+}
+
+void APropHuntCharacter::StopShooting() {
+	if (!HasAuthority()) {
+		StopFireOnServer();
+	}
+}
+
+/*
+	Binding the timer to call fire function after every given fire rate.
+	Performing on server side
+*/
+
+void APropHuntCharacter::FireOnServer_Implementation() {
+	FTimerDelegate TimerDelegate;
+	float FireRate = 0.2f;
+	TimerDelegate.BindUFunction(this, FName("Fire"));
+		
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, FireRate, true);
+}
+
+/*
+	Clearing the timer to stop firing
+*/
+
+void APropHuntCharacter::StopFireOnServer_Implementation() {
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+}
+
+void APropHuntCharacter::Fire() {
+	UE_LOG(LogTemp, Warning, TEXT("Firing"));
+}
