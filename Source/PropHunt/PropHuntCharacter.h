@@ -91,11 +91,20 @@ public:
 	UFUNCTION(Server, Reliable)
 	void StopFireOnServer();
 
+	UFUNCTION(Client, Reliable)
+	void GetClientCameraRotation();
+
+	UFUNCTION(Server, Reliable)
+	void LineTraceOnServer(FRotator CameraRotation);
+
 protected:
 	UFUNCTION()
 	void Fire();
 
+	void PerformLineTrace(FRotator CameraRotation);
+
 private:
 	FTimerHandle TimerHandle;
+	float BulletDistance;
 };
 

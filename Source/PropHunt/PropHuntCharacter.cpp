@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -53,6 +55,10 @@ APropHuntCharacter::APropHuntCharacter()
 	// enable replication
 	SetReplicates(true);
 	SetReplicateMovement(true);
+
+	
+	// private variables initialization
+	BulletDistance = 10000.0f;
 
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
@@ -156,16 +162,11 @@ void APropHuntCharacter::Landed(const FHitResult& Hit)
 */
 
 void APropHuntCharacter::Shoot() {
-
-	if (!HasAuthority()){
-		FireOnServer();
-	}
+	FireOnServer();
 }
 
 void APropHuntCharacter::StopShooting() {
-	if (!HasAuthority()) {
-		StopFireOnServer();
-	}
+	StopFireOnServer();
 }
 
 /*
@@ -174,11 +175,9 @@ void APropHuntCharacter::StopShooting() {
 */
 
 void APropHuntCharacter::FireOnServer_Implementation() {
-	FTimerDelegate TimerDelegate;
-	float FireRate = 0.2f;
-	TimerDelegate.BindUFunction(this, FName("Fire"));
+	float FireRate = 0.1f;
 		
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, FireRate, true);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APropHuntCharacter::Fire, FireRate, true);
 }
 
 /*
@@ -190,5 +189,38 @@ void APropHuntCharacter::StopFireOnServer_Implementation() {
 }
 
 void APropHuntCharacter::Fire() {
-	UE_LOG(LogTemp, Warning, TEXT("Firing"));
+	GetClientCameraRotation();
+}
+
+void APropHuntCharacter::GetClientCameraRotation_Implementation() {
+	FRotator CameraRotation = FollowCamera->GetComponentRotation();
+	LineTraceOnServer(CameraRotation);
+}
+
+void APropHuntCharacter::LineTraceOnServer_Implementation(FRotator CameraRotation){
+	PerformLineTrace(CameraRotation);
+}
+
+void APropHuntCharacter::PerformLineTrace(FRotator CameraRotation) {
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	FVector Start = FollowCamera->GetComponentLocation();
+	FVector End = Start + (UKismetMathLibrary::GetForwardVector(CameraRotation) * BulletDistance);
+
+	// trace parameters	
+	ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Camera);
+	bool bTraceComplex = true;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	EDrawDebugTrace::Type DrawDebugType = EDrawDebugTrace::ForDuration;	// None for no trace
+	FHitResult OutHit;
+	bool bIgnoreSelf = true;
+	FLinearColor TraceColor = FLinearColor::Red;
+	FLinearColor TraceHitColor = FLinearColor::Green;
+	float DrawTime = 1.0f;
+
+	// perform the line trace
+	bool bHit = UKismetSystemLibrary::LineTraceSingle(World, Start, End, TraceChannel, bTraceComplex, ActorsToIgnore, DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
 }
