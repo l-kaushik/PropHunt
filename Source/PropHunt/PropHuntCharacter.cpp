@@ -12,6 +12,8 @@
 #include "InputActionValue.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -203,6 +205,7 @@ void APropHuntCharacter::GetClientCameraRotation_Implementation() {
 
 void APropHuntCharacter::LineTraceOnServer_Implementation(FRotator CameraRotation){
 	PerformLineTrace(CameraRotation);
+	FireMulticast();
 }
 
 void APropHuntCharacter::PerformLineTrace(FRotator CameraRotation) {
@@ -227,8 +230,33 @@ void APropHuntCharacter::PerformLineTrace(FRotator CameraRotation) {
 
 	// perform the line trace
 	bool bHit = UKismetSystemLibrary::LineTraceSingle(World, Start, End, TraceChannel, bTraceComplex, ActorsToIgnore, DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
+
+	// spawn emitter if hit something
+	if (bHit) {
+		HitFxMulticast(OutHit.ImpactPoint);
+	}
 }
 
 void APropHuntCharacter::FireMulticast_Implementation() {
+	static UAnimationAsset* FireAnim = LoadObject<UAnimationAsset>(nullptr, TEXT("/Game/MilitaryWeapSilver/Weapons/Animations/Fire_Rifle_W.Fire_Rifle_W"));
 
+	if (RifleMesh && FireAnim) {
+		RifleMesh->PlayAnimation(FireAnim, false);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load fire anim or weapon is missing! Check the asset path."));
+	}
+}
+
+void APropHuntCharacter::HitFxMulticast_Implementation(FVector ImpactPoint) {
+	static UParticleSystem* ParticleSystem = LoadObject<UParticleSystem>(nullptr, TEXT("/Game/MilitaryWeapSilver/FX/P_Impact_Stone_Large_01.P_Impact_Stone_Large_01"));
+
+	if (ParticleSystem) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, FTransform(ImpactPoint));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load particle system! Check the asset path."));
+	}
 }

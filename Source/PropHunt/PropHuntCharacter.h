@@ -100,6 +100,9 @@ public:
 	UFUNCTION(NetMulticast, Unreliable)
 	void FireMulticast();
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void HitFxMulticast(FVector ImpactPoint);
+
 protected:
 	UFUNCTION()
 	void Fire();
