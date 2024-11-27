@@ -221,7 +221,7 @@ void APropHuntCharacter::PerformLineTrace(FRotator CameraRotation) {
 	bool bTraceComplex = true;
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(this);
-	EDrawDebugTrace::Type DrawDebugType = EDrawDebugTrace::ForDuration;	// None for no trace
+	EDrawDebugTrace::Type DrawDebugType = EDrawDebugTrace::None;
 	FHitResult OutHit;
 	bool bIgnoreSelf = true;
 	FLinearColor TraceColor = FLinearColor::Red;
