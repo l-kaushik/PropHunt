@@ -11,6 +11,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class UStaticMeshComponent;
 
 UCLASS()
 class PROPHUNT_API APropCharacter : public ACharacter
@@ -40,6 +41,9 @@ class PROPHUNT_API APropCharacter : public ACharacter
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* PropMesh;
 
 public:
 	// Sets default values for this character's properties
