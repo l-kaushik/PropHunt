@@ -42,6 +42,11 @@ class PROPHUNT_API APropCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Change prop Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ChangePropAction;
+
+	/** Prop Mesh actual player */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PropMesh;
 
@@ -72,4 +77,14 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+
+public:
+	UFUNCTION(Server, Reliable)
+	void ChangePropOnServer();
+	void PerformSphereTrace();
+	UStaticMesh* GetTracedObjectMesh(AActor* HitActor);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void UpdateMeshMulticast(UStaticMesh* StaticMesh);
 };

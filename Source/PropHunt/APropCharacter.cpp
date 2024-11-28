@@ -11,6 +11,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Engine/StaticMeshActor.h"
 
 // Sets default values
 APropCharacter::APropCharacter()
@@ -97,6 +99,9 @@ void APropCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APropCharacter::Look);
+
+		// Change prop
+		EnhancedInputComponent->BindAction(ChangePropAction, ETriggerEvent::Triggered, this, &APropCharacter::ChangePropOnServer);
 	}
 	else
 	{
@@ -137,5 +142,74 @@ void APropCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+
+// Prop changing mechanism
+
+void APropCharacter::ChangePropOnServer_Implementation() {
+	PerformSphereTrace();
+}
+
+void APropCharacter::PerformSphereTrace() {
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	FVector Start = GetActorLocation() + FVector(0.0f, 0.0f, 10.0);
+	FVector End = Start;
+
+	// trace parameters	
+	float Radius = 100.0;
+	ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Visibility);
+	bool bTraceComplex = true;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	EDrawDebugTrace::Type DrawDebugType = EDrawDebugTrace::ForDuration;
+	FHitResult OutHit;
+	bool bIgnoreSelf = true;
+	FLinearColor TraceColor = FLinearColor::Red;
+	FLinearColor TraceHitColor = FLinearColor::Green;
+	float DrawTime = 1.0f;
+
+	bool bHit = UKismetSystemLibrary::SphereTraceSingle(World, Start, End, Radius, TraceChannel, bTraceComplex, ActorsToIgnore, DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
+
+	if (bHit) {
+		AActor* HitActor = OutHit.GetActor();
+		UStaticMesh* StaticMesh = GetTracedObjectMesh(HitActor);
+		UpdateMeshMulticast(StaticMesh);
+	}
+}
+
+UStaticMesh* APropCharacter::GetTracedObjectMesh(AActor* HitActor) {
+	if (!HitActor) {
+		UE_LOG(LogTemp, Error, TEXT("HitActor is not found while changing pro, returning nullptr"));
+		return nullptr;
+	}
+
+	AStaticMeshActor* MeshActor = Cast<AStaticMeshActor>(HitActor);
+	if (!MeshActor) {
+		UE_LOG(LogTemp, Error, TEXT("StaticMeshActor is not found while changing pro, returning nullptr"));
+		return nullptr;
+	}
+
+	UStaticMeshComponent* MeshComp = MeshActor->GetStaticMeshComponent();
+	if (!MeshComp) {
+		UE_LOG(LogTemp, Error, TEXT("StaticMeshComponent is not found while changing pro, returning nullptr"));
+		return nullptr;
+	}
+
+	UStaticMesh* StaticMesh = MeshComp->GetStaticMesh();
+	if (!StaticMesh) {
+		UE_LOG(LogTemp, Error, TEXT("StaticMesh is not found while changing prop, returning nullptr"));
+		return nullptr;
+	}
+
+	return StaticMesh;
+}
+
+void APropCharacter::UpdateMeshMulticast_Implementation(UStaticMesh* StaticMesh) {
+	if (StaticMesh) {
+		PropMesh->SetStaticMesh(StaticMesh);
 	}
 }
