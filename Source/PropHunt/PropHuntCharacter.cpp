@@ -10,6 +10,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -50,6 +54,19 @@ APropHuntCharacter::APropHuntCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Create weapon mesh
+	RifleMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RifleMesh"));
+	RifleMesh->SetupAttachment(GetMesh(), TEXT("RifleSocket"));
+
+	// enable replication
+	SetReplicates(true);
+	SetReplicateMovement(true);
+
+	
+	// private variables initialization
+	BulletDistance = 10000.0f;
+
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -85,6 +102,11 @@ void APropHuntCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APropHuntCharacter::Look);
+
+		// Shooting
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &APropHuntCharacter::Shoot);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &APropHuntCharacter::StopShooting);
+
 	}
 	else
 	{
@@ -139,3 +161,102 @@ void APropHuntCharacter::Landed(const FHitResult& Hit)
 	isJumping = false;
 }
 
+/*
+	Shoot and StopShooting will get called after the "ShootAction" triggers a valid event.
+
+	!HasAuthority make sure only client calls the RPCs.
+*/
+
+void APropHuntCharacter::Shoot() {
+	FireOnServer();
+}
+
+void APropHuntCharacter::StopShooting() {
+	StopFireOnServer();
+}
+
+/*
+	Binding the timer to call fire function after every given fire rate.
+	Performing on server side
+*/
+
+void APropHuntCharacter::FireOnServer_Implementation() {
+	float FireRate = 0.1f;
+		
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APropHuntCharacter::Fire, FireRate, true);
+}
+
+/*
+	Clearing the timer to stop firing
+*/
+
+void APropHuntCharacter::StopFireOnServer_Implementation() {
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+}
+
+void APropHuntCharacter::Fire() {
+	GetClientCameraRotation();
+}
+
+void APropHuntCharacter::GetClientCameraRotation_Implementation() {
+	FRotator CameraRotation = FollowCamera->GetComponentRotation();
+	LineTraceOnServer(CameraRotation);
+}
+
+void APropHuntCharacter::LineTraceOnServer_Implementation(FRotator CameraRotation){
+	PerformLineTrace(CameraRotation);
+	FireMulticast();
+}
+
+void APropHuntCharacter::PerformLineTrace(FRotator CameraRotation) {
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	FVector Start = FollowCamera->GetComponentLocation();
+	FVector End = Start + (UKismetMathLibrary::GetForwardVector(CameraRotation) * BulletDistance);
+
+	// trace parameters	
+	ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Camera);
+	bool bTraceComplex = true;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	EDrawDebugTrace::Type DrawDebugType = EDrawDebugTrace::None;
+	FHitResult OutHit;
+	bool bIgnoreSelf = true;
+	FLinearColor TraceColor = FLinearColor::Red;
+	FLinearColor TraceHitColor = FLinearColor::Green;
+	float DrawTime = 1.0f;
+
+	// perform the line trace
+	bool bHit = UKismetSystemLibrary::LineTraceSingle(World, Start, End, TraceChannel, bTraceComplex, ActorsToIgnore, DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
+
+	// spawn emitter if hit something
+	if (bHit) {
+		HitFxMulticast(OutHit.ImpactPoint);
+	}
+}
+
+void APropHuntCharacter::FireMulticast_Implementation() {
+	static UAnimationAsset* FireAnim = LoadObject<UAnimationAsset>(nullptr, TEXT("/Game/MilitaryWeapSilver/Weapons/Animations/Fire_Rifle_W.Fire_Rifle_W"));
+
+	if (RifleMesh && FireAnim) {
+		RifleMesh->PlayAnimation(FireAnim, false);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load fire anim or weapon is missing! Check the asset path."));
+	}
+}
+
+void APropHuntCharacter::HitFxMulticast_Implementation(FVector ImpactPoint) {
+	static UParticleSystem* ParticleSystem = LoadObject<UParticleSystem>(nullptr, TEXT("/Game/MilitaryWeapSilver/FX/P_Impact_Stone_Large_01.P_Impact_Stone_Large_01"));
+
+	if (ParticleSystem) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, FTransform(ImpactPoint));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load particle system! Check the asset path."));
+	}
+}
