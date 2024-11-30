@@ -13,6 +13,8 @@
 #include "InputActionValue.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/StaticMeshActor.h"
+#include "SpawnedProp.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 APropCharacter::APropCharacter()
@@ -102,6 +104,9 @@ void APropCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Change prop
 		EnhancedInputComponent->BindAction(ChangePropAction, ETriggerEvent::Triggered, this, &APropCharacter::ChangePropOnServer);
+
+		// Spawn prop
+		EnhancedInputComponent->BindAction(SpawnPropAction, ETriggerEvent::Triggered, this, &APropCharacter::SpawnPropOnServer);
 	}
 	else
 	{
@@ -211,5 +216,26 @@ UStaticMesh* APropCharacter::GetTracedObjectMesh(AActor* HitActor) {
 void APropCharacter::UpdateMeshMulticast_Implementation(UStaticMesh* StaticMesh) {
 	if (StaticMesh) {
 		PropMesh->SetStaticMesh(StaticMesh);
+	}
+}
+
+/* Spawn duplicate props */
+
+void APropCharacter::SpawnPropOnServer_Implementation() {
+	
+	UWorld* World = GetWorld();
+
+	TSubclassOf<ASpawnedProp> PropClass = ASpawnedProp::StaticClass();
+	FTransform SpawnTransform = PropMesh->GetComponentTransform();
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	ASpawnedProp* SpawnedProp = World->SpawnActor<ASpawnedProp>(PropClass, SpawnTransform, SpawnParams);
+	UStaticMesh* StaticMesh = PropMesh->GetStaticMesh();
+
+	if (SpawnedProp && StaticMesh) {
+		SpawnedProp->SetReplicatedMesh(StaticMesh);
+		SpawnedProp->ResetCollision();
 	}
 }

@@ -12,6 +12,7 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class UStaticMeshComponent;
+class ASpawnedProp;
 
 UCLASS()
 class PROPHUNT_API APropCharacter : public ACharacter
@@ -46,6 +47,10 @@ class PROPHUNT_API APropCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* ChangePropAction;
 
+	/** Spawn prop input action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* SpawnPropAction;
+
 	/** Prop Mesh actual player */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PropMesh;
@@ -78,8 +83,8 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-
 public:
+	/* Change prop */
 	UFUNCTION(Server, Reliable)
 	void ChangePropOnServer();
 	void PerformSphereTrace();
@@ -87,4 +92,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void UpdateMeshMulticast(UStaticMesh* StaticMesh);
+
+	/* Spawn duplicate prop */
+	UFUNCTION(Server, Reliable)
+	void SpawnPropOnServer();
 };
