@@ -2,6 +2,7 @@
 
 #include "PropHuntGameMode.h"
 #include "PropHuntCharacter.h"
+#include "PropHuntPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 APropHuntGameMode::APropHuntGameMode()
@@ -11,5 +12,6 @@ APropHuntGameMode::APropHuntGameMode()
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
+		PlayerControllerClass = APropHuntPlayerController::StaticClass();
 	}
 }
