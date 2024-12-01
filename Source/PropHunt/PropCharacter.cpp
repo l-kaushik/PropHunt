@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "APropCharacter.h"
+#include "PropCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -15,6 +15,7 @@
 #include "Engine/StaticMeshActor.h"
 #include "SpawnedProp.h"
 #include "Net/UnrealNetwork.h"
+#include "PropHuntPlayerController.h"
 
 // Sets default values
 APropCharacter::APropCharacter()
@@ -77,7 +78,7 @@ void APropCharacter::NotifyControllerChanged()
 	Super::NotifyControllerChanged();
 
 	// Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (APropHuntPlayerController* PlayerController = Cast<APropHuntPlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{

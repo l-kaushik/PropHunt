@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "APropCharacter.generated.h"
+#include "PropCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
