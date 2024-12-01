@@ -4,13 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "APropCharacter.generated.h"
+#include "PropCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class UStaticMeshComponent;
+class ASpawnedProp;
 
 UCLASS()
 class PROPHUNT_API APropCharacter : public ACharacter
@@ -41,6 +43,18 @@ class PROPHUNT_API APropCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Change prop Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ChangePropAction;
+
+	/** Spawn prop input action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* SpawnPropAction;
+
+	/** Prop Mesh actual player */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* PropMesh;
+
 public:
 	// Sets default values for this character's properties
 	APropCharacter();
@@ -68,4 +82,18 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+public:
+	/* Change prop */
+	UFUNCTION(Server, Reliable)
+	void ChangePropOnServer();
+	void PerformSphereTrace();
+	UStaticMesh* GetTracedObjectMesh(AActor* HitActor);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void UpdateMeshMulticast(UStaticMesh* StaticMesh);
+
+	/* Spawn duplicate prop */
+	UFUNCTION(Server, Reliable)
+	void SpawnPropOnServer();
 };
