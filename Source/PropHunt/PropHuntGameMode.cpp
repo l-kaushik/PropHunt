@@ -3,6 +3,7 @@
 #include "PropHuntGameMode.h"
 #include "PropHuntCharacter.h"
 #include "PropHuntPlayerController.h"
+#include "PropHuntGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 APropHuntGameMode::APropHuntGameMode()
@@ -13,5 +14,118 @@ APropHuntGameMode::APropHuntGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 		PlayerControllerClass = APropHuntPlayerController::StaticClass();
+		GameStateClass = APropHuntGameState::StaticClass();
 	}
+
+	// getting reference to prop hunt character blueprint class
+	static ConstructorHelpers::FClassFinder<APropHuntCharacter> PropHuntCharBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
+	if (PropHuntCharBPClass.Succeeded()) 
+	{
+		CharacterBlueprint = PropHuntCharBPClass.Class;
+	}
+}
+
+void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	MyGameState = GetGameState<APropHuntGameState>();
+	if (MyGameState) {
+		MyGameState->AddPlayerController(Cast<APropHuntPlayerController>(NewPlayer));
+		CheckGameStarted();
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("MyGameState is invalid"));
+	}
+}
+
+void APropHuntGameMode::CheckGameStarted()
+{
+	UE_LOG(LogTemp, Warning, TEXT("CheckGameStarted..."));
+	// Start game if we have at least MinPlayerNum in game
+	if (!MyGameState->bHasGameStarted) {
+		int32 ArrayLength = MyGameState->GetPlayerControllerList().Num();
+		if (ArrayLength >= MyGameState->MinPlayerNum) {
+			StartGameTimer();
+		}
+	}
+
+	// handle what to do with joined players, when game is already started
+}
+
+// wait for "CountdownSeconds" before hunter selection
+
+void APropHuntGameMode::StartGameTimer()
+{
+	UE_LOG(LogTemp, Warning, TEXT("StartGameTimer..."));
+	float CountdownSeconds = 5.0f;
+	GetWorldTimerManager().ClearTimer(StartGameCountdownHandler);
+
+	GetWorldTimerManager().SetTimer(
+		StartGameCountdownHandler, 
+		this,
+		&APropHuntGameMode::ChooseHunterCharacter, 
+		CountdownSeconds, 
+		false);
+}
+
+void APropHuntGameMode::ChooseHunterCharacter()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ChooseHunterCharacter..."));
+	MyGameState->bHasGameStarted = true;
+
+	int32 Length = MyGameState->GetPlayerControllerList().Num() - 1;
+	int32 RandomIndex = FMath::RandRange(0, Length);
+	APropHuntPlayerController* Hunter = *(MyGameState->GetPlayerControllerList().GetData() + RandomIndex);
+
+	if (Hunter) {
+		MyGameState->AddHunter(Hunter);
+		SpawnHunter();
+	}
+	else {
+		StartGameTimer();	// if hunter not present, reset 
+	}
+
+}
+
+void APropHuntGameMode::SpawnHunter()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SpawnHunter..."));
+	UWorld* World = GetWorld();
+
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	APropHuntCharacter* HunterCharacter = World->SpawnActor<APropHuntCharacter>(CharacterBlueprint, SpawnTransform, SpawnParams);
+
+	/*
+	* taking the 0th indexed hunter controller cuz for now only 2 player exits, but when hunter kills more player, more hunter will join, so I have to maintain a counter or something to note that how many hunters have assigned with their pawns
+	*/
+	APropHuntPlayerController* HunterController = *(MyGameState->HunterList.GetData());
+	HunterController->GetPawn()->Destroy();		// destroy current actor owned by hunter controller
+
+	// posses the hunter with the spawned hunter character
+
+	if (HunterController) {
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(
+			TimerHandle,
+			[this, HunterController, HunterCharacter]() {
+
+				UE_LOG(LogTemp, Warning, TEXT("Inside lambda function"));
+
+				if (HasAuthority()) {
+					UE_LOG(LogTemp, Warning, TEXT("Trying to posses pawn"));
+					HunterController->Possess(HunterCharacter);
+				}
+			},
+			2,
+			false);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn the character"));
+	}
+
 }

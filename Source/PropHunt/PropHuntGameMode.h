@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "PropHuntGameMode.generated.h"
 
+class APropHuntGameState;
+class APropHuntCharacter;
+
 UCLASS(minimalapi)
 class APropHuntGameMode : public AGameModeBase
 {
@@ -13,6 +16,22 @@ class APropHuntGameMode : public AGameModeBase
 
 public:
 	APropHuntGameMode();
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+protected:
+	void CheckGameStarted();
+	void StartGameTimer();
+	void ChooseHunterCharacter();
+	void SpawnHunter();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+	TSubclassOf<APropHuntCharacter> CharacterBlueprint;
+
+private:
+	APropHuntGameState* MyGameState;
+	FTimerHandle StartGameCountdownHandler;
 };
 
 
