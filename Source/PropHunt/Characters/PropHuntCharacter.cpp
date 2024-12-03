@@ -14,7 +14,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
-#include "PropHuntPlayerController.h"
+#include "../Controller/PropHuntPlayerController.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 

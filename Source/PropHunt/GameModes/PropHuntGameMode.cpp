@@ -1,9 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PropHuntGameMode.h"
-#include "PropHuntCharacter.h"
-#include "PropHuntPlayerController.h"
-#include "PropHuntGameState.h"
+#include "../Characters/PropHuntCharacter.h"
+#include "../Controller/PropHuntPlayerController.h"
+#include "../States/PropHuntGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 APropHuntGameMode::APropHuntGameMode()

@@ -2,7 +2,7 @@
 
 
 #include "PropHuntGameState.h"
-#include "PropHuntPlayerController.h"
+#include "../Controller/PropHuntPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
 APropHuntGameState::APropHuntGameState() 

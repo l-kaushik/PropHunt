@@ -13,9 +13,9 @@
 #include "InputActionValue.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/StaticMeshActor.h"
-#include "SpawnedProp.h"
+#include "../Actors/SpawnedProp.h"
 #include "Net/UnrealNetwork.h"
-#include "PropHuntPlayerController.h"
+#include "../Controller/PropHuntPlayerController.h"
 
 // Sets default values
 APropCharacter::APropCharacter()
