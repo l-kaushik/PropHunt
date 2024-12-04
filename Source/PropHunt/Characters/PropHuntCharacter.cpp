@@ -235,7 +235,17 @@ void APropHuntCharacter::PerformLineTrace(FRotator CameraRotation) {
 	// spawn emitter if hit something
 	if (bHit) {
 		HitFxMulticast(OutHit.ImpactPoint);
+		GiveDamage(OutHit.GetActor());
 	}
+}
+
+void APropHuntCharacter::GiveDamage(AActor* HitActor)
+{
+	if(!HitActor->ActorHasTag("Prop")) return;
+
+	TSubclassOf<UDamageType> DamageType;
+	float Damage = 5.0f;
+	UGameplayStatics::ApplyDamage(HitActor, Damage, GetInstigator()->GetController(), this, DamageType);
 }
 
 void APropHuntCharacter::FireMulticast_Implementation() {

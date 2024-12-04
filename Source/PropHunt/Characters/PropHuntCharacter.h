@@ -106,6 +106,7 @@ public:
 protected:
 	UFUNCTION()
 	void Fire();
+	void GiveDamage(AActor* HitActor);
 
 	void PerformLineTrace(FRotator CameraRotation);
 

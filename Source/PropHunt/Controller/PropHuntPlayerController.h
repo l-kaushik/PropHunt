@@ -29,12 +29,18 @@ public:
 	// PropHuntControllerInterface implementations
 
 	virtual void SetupPropWidget(bool bIsProp) override;
+	virtual void UpdateHealthWidget(float NewHealth) override;
+
+public:
 
 	void TrySetupPropWidget(bool bIsProp);
 
 protected:
 	UFUNCTION(Client, Reliable)
 	void HandleHudWidgetOnClient(bool bIsProp);
+
+	UFUNCTION(Client, Reliable)
+	void UpdateHealthOnClient(float NewHealth);
 
 protected:
 	// stores the refernce of blueprint WB_MainHud class

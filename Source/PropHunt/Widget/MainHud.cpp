@@ -22,6 +22,11 @@ void UMainHud::SetupPropWidget(bool bIsProp)
 		
 }
 
+void UMainHud::UpdateHealthBar(float NewHealth)
+{
+	HealthBar->SetPercent(NewHealth * 0.01);
+}
+
 // Set things for the gameplay time
 void UMainHud::NativeConstruct()
 {

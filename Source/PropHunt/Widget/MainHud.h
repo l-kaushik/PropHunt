@@ -16,6 +16,7 @@ class PROPHUNT_API UMainHud : public UUserWidget
 
 public:
 	void SetupPropWidget(bool bIsProp);
+	void UpdateHealthBar(float NewHealth);
 
 protected:
 

@@ -17,6 +17,9 @@
 #include "Net/UnrealNetwork.h"
 #include "../Controller/PropHuntPlayerController.h"
 
+const float APropCharacter::MAX_HEALTH = 100.0f;
+
+
 // Sets default values
 APropCharacter::APropCharacter()
 {
@@ -57,6 +60,9 @@ APropCharacter::APropCharacter()
 	// enable replication
 	SetReplicates(true);
 	SetReplicateMovement(true);
+
+	// default values
+	Health = MAX_HEALTH;
 }
 
 // Called when the game starts or when spawned
@@ -113,6 +119,20 @@ void APropCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	{
 		UE_LOG(LogTemp, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (HasAuthority()) {
+		Health = FMath::Clamp<double>(Health - DamageAmount, 0.0f, MAX_HEALTH);
+
+		if (IPropHuntControllerInterface* PropHuntInterface = Cast<IPropHuntControllerInterface>(GetController()))
+		{
+			PropHuntInterface->UpdateHealthWidget(Health);
+		}
+	}
+
+	return DamageAmount;
 }
 
 void APropCharacter::Move(const FInputActionValue& Value)

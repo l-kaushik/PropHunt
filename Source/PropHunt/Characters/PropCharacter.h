@@ -78,6 +78,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
@@ -96,4 +98,8 @@ public:
 	/* Spawn duplicate prop */
 	UFUNCTION(Server, Reliable)
 	void SpawnPropOnServer();
+
+private:
+	float Health;
+	static const float MAX_HEALTH;
 };

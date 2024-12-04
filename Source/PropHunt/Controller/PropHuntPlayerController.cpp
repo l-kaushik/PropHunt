@@ -41,12 +41,23 @@ void APropHuntPlayerController::SetupPropWidget(bool bIsProp)
 	HandleHudWidgetOnClient(bIsProp);
 }
 
+void APropHuntPlayerController::UpdateHealthWidget(float NewHealth)
+{
+	UpdateHealthOnClient(NewHealth);
+}
+
+
 void APropHuntPlayerController::TrySetupPropWidget(bool bIsProp)
 {
 	if (IPropHuntControllerInterface* PropHuntInterface = Cast<IPropHuntControllerInterface>(this))
 	{
 		PropHuntInterface->SetupPropWidget(bIsProp);
 	}
+}
+
+void APropHuntPlayerController::UpdateHealthOnClient_Implementation(float NewHealth)
+{
+	MainHudRef->UpdateHealthBar(NewHealth);
 }
 
 void APropHuntPlayerController::HandleHudWidgetOnClient_Implementation(bool bIsProp)
