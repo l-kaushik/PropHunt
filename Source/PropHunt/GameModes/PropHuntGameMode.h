@@ -8,6 +8,7 @@
 
 class APropHuntGameState;
 class APropHuntCharacter;
+class APropHuntPlayerController;
 
 UCLASS(minimalapi)
 class APropHuntGameMode : public AGameModeBase
@@ -24,7 +25,7 @@ protected:
 	void StartGameTimer();
 	void ChooseHunterCharacter();
 	void SpawnHunter();
-
+	void SetupInitialWidget(APropHuntPlayerController* HunterController);
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	TSubclassOf<APropHuntCharacter> CharacterBlueprint;

@@ -113,19 +113,25 @@ void APropHuntGameMode::SpawnHunter()
 		GetWorldTimerManager().SetTimer(
 			TimerHandle,
 			[this, HunterController, HunterCharacter]() {
-
-				UE_LOG(LogTemp, Warning, TEXT("Inside lambda function"));
-
 				if (HasAuthority()) {
-					UE_LOG(LogTemp, Warning, TEXT("Trying to posses pawn"));
 					HunterController->Possess(HunterCharacter);
+					SetupInitialWidget(HunterController);
 				}
 			},
 			2,
 			false);
 	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn the character"));
-	}
+}
 
+void APropHuntGameMode::SetupInitialWidget(APropHuntPlayerController* HunterController)
+{
+	// setup widget for the first hunter
+	HunterController->TrySetupPropWidget(false);
+
+	// setup widget for rest of the props
+	for (auto& PlayerController : MyGameState->PlayerControllerList) {
+		if (PlayerController != HunterController) {
+			PlayerController->TrySetupPropWidget(true);
+		}
+	}
 }
