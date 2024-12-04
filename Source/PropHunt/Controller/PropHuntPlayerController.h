@@ -9,9 +9,28 @@
 /**
  * 
  */
+
+class UMainHud;
+
 UCLASS()
 class PROPHUNT_API APropHuntPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+
+public:
+
+	APropHuntPlayerController();
+
+	virtual void BeginPlay() override;
+
+
+protected:
+	// stores the refernce of blueprint WB_MainHud class
+	UPROPERTY(EditDefaultsOnly, Category = "Blueprints Reference")
+	TSubclassOf<UMainHud> MainHudBPClassRef;
+
+	// stores the object created in BeginPlay
+	UMainHud* MainHudRef;
 	
 };
