@@ -25,11 +25,15 @@ protected:
 private:
 	void SetGameStatusText();
 	void SetCrosshairImage();
+	void SetHealthBar();
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* GameStatus;
 
 	UPROPERTY(meta = (BindWidget))
 	class UImage* Crosshair;
+
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* HealthBar;
 	
 };
