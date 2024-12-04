@@ -14,6 +14,9 @@ class PROPHUNT_API UMainHud : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	void SetupPropWidget(bool bIsProp);
+
 protected:
 
 	virtual void NativeConstruct();

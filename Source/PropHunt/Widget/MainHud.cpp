@@ -3,6 +3,13 @@
 #include "Components/TextBlock.h"
 #include "MainHud.h"
 
+void UMainHud::SetupPropWidget(bool bIsProp)
+{
+	FText GameStatusText = bIsProp ? FText::FromString("You are the Prop! Hide!") :
+		FText::FromString("Find the Prop!");
+	GameStatus->SetText(GameStatusText);
+}
+
 void UMainHud::NativeConstruct()
 {
 	if (GameStatus) {
