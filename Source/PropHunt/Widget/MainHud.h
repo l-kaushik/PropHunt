@@ -19,9 +19,17 @@ public:
 
 protected:
 
-	virtual void NativeConstruct();
+	virtual void NativeConstruct() override;
+	virtual void NativePreConstruct() override;
+
+private:
+	void SetGameStatusText();
+	void SetCrosshairImage();
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* GameStatus;
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* Crosshair;
 	
 };
