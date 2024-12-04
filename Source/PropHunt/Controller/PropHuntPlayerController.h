@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "../Interfaces/PropHuntControllerInterface.h"
 #include "PropHuntPlayerController.generated.h"
 
 /**
@@ -13,7 +14,7 @@
 class UMainHud;
 
 UCLASS()
-class PROPHUNT_API APropHuntPlayerController : public APlayerController
+class PROPHUNT_API APropHuntPlayerController : public APlayerController, public IPropHuntControllerInterface
 {
 	GENERATED_BODY()
 
@@ -24,6 +25,16 @@ public:
 
 	virtual void BeginPlay() override;
 
+public:
+	// PropHuntControllerInterface implementations
+
+	virtual void SetupPropWidget(bool bIsProp) override;
+
+	void TrySetupPropWidget(bool bIsProp);
+
+protected:
+	UFUNCTION(Client, Reliable)
+	void HandleHudWidgetOnClient(bool bIsProp);
 
 protected:
 	// stores the refernce of blueprint WB_MainHud class

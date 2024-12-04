@@ -35,3 +35,21 @@ void APropHuntPlayerController::BeginPlay() {
 		MainHudRef->AddToPlayerScreen();
 	}
 }
+
+void APropHuntPlayerController::SetupPropWidget(bool bIsProp)
+{
+	HandleHudWidgetOnClient(bIsProp);
+}
+
+void APropHuntPlayerController::TrySetupPropWidget(bool bIsProp)
+{
+	if (IPropHuntControllerInterface* PropHuntInterface = Cast<IPropHuntControllerInterface>(this))
+	{
+		PropHuntInterface->SetupPropWidget(bIsProp);
+	}
+}
+
+void APropHuntPlayerController::HandleHudWidgetOnClient_Implementation(bool bIsProp)
+{
+	MainHudRef->SetupPropWidget(bIsProp);
+}
