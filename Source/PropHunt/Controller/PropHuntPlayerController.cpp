@@ -55,6 +55,16 @@ void APropHuntPlayerController::ShowWinScreenWidget(bool bIsPropWon)
 	ShowWinScreenOnClient(bIsPropWon, m_bIsProp);
 }
 
+void APropHuntPlayerController::StartCountdownWidget()
+{
+	StartCountdownOnClient();
+}
+
+void APropHuntPlayerController::StartCountdownOnClient_Implementation()
+{
+	MainHudRef->StartTimer();
+}
+
 
 void APropHuntPlayerController::TrySetupPropWidget(bool bIsProp)
 {

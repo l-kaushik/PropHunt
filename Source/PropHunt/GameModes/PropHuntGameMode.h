@@ -30,6 +30,8 @@ protected:
 	void StartGameTimer();
 	void ChooseHunterCharacter();
 	void SpawnHunter();
+	void StartGameLoopTimer();
+	void TimerFinishEndGame();
 	void SetupInitialWidget(APropHuntPlayerController* HunterController);
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
@@ -37,8 +39,5 @@ protected:
 
 private:
 	APropHuntGameState* MyGameState;
-	FTimerHandle StartGameCountdownHandler;
+	FTimerHandle GameLoopTimer;
 };
-
-
-

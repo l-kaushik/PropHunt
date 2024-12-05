@@ -18,6 +18,9 @@ public:
 	void SetupPropWidget(bool bIsProp);
 	void UpdateHealthBar(float NewHealth);
 	void ShowWinScreen(bool bIsPropWon, bool bIsProp);
+	void StartTimer();
+	void EndTimer();
+	void UpdateTimerText();
 
 protected:
 
@@ -32,6 +35,9 @@ private:
 	void SetWinScreen();
 	void SetWinScreenText();
 	void SetNewGameStartingText();
+	void SetTimerBorder();
+	void SetTimerIcon();
+	void SetTimerText();
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* GameStatus;
@@ -50,4 +56,15 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* NewGameStartingText;
+
+	UPROPERTY(meta = (BindWidget))
+	class UBorder* TimerBorder;
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* TimerIcon;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TimerText;
+
+	FTimerHandle CountdownTimer;
 };

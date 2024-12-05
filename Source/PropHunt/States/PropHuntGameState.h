@@ -42,5 +42,5 @@ public:
 
 	FVector HunterStartLocation;
 	bool bIsPropWon;
-
+	static const float GAME_TIME_IN_SECONDS;
 };

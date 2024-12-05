@@ -31,6 +31,7 @@ public:
 	virtual void SetupPropWidget(bool bIsProp) override;
 	virtual void UpdateHealthWidget(float NewHealth) override;
 	virtual void ShowWinScreenWidget(bool bIsPropWon) override;
+	virtual void StartCountdownWidget() override;
 
 public:
 
@@ -45,6 +46,9 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void ShowWinScreenOnClient(bool bIsPropWon, bool bIsProp);
+
+	UFUNCTION(Client, Reliable)
+	void StartCountdownOnClient();
 
 protected:
 	// stores the refernce of blueprint WB_MainHud class

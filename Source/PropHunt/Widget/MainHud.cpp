@@ -4,6 +4,10 @@
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/BackgroundBlur.h"
+#include "Components/Border.h"
+#include "Engine/World.h"
+
+#include "../States/PropHuntGameState.h"
 #include "MainHud.h"
 
 void UMainHud::SetupPropWidget(bool bIsProp)
@@ -67,6 +71,42 @@ void UMainHud::ShowWinScreen(bool bIsPropWon, bool bIsProp)
 	WinScreenText->SetColorAndOpacity(textColor);
 }
 
+void UMainHud::StartTimer()
+{
+	// timer to keep track of remaining game time
+	GetWorld()->GetTimerManager().SetTimer(
+		CountdownTimer,
+		this,
+		&UMainHud::EndTimer,
+		APropHuntGameState::GAME_TIME_IN_SECONDS,
+		false
+	);
+
+	// timer to update timer text every second
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle,
+		this,
+		&UMainHud::UpdateTimerText,
+		1.0f,
+		true
+	);
+}
+
+void UMainHud::EndTimer()
+{
+}
+
+void UMainHud::UpdateTimerText()
+{
+	float RemainingSeconds = GetWorld()->GetTimerManager().GetTimerRemaining(CountdownTimer);
+	FTimespan RemainingTime = FTimespan::FromSeconds(RemainingSeconds);
+	int32 Minutes = RemainingTime.GetMinutes();
+	int32 Seconds = RemainingTime.GetSeconds();
+	FString TimerString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
+	TimerText->SetText(FText::FromString(TimerString));;
+}
+
 // Set things for the gameplay time
 void UMainHud::NativeConstruct()
 {
@@ -94,6 +134,9 @@ void UMainHud::InitializeWidgetComponents()
 	SetWinScreen();
 	SetWinScreenText();
 	SetNewGameStartingText();
+	SetTimerBorder();
+	SetTimerIcon();
+	SetTimerText();
 }
 
 void UMainHud::SetGameStatusText()
@@ -153,5 +196,36 @@ void UMainHud::SetNewGameStartingText()
 		NewGameStartingText->SetFont(FontInfo);
 		NewGameStartingText->SetText(FText::FromString("New Game Starting Soon..."));
 		NewGameStartingText->SetJustification(ETextJustify::Center);
+	}
+}
+
+void UMainHud::SetTimerBorder()
+{
+	if (TimerBorder)
+	{
+		FLinearColor BlackWithAlpha(0.0f, 0.0f, 0.0f, 0.5f);
+		TimerBorder->SetBrushColor(BlackWithAlpha);	// tint
+	}
+}
+
+void UMainHud::SetTimerIcon()
+{
+	if (TimerIcon)
+	{
+		if (UTexture2D* TimerIconTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/ThirdPerson/Widgets/Textures/timericon.timericon"))) {
+			TimerIcon->SetBrushFromTexture(TimerIconTexture);
+		}
+	}
+}
+
+void UMainHud::SetTimerText()
+{
+	if (TimerText)
+	{
+		FSlateFontInfo FontInfo = TimerText->GetFont();
+		FontInfo.Size = 45;
+
+		TimerText->SetFont(FontInfo);
+		TimerText->SetText(FText::FromString("5:00"));
 	}
 }

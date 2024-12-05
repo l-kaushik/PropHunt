@@ -41,6 +41,7 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 
 void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 {
+	GetWorldTimerManager().ClearTimer(GameLoopTimer);
 	MyGameState->bIsPropWon = bIsPropWon;
 
 	for (auto& PlayerController : MyGameState->PlayerControllerList) {
@@ -71,7 +72,7 @@ void APropHuntGameMode::StartGameTimer()
 {
 	UE_LOG(LogTemp, Warning, TEXT("StartGameTimer..."));
 	float CountdownSeconds = 5.0f;
-	GetWorldTimerManager().ClearTimer(StartGameCountdownHandler);
+	FTimerHandle StartGameCountdownHandler;
 
 	GetWorldTimerManager().SetTimer(
 		StartGameCountdownHandler, 
@@ -128,11 +129,27 @@ void APropHuntGameMode::SpawnHunter()
 				if (HasAuthority()) {
 					HunterController->Possess(HunterCharacter);
 					SetupInitialWidget(HunterController);
+					StartGameLoopTimer();
 				}
 			},
 			2,
 			false);
 	}
+}
+
+void APropHuntGameMode::StartGameLoopTimer()
+{
+	GetWorldTimerManager().SetTimer(
+		GameLoopTimer,
+		this,
+		&APropHuntGameMode::TimerFinishEndGame,
+		APropHuntGameState::GAME_TIME_IN_SECONDS,
+		false);
+}
+
+void APropHuntGameMode::TimerFinishEndGame()
+{
+	EndTheGame(true);
 }
 
 void APropHuntGameMode::SetupInitialWidget(APropHuntPlayerController* HunterController)
@@ -142,7 +159,15 @@ void APropHuntGameMode::SetupInitialWidget(APropHuntPlayerController* HunterCont
 
 	// setup widget for rest of the props
 	for (auto& PlayerController : MyGameState->PlayerControllerList) {
-		if (PlayerController != HunterController) {
+
+		// setup the timer widget
+		if (PlayerController)
+		{
+			PlayerController->StartCountdownWidget();
+		}
+
+		// setup the other start screen widget
+		if (PlayerController && PlayerController != HunterController) {
 			PlayerController->TrySetupPropWidget(true);
 		}
 	}

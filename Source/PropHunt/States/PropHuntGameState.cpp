@@ -5,6 +5,8 @@
 #include "../Controller/PropHuntPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
+const float APropHuntGameState::GAME_TIME_IN_SECONDS = 300.0f;
+
 APropHuntGameState::APropHuntGameState() 
 {
 	bHasGameStarted = false;
