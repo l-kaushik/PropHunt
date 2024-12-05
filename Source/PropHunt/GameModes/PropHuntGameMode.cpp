@@ -39,6 +39,18 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 	}
 }
 
+void APropHuntGameMode::EndTheGame(bool bIsPropWon)
+{
+	MyGameState->bIsPropWon = bIsPropWon;
+
+	for (auto& PlayerController : MyGameState->PlayerControllerList) {
+		if (PlayerController)
+		{
+			PlayerController->ShowWinScreenWidget(MyGameState->bIsPropWon);
+		}
+	}
+}
+
 void APropHuntGameMode::CheckGameStarted()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CheckGameStarted..."));

@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PropCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -13,9 +12,14 @@
 #include "InputActionValue.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/StaticMeshActor.h"
-#include "../Actors/SpawnedProp.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "../Actors/SpawnedProp.h"
 #include "../Controller/PropHuntPlayerController.h"
+#include "../Interfaces/PropHuntGameModeInterface.h"
+#include "../GameModes/PropHuntGameMode.h"
+#include "PropCharacter.h"
 
 const float APropCharacter::MAX_HEALTH = 100.0f;
 
@@ -129,6 +133,19 @@ float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		if (IPropHuntControllerInterface* PropHuntInterface = Cast<IPropHuntControllerInterface>(GetController()))
 		{
 			PropHuntInterface->UpdateHealthWidget(Health);
+		}
+
+		if (Health <= 0.0f)
+		{
+			if (auto* GameMode = UGameplayStatics::GetGameMode(GetWorld()))
+			{
+				auto* GameModeInterface = Cast<IPropHuntGameModeInterface>(GameMode);
+				if (GameModeInterface)
+				{
+					GameModeInterface->EndTheGame(false);
+				}
+				
+			}
 		}
 	}
 

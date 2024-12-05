@@ -30,6 +30,7 @@ public:
 
 	virtual void SetupPropWidget(bool bIsProp) override;
 	virtual void UpdateHealthWidget(float NewHealth) override;
+	virtual void ShowWinScreenWidget(bool bIsPropWon) override;
 
 public:
 
@@ -42,6 +43,9 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void UpdateHealthOnClient(float NewHealth);
 
+	UFUNCTION(Client, Reliable)
+	void ShowWinScreenOnClient(bool bIsPropWon, bool bIsProp);
+
 protected:
 	// stores the refernce of blueprint WB_MainHud class
 	UPROPERTY(EditDefaultsOnly, Category = "Blueprints Reference")
@@ -49,5 +53,8 @@ protected:
 
 	// stores the object created in BeginPlay
 	UMainHud* MainHudRef;
+
+private:
+	bool m_bIsProp;
 	
 };

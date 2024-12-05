@@ -17,6 +17,7 @@ class PROPHUNT_API UMainHud : public UUserWidget
 public:
 	void SetupPropWidget(bool bIsProp);
 	void UpdateHealthBar(float NewHealth);
+	void ShowWinScreen(bool bIsPropWon, bool bIsProp);
 
 protected:
 
@@ -24,9 +25,13 @@ protected:
 	virtual void NativePreConstruct() override;
 
 private:
+	void InitializeWidgetComponents();
 	void SetGameStatusText();
 	void SetCrosshairImage();
 	void SetHealthBar();
+	void SetWinScreen();
+	void SetWinScreenText();
+	void SetNewGameStartingText();
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* GameStatus;
@@ -36,5 +41,13 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HealthBar;
+
+	UPROPERTY(meta = (BindWidget))
+	class UBackgroundBlur* WinScreen;
 	
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* WinScreenText;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* NewGameStartingText;
 };

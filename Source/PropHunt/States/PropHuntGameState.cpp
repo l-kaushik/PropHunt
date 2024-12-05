@@ -10,6 +10,7 @@ APropHuntGameState::APropHuntGameState()
 	bHasGameStarted = false;
 	MinPlayerNum = 2;
 	HunterStartLocation.Set(606.749038, 1241.206218, 99.227695);	// for test purposes only
+	bIsPropWon = false;
 }
 
 void APropHuntGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

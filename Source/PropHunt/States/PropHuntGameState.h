@@ -41,5 +41,6 @@ public:
 	int32 MinPlayerNum;
 
 	FVector HunterStartLocation;
+	bool bIsPropWon;
 
 };

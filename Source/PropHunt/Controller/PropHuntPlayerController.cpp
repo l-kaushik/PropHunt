@@ -12,6 +12,9 @@ APropHuntPlayerController::APropHuntPlayerController() {
 	if (MainHudBPClass.Succeeded()) {
 		MainHudBPClassRef = MainHudBPClass.Class;
 	}
+
+	// intitial values
+	m_bIsProp = false;
 }
 
 void APropHuntPlayerController::BeginPlay() {
@@ -39,11 +42,17 @@ void APropHuntPlayerController::BeginPlay() {
 void APropHuntPlayerController::SetupPropWidget(bool bIsProp)
 {
 	HandleHudWidgetOnClient(bIsProp);
+	this->m_bIsProp = bIsProp;
 }
 
 void APropHuntPlayerController::UpdateHealthWidget(float NewHealth)
 {
 	UpdateHealthOnClient(NewHealth);
+}
+
+void APropHuntPlayerController::ShowWinScreenWidget(bool bIsPropWon)
+{
+	ShowWinScreenOnClient(bIsPropWon, m_bIsProp);
 }
 
 
@@ -58,6 +67,11 @@ void APropHuntPlayerController::TrySetupPropWidget(bool bIsProp)
 void APropHuntPlayerController::UpdateHealthOnClient_Implementation(float NewHealth)
 {
 	MainHudRef->UpdateHealthBar(NewHealth);
+}
+
+void APropHuntPlayerController::ShowWinScreenOnClient_Implementation(bool bIsPropWon, bool bIsProp)
+{
+	MainHudRef->ShowWinScreen(bIsPropWon, bIsProp);
 }
 
 void APropHuntPlayerController::HandleHudWidgetOnClient_Implementation(bool bIsProp)
