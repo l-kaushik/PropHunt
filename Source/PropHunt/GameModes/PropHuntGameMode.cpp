@@ -23,6 +23,8 @@ APropHuntGameMode::APropHuntGameMode()
 	{
 		CharacterBlueprint = PropHuntCharBPClass.Class;
 	}
+
+	bUseSeamlessTravel = true;
 }
 
 void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
@@ -50,6 +52,23 @@ void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 			PlayerController->ShowWinScreenWidget(MyGameState->bIsPropWon);
 		}
 	}
+
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(
+		TimerHandle,
+		this,
+		&APropHuntGameMode::StartNextGame,
+		5.0f,
+		false
+	);
+	UE_LOG(LogTemp, Warning, TEXT("end the game..."));
+}
+
+void APropHuntGameMode::StartNextGame()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Start next game..."));
+
+	GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/ThirdPersonMap"));
 }
 
 void APropHuntGameMode::CheckGameStarted()

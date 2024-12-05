@@ -26,6 +26,7 @@ public:
 	virtual void EndTheGame(bool bIsPropWon) override;
 
 protected:
+	void StartNextGame();
 	void CheckGameStarted();
 	void StartGameTimer();
 	void ChooseHunterCharacter();
