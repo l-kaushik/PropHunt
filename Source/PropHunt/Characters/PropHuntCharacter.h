@@ -107,6 +107,7 @@ protected:
 	UFUNCTION()
 	void Fire();
 	void GiveDamage(AActor* HitActor);
+	void ShowHitMarker();
 
 	void PerformLineTrace(FRotator CameraRotation);
 

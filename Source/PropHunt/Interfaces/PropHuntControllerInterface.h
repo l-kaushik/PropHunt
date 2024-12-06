@@ -23,6 +23,7 @@ public:
 	virtual void UpdateHealthWidget(float NewHealth) = 0;
 	virtual void ShowWinScreenWidget(bool bIsPropWon) = 0;
 	virtual void StartCountdownWidget() = 0;
+	virtual void PlayHitMarkerAnim() = 0;
 };
 
 

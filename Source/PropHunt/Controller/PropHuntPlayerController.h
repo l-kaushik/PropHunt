@@ -32,6 +32,7 @@ public:
 	virtual void UpdateHealthWidget(float NewHealth) override;
 	virtual void ShowWinScreenWidget(bool bIsPropWon) override;
 	virtual void StartCountdownWidget() override;
+	virtual void PlayHitMarkerAnim() override;
 
 public:
 
@@ -49,6 +50,9 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void StartCountdownOnClient();
+
+	UFUNCTION(Client, Reliable)
+	void ShowHitMarkerOnClient();
 
 protected:
 	// stores the refernce of blueprint WB_MainHud class

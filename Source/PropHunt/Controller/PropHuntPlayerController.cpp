@@ -60,6 +60,11 @@ void APropHuntPlayerController::StartCountdownWidget()
 	StartCountdownOnClient();
 }
 
+void APropHuntPlayerController::PlayHitMarkerAnim()
+{
+	ShowHitMarkerOnClient();
+}
+
 void APropHuntPlayerController::StartCountdownOnClient_Implementation()
 {
 	MainHudRef->StartTimer();
@@ -72,6 +77,11 @@ void APropHuntPlayerController::TrySetupPropWidget(bool bIsProp)
 	{
 		PropHuntInterface->SetupPropWidget(bIsProp);
 	}
+}
+
+void APropHuntPlayerController::ShowHitMarkerOnClient_Implementation()
+{
+	MainHudRef->PlayHitMarkerAnimation();
 }
 
 void APropHuntPlayerController::UpdateHealthOnClient_Implementation(float NewHealth)

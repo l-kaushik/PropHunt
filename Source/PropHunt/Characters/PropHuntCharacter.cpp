@@ -246,6 +246,15 @@ void APropHuntCharacter::GiveDamage(AActor* HitActor)
 	TSubclassOf<UDamageType> DamageType;
 	float Damage = 5.0f;
 	UGameplayStatics::ApplyDamage(HitActor, Damage, GetInstigator()->GetController(), this, DamageType);
+
+	ShowHitMarker();
+}
+
+void APropHuntCharacter::ShowHitMarker()
+{
+	if (IPropHuntControllerInterface* ControllerInterface = Cast<IPropHuntControllerInterface>(GetController())) {
+		ControllerInterface->PlayHitMarkerAnim();
+	}
 }
 
 void APropHuntCharacter::FireMulticast_Implementation() {

@@ -5,6 +5,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/BackgroundBlur.h"
 #include "Components/Border.h"
+#include "Animation/WidgetAnimation.h"
 #include "Engine/World.h"
 
 #include "../States/PropHuntGameState.h"
@@ -24,12 +25,26 @@ void UMainHud::SetupPropWidget(bool bIsProp)
 	}
 
 	GameStatus->SetText(GameStatusText);
-		
 }
 
 void UMainHud::UpdateHealthBar(float NewHealth)
 {
 	HealthBar->SetPercent(NewHealth * 0.01);
+}
+
+void UMainHud::PlayHitMarkerAnimation()
+{
+	if (HitMarker && HitMarkerAnim)
+	{
+		HitMarker->SetVisibility(ESlateVisibility::Visible);
+		UUserWidget::PlayAnimation(HitMarkerAnim);
+
+		// Bind the animation finished event
+		FWidgetAnimationDynamicEvent AnimationFinishedDelegate;
+		AnimationFinishedDelegate.BindUFunction(this, FName("HitMarkerAnimFinished"));
+	
+		UUserWidget::BindToAnimationFinished(HitMarkerAnim, AnimationFinishedDelegate);
+	}
 }
 
 void UMainHud::ShowWinScreen(bool bIsPropWon, bool bIsProp)
@@ -137,6 +152,7 @@ void UMainHud::InitializeWidgetComponents()
 	SetTimerBorder();
 	SetTimerIcon();
 	SetTimerText();
+	SetHitMarker();
 }
 
 void UMainHud::SetGameStatusText()
@@ -154,6 +170,17 @@ void UMainHud::SetCrosshairImage()
 			Crosshair->SetBrushFromTexture(CrosshairTexture);
 		}
 		Crosshair->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UMainHud::SetHitMarker()
+{
+	if (HitMarker)
+	{
+		if (UTexture2D* HitMarkerTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/ThirdPerson/Widgets/Textures/crosshair.crosshair"))) {
+			HitMarker->SetBrushFromTexture(HitMarkerTexture);
+		}
+		HitMarker->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -228,4 +255,10 @@ void UMainHud::SetTimerText()
 		TimerText->SetFont(FontInfo);
 		TimerText->SetText(FText::FromString("5:00"));
 	}
+}
+
+void UMainHud::HitMarkerAnimFinished(UWidgetAnimation* Animation)
+{
+	if(Animation == HitMarkerAnim)
+		HitMarker->SetVisibility(ESlateVisibility::Hidden);
 }
