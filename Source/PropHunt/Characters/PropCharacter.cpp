@@ -1,5 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "PropCharacter.h"
+#include "../Actors/SpawnedProp.h"
+#include "../Controller/PropHuntPlayerController.h"
+#include "../Interfaces/PropHuntGameModeInterface.h"
+#include "../GameModes/PropHuntGameMode.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -14,12 +19,6 @@
 #include "Engine/StaticMeshActor.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
-
-#include "../Actors/SpawnedProp.h"
-#include "../Controller/PropHuntPlayerController.h"
-#include "../Interfaces/PropHuntGameModeInterface.h"
-#include "../GameModes/PropHuntGameMode.h"
-#include "PropCharacter.h"
 
 const float APropCharacter::MAX_HEALTH = 100.0f;
 

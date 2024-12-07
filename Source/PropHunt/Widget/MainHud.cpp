@@ -1,5 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "MainHud.h"
+#include "../States/PropHuntGameState.h"
+
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
@@ -7,9 +10,6 @@
 #include "Components/Border.h"
 #include "Animation/WidgetAnimation.h"
 #include "Engine/World.h"
-
-#include "../States/PropHuntGameState.h"
-#include "MainHud.h"
 
 void UMainHud::SetupPropWidget(bool bIsProp)
 {

@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "PropHuntPlayerController.h"
+#include "../Widget/MainHud.h"
+
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
-#include "../Widget/MainHud.h"
-#include "PropHuntPlayerController.h"
-
 
 APropHuntPlayerController::APropHuntPlayerController() {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainHudBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_MainHud"));
