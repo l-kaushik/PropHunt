@@ -41,6 +41,12 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 	}
 }
 
+void APropHuntGameMode::Logout(AController* ExistingPlayer)
+{
+	Super::Logout(ExistingPlayer);
+	MyGameState->PlayerControllerList.Remove(Cast<APropHuntPlayerController>(ExistingPlayer));
+}
+
 void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 {
 	GetWorldTimerManager().ClearTimer(GameLoopTimer);

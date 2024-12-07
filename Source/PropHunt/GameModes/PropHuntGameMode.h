@@ -20,6 +20,7 @@ public:
 	APropHuntGameMode();
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void Logout(AController* ExistingPlayer) override;
 
 public:
 	// interface functions
