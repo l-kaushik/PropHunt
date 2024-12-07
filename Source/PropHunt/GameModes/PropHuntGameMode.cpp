@@ -4,6 +4,7 @@
 #include "../Characters/PropHuntCharacter.h"
 #include "../Controller/PropHuntPlayerController.h"
 #include "../States/PropHuntGameState.h"
+#include "../States/PropHuntPlayerState.h"
 #include "UObject/ConstructorHelpers.h"
 
 APropHuntGameMode::APropHuntGameMode()
@@ -15,6 +16,7 @@ APropHuntGameMode::APropHuntGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 		PlayerControllerClass = APropHuntPlayerController::StaticClass();
 		GameStateClass = APropHuntGameState::StaticClass();
+		PlayerStateClass = APropHuntPlayerState::StaticClass();
 	}
 
 	// getting reference to prop hunt character blueprint class
