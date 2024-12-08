@@ -18,22 +18,24 @@ void UMenuWidget::NativePreConstruct()
 	InitializeComponents();
 }
 
-// Delegate binding
+// Bind fucntion to click of buttons
 void UMenuWidget::BindClickEvents()
 {
 	if (PlayGameButton)
 	{
 		PlayGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnPlayGameButtonClicked);
 	}
-
-	if (OptionsButton)
+	if (HostGameButton)
 	{
-		OptionsButton->OnClicked.AddDynamic(this, &UMenuWidget::OnOptionsButtonClicked);
+		HostGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnHostGameButonClicked);
 	}
-
-	if (QuitGameButton)
+	if (JoinGameButton)
 	{
-		QuitGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnQuitGameButtonClicked);
+		JoinGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnJoinGameButtonClicked);
+	}
+	if (BackButton)
+	{
+		BackButton->OnClicked.AddDynamic(this, &UMenuWidget::OnBackButtonClicked);
 	}
 }
 
@@ -43,6 +45,12 @@ void UMenuWidget::InitializeComponents()
 	InitializePlayGameButton();
 	InitializeOptionsButton();
 	InitializeQuitGameButton();
+
+	InitializePlayGameMenuVBox();
+	InitializeHostGameButton();
+	InitializeJoinGameButton();
+
+	InitializeBackButton();
 }
 
 // Functions to initialize components
@@ -50,6 +58,11 @@ void UMenuWidget::InitializeComponents()
 void UMenuWidget::OnPlayGameButtonClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Play Game Button Clicked!"));
+
+	MenuState = EMenuState::PlayGameMenu;
+	MainMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+	PlayGameMenuVBox->SetVisibility(ESlateVisibility::Visible);
+	BackButton->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMenuWidget::OnOptionsButtonClicked()
@@ -60,6 +73,30 @@ void UMenuWidget::OnOptionsButtonClicked()
 void UMenuWidget::OnQuitGameButtonClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Quit Game Button Clicked!"));
+}
+
+void UMenuWidget::OnHostGameButonClicked()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Host Game Button Clicked!"));
+}
+
+void UMenuWidget::OnJoinGameButtonClicked()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Join Game Button Clicked!"));
+}
+
+void UMenuWidget::OnBackButtonClicked()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Back Button Clicked!"));
+
+	if (MenuState == EMenuState::PlayGameMenu)
+	{
+		MenuState = EMenuState::MainMenu;
+		PlayGameMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+		// do all kind of cleanups
+		MainMenuVBox->SetVisibility(ESlateVisibility::Visible);
+		BackButton->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 // Main Menu UI Components
@@ -98,6 +135,45 @@ void UMenuWidget::InitializeQuitGameButton()
 
 	}
 }
+
+// Play Game Menu Components Initializers
+
+void UMenuWidget::InitializePlayGameMenuVBox()
+{
+	if (PlayGameMenuVBox)
+	{
+		PlayGameMenuVBox->AddChildToVerticalBox(HostGameButton);
+		PlayGameMenuVBox->AddChildToVerticalBox(JoinGameButton);
+
+		PlayGameMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UMenuWidget::InitializeHostGameButton()
+{
+	if (HostGameButton)
+	{
+		SetMainMenuButtons(HostGameButton);
+	}
+}
+
+void UMenuWidget::InitializeJoinGameButton()
+{
+	if (JoinGameButton)
+	{
+		SetMainMenuButtons(JoinGameButton);
+	}
+}
+
+void UMenuWidget::InitializeBackButton()
+{
+	if (BackButton)
+	{
+		BackButton->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+// Utility functions
 
 void UMenuWidget::SetMainMenuButtons(UButton* Button)
 {
