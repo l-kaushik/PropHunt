@@ -2,10 +2,22 @@
 
 
 #include "MenuWidget.h"
+#include "../Widget/HostWidget.h"
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
+
+UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	static ConstructorHelpers::FClassFinder<UHostWidget> HostWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Host"));
+	if (HostWidgetBPClass.Succeeded())
+	{
+		HostWidgetBPClassRef = HostWidgetBPClass.Class;
+	}
+}
 
 void UMenuWidget::NativeConstruct()
 {
@@ -78,6 +90,16 @@ void UMenuWidget::OnQuitGameButtonClicked()
 void UMenuWidget::OnHostGameButonClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Host Game Button Clicked!"));
+
+	if (!HostWidgetBPClassRef)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Host widget blueprint class reference is nullptr"));
+		return;
+	}
+
+	this->SetVisibility(ESlateVisibility::Collapsed);
+	CreateAndAddWidget<UHostWidget>(HostWidgetBPClassRef);
+
 }
 
 void UMenuWidget::OnJoinGameButtonClicked()
