@@ -3,6 +3,8 @@
 
 #include "MenuController.h"
 #include "../Widget/MenuWidget.h"
+#include "../GameModes/MenuGameMode.h"
+
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -30,4 +32,22 @@ void AMenuController::BeginPlay()
 	}
 }
 
+void AMenuController::HostServer(const FString& ServerName, const int32& NumberOfPlayers)
+{
+	RequestHostServer(ServerName, NumberOfPlayers);
+}
+
+void AMenuController::RequestHostServer_Implementation(const FString& ServerName, const int32& NumberOfPlayers)
+{
+	AGameModeBase* CurrentGameMode = UGameplayStatics::GetGameMode(GetWorld());
+	
+	if (IMenuInterface* GameModeInterface = Cast<IMenuInterface>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		GameModeInterface->HostServer(ServerName, NumberOfPlayers);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to get game mode"));
+	}
+}
 
