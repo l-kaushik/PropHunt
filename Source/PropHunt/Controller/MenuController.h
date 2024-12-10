@@ -9,9 +9,21 @@
 /**
  * 
  */
+
+class UMenuWidget;
 UCLASS()
 class PROPHUNT_API AMenuController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	AMenuController();
+
+	virtual void BeginPlay() override;
+
+private:
+	TSubclassOf<UMenuWidget> MenuWidgetBPClassRef;
+
+	UMenuWidget* MenuWidgetRef;
 	
 };
