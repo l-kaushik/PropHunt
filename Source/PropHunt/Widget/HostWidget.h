@@ -22,16 +22,37 @@ private:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 
+	void BindEvents();
+
+	void InitializeServerInfoVBox();
+
 	UFUNCTION()
 	void OnBackButtonClicked();
 
-private:
+	UFUNCTION()
+	void OnHostButtonClicked();
 
+	bool VerifyServerInfo();
+
+private:
+	// Reference to parent widget
 	UPROPERTY()
 	class UMenuWidget* ParentWidget;
 
+	// Components related to server info box
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* ServerNameLabel;
+	class UVerticalBox* ServerInfoVBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UEditableText* ServerNameText;
+
+	UPROPERTY(meta = (BindWidget))
+	class UEditableText* NumberOfPlayersText;
+
+	// add combo box for map selection
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* HostButton;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BackButton;

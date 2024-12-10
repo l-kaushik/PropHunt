@@ -3,9 +3,13 @@
 
 #include "HostWidget.h"
 #include "../Widget/MenuWidget.h"
+#include "../Controller/MenuController.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Components/EditableText.h"
+#include "Internationalization/Regex.h"
+#include "Kismet/GameplayStatics.h"
 
 void UHostWidget::SetParentWidget(UMenuWidget* InParentWidget)
 {
@@ -15,26 +19,33 @@ void UHostWidget::SetParentWidget(UMenuWidget* InParentWidget)
 void UHostWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-
-	if (ServerNameLabel)
-	{
-		ServerNameLabel->SetText(FText::FromString("Server Name: "));
-	}
-
-	if (BackButton)
-	{
-		BackButton->OnClicked.AddDynamic(this, &UHostWidget::OnBackButtonClicked);
-	}
+	BindEvents();
 }
 
 void UHostWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	if (ServerNameLabel)
+}
+
+void UHostWidget::BindEvents()
+{
+	if (BackButton)
 	{
-		ServerNameLabel->SetText(FText::FromString("Server Name: "));
+		BackButton->OnClicked.AddDynamic(this, &UHostWidget::OnBackButtonClicked);
+	}
+
+	if (HostButton)
+	{
+		HostButton->OnClicked.AddDynamic(this, &UHostWidget::OnHostButtonClicked);
+	}
+}
+
+void UHostWidget::InitializeServerInfoVBox()
+{
+	if (ServerInfoVBox)
+	{
+
 	}
 }
 
@@ -46,4 +57,59 @@ void UHostWidget::OnBackButtonClicked()
 	{
 		ParentWidget->SetVisibility(ESlateVisibility::Visible);
 	}
+}
+
+void UHostWidget::OnHostButtonClicked()
+{
+	if (!VerifyServerInfo()) return;
+
+	const FString ServerName = ServerNameText->GetText().ToString();
+	const int32 PlayerNumbers = FCString::Atoi(*(NumberOfPlayersText->GetText().ToString()));
+
+	// host server
+
+	if (AMenuController* Controller = Cast<AMenuController>(GetOwningPlayer()))
+	{
+		Controller->HostServer(ServerName, PlayerNumbers);
+	}
+
+	// display players joined
+
+}
+
+bool UHostWidget::VerifyServerInfo()
+{
+	const FString ServerName = ServerNameText->GetText().ToString();
+	const FString PlayerNumber = NumberOfPlayersText->GetText().ToString();
+
+	/*
+	*	Verify server name
+	* 
+	*	Length should be between 3 - 20 chars
+	*	Only start with alphabet
+	*	Can contain numbers and _
+	*/
+	const FRegexPattern ServerNamePattern(TEXT("^[a-zA-Z][a-zA-Z0-9_]{2,19}$"));
+	FRegexMatcher ServerNameMatcher(ServerNamePattern, ServerName);
+
+	if (!ServerNameMatcher.FindNext()) {
+		UE_LOG(LogTemp, Warning, TEXT("Invalid server name: %s"), *ServerName);
+		return false;
+	}
+
+	/*
+	*	Verify number of players 
+	*
+	*	range 2 - 99
+	*/
+	const FRegexPattern PlayerNumberPattern(TEXT("^[2-9][0-9]{0,1}$"));
+	FRegexMatcher PlayerNumberMatcher(PlayerNumberPattern, PlayerNumber);
+	if (!PlayerNumberMatcher.FindNext()) {
+		UE_LOG(LogTemp, Warning, TEXT("Invalid player number: %s"), *PlayerNumber);
+		return false;
+	}
+
+	// display proper error message to user
+
+	return true;
 }
