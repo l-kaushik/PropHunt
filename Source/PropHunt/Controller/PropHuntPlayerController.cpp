@@ -20,8 +20,6 @@ APropHuntPlayerController::APropHuntPlayerController() {
 void APropHuntPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Working"));
-
 	/*
 	* In "Listen server architecture"
 	* HasAuthority() && IsLocalPlayerController() --> this line checks, if listen server is a client also, if it is then create UI for it
