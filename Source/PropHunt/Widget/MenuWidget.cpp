@@ -9,6 +9,13 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
 
+// custom macro to make on click binding generic
+#define BIND_BUTTON_CLICK(Button, Function) \
+    if (Button)                             \
+    {                                       \
+        Button->OnClicked.AddDynamic(this, Function); \
+    }
+
 
 UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -33,22 +40,14 @@ void UMenuWidget::NativePreConstruct()
 // Bind fucntion to click of buttons
 void UMenuWidget::BindClickEvents()
 {
-	if (PlayGameButton)
-	{
-		PlayGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnPlayGameButtonClicked);
-	}
-	if (HostGameButton)
-	{
-		HostGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnHostGameButonClicked);
-	}
-	if (JoinGameButton)
-	{
-		JoinGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnJoinGameButtonClicked);
-	}
-	if (BackButton)
-	{
-		BackButton->OnClicked.AddDynamic(this, &UMenuWidget::OnBackButtonClicked);
-	}
+	BIND_BUTTON_CLICK(PlayGameButton, &UMenuWidget::OnPlayGameButtonClicked);
+	BIND_BUTTON_CLICK(OptionsButton, &UMenuWidget::OnOptionsButtonClicked);
+	BIND_BUTTON_CLICK(QuitGameButton, &UMenuWidget::OnQuitGameButtonClicked);
+
+	BIND_BUTTON_CLICK(HostGameButton, &UMenuWidget::OnHostGameButonClicked);
+	BIND_BUTTON_CLICK(JoinGameButton, &UMenuWidget::OnJoinGameButtonClicked);
+
+	BIND_BUTTON_CLICK(BackButton, &UMenuWidget::OnBackButtonClicked);
 }
 
 void UMenuWidget::InitializeComponents()
