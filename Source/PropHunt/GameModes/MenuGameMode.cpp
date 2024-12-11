@@ -14,3 +14,9 @@ AMenuGameMode::AMenuGameMode()
 	DefaultPawnClass = nullptr;
 }
 
+void AMenuGameMode::HostServer(const FString& ServerName, const int32& NumberOfPlayers)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hosting server using game mode"));
+}
+
+
