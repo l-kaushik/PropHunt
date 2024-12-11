@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "PropHuntCharacter.h"
+#include "Characters/PropHuntCharacter.h"
+#include "Controller/PropHuntPlayerController.h"
+
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -14,7 +16,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
-#include "../Controller/PropHuntPlayerController.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 

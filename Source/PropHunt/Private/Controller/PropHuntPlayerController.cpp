@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PropHuntPlayerController.h"
-#include "../Widget/MainHud.h"
+#include "Controller/PropHuntPlayerController.h"
+#include "Widget/MainHud.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"

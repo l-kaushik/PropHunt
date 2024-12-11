@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PropCharacter.h"
-#include "../Actors/SpawnedProp.h"
-#include "../Controller/PropHuntPlayerController.h"
-#include "../Interfaces/PropHuntGameModeInterface.h"
-#include "../GameModes/PropHuntGameMode.h"
+#include "Characters/PropCharacter.h"
+#include "Actors/SpawnedProp.h"
+#include "Controller/PropHuntPlayerController.h"
+#include "Interfaces/PropHuntGameModeInterface.h"
+#include "GameModes/PropHuntGameMode.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"

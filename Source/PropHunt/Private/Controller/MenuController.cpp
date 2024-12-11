@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MenuController.h"
-#include "../Widget/MenuWidget.h"
-#include "../GameModes/MenuGameMode.h"
+#include "Controller/MenuController.h"
+#include "Widget/MenuWidget.h"
+#include "GameModes/MenuGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"

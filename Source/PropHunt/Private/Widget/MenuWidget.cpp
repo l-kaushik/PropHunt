@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MenuWidget.h"
-#include "../Widget/HostWidget.h"
+#include "Widget/MenuWidget.h"
+#include "Widget/HostWidget.h"
+
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"

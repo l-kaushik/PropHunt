@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PropHuntGameState.h"
-#include "../Controller/PropHuntPlayerController.h"
+#include "States/PropHuntGameState.h"
+#include "Controller/PropHuntPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
 const float APropHuntGameState::GAME_TIME_IN_SECONDS = 300.0f;

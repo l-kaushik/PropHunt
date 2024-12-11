@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MenuGameMode.h"
-#include "../Controller/MenuController.h"
-#include "../States/PropHuntGameState.h"
-#include "../States/PropHuntPlayerState.h"
+#include "GameModes/MenuGameMode.h"
+#include "Controller/MenuController.h"
+#include "States/PropHuntGameState.h"
+#include "States/PropHuntPlayerState.h"
 
 AMenuGameMode::AMenuGameMode()
 {

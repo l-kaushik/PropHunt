@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "../Interfaces/PropHuntControllerInterface.h"
+#include "Interfaces/PropHuntControllerInterface.h"
 #include "PropHuntPlayerController.generated.h"
 
 /**

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SpawnedProp.h"
+#include "Actors/SpawnedProp.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/StaticMeshComponent.h"
 
