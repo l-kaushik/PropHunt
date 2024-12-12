@@ -15,6 +15,8 @@ class PROPHUNT_API UHostWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UHostWidget(const FObjectInitializer& ObjectInitializer);
+
 	void SetParentWidget(class UMenuWidget* InParentWidget);
 
 	void OnCreateSessionCompleted(bool Successful);
@@ -36,6 +38,8 @@ private:
 	void OnHostButtonClicked();
 
 	bool VerifyServerInfo();
+
+	void CreateLobbyWidget();
 
 private:
 	// Reference to parent widget
@@ -59,5 +63,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BackButton;
+
+	TSubclassOf<class ULobbyWidget> LobbyWidgetBPClassRef;
 	
 };

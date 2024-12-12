@@ -3,6 +3,7 @@
 
 #include "Widget/HostWidget.h"
 #include "Widget/MenuWidget.h"
+#include "Widget/LobbyWidget.h"
 #include "Controller/MenuController.h"
 #include "Subsystem/PropHuntSubsystem.h"
 
@@ -12,6 +13,16 @@
 #include "Internationalization/Regex.h"
 #include "Kismet/GameplayStatics.h"
 #include "OnlineSessionSettings.h"
+#include "UObject/ConstructorHelpers.h"
+
+UHostWidget::UHostWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	static ConstructorHelpers::FClassFinder<ULobbyWidget> LobbyWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Lobby"));
+	if (LobbyWidgetBPClass.Succeeded())
+	{
+		LobbyWidgetBPClassRef = LobbyWidgetBPClass.Class;
+	}
+}
 
 void UHostWidget::SetParentWidget(UMenuWidget* InParentWidget)
 {
@@ -99,14 +110,15 @@ void UHostWidget::OnCreateSessionCompleted(bool Successful)
 {
 	if (Successful)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("insde host widget Session created successfully"));
+		UE_LOG(LogTemp, Warning, TEXT("inside host widget Session created successfully"));
 
 		// open player list window
+		CreateLobbyWidget();
 	}
 	else
 	{
 
-		UE_LOG(LogTemp, Warning, TEXT("insde host widget Failed to create session"));
+		UE_LOG(LogTemp, Warning, TEXT("inside host widget Failed to create session"));
 
 		// display error
 	}
@@ -164,4 +176,15 @@ bool UHostWidget::VerifyServerInfo()
 	// display proper error message to user
 
 	return true;
+}
+
+void UHostWidget::CreateLobbyWidget()
+{
+	ULobbyWidget* WidgetRef = CreateWidget<ULobbyWidget>(this, LobbyWidgetBPClassRef);
+	check(WidgetRef);
+	WidgetRef->AddToViewport();
+	WidgetRef->SetParentWidget(this);
+	WidgetRef->SetIsHost(true);
+
+	this->SetVisibility(ESlateVisibility::Collapsed);
 }
