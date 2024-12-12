@@ -12,7 +12,8 @@
 // Delegates for session handling functions
 DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnCreateSessionComplete, bool Successful);
 DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnDestroySessionComplete, bool Successful);
-
+DECLARE_MULTICAST_DELEGATE_TwoParams
+(FPHOnFindSessionsComplete, const TArray<FOnlineSessionSearchResult>& SessionResults, bool Successful);
 
 UCLASS()
 class PROPHUNT_API UPropHuntSubsystem : public UGameInstanceSubsystem
@@ -24,13 +25,16 @@ public:
 
 	void CreateSession(FName& SessionName, FString& LevelName, int32& NumPublicConnections, bool IsLANMatch);
 	void DestroySession(FName& SessionName);
+	void FindSessions(int32 MaxSearchResults, bool IsLANQuery);
 
 	FPHOnCreateSessionComplete OnCreateSessionCompleteEvent;
 	FPHOnDestroySessionComplete OnDestroySessionCompleteEvent;
+	FPHOnFindSessionsComplete OnFindSessionsCompleteEvent;
 
 protected:
 	void OnCreateSessionCompleted(FName SessionName, bool Successful);
 	void OnDestroySessionCompleted(FName SessionName, bool Successful);
+	void OnFindSessionsCompleted(bool Successful);
 
 private:
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
@@ -40,5 +44,9 @@ private:
 
 	FOnDestroySessionCompleteDelegate DestroySessionCompleteDelegate;
 	FDelegateHandle DestroySessionCompleteDelegateHandle;
+
+	FOnFindSessionsCompleteDelegate FindSessionsCompleteDelegate;
+	FDelegateHandle FindSessionsCompleteDelegateHandle;
+	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
 	
 };
