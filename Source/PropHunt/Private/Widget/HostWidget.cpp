@@ -11,6 +11,7 @@
 #include "Components/EditableText.h"
 #include "Internationalization/Regex.h"
 #include "Kismet/GameplayStatics.h"
+#include "OnlineSessionSettings.h"
 
 void UHostWidget::SetParentWidget(UMenuWidget* InParentWidget)
 {
@@ -82,7 +83,10 @@ void UHostWidget::OnHostButtonClicked()
 		PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
 
 		// find the session, if present destroy then create new session
-		PropHuntSubsystem->DestroySession(SessionName);
+		if (PropHuntSubsystem->FindSessionByName(SessionName))
+		{
+			PropHuntSubsystem->DestroySession(SessionName);
+		}
 		PropHuntSubsystem->CreateSession(SessionName, LevelName, PlayerNumbers, true);
 	}
 	else

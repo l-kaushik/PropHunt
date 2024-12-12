@@ -94,6 +94,18 @@ void UPropHuntSubsystem::DestroySession(FName& SessionName)
 	}
 }
 
+FNamedOnlineSession* UPropHuntSubsystem::FindSessionByName(FName SessionName)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		return nullptr;
+	}
+
+	FNamedOnlineSession* ExistingSession = SessionInterface->GetNamedSession(SessionName);
+	return ExistingSession;
+}
+
 void UPropHuntSubsystem::OnDestroySessionCompleted(FName SessionName, bool Successful)
 {
 	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());

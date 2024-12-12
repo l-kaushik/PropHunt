@@ -15,6 +15,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnDestroySessionComplete, bool Successful
 DECLARE_MULTICAST_DELEGATE_TwoParams
 (FPHOnFindSessionsComplete, const TArray<FOnlineSessionSearchResult>& SessionResults, bool Successful);
 
+class FNamedOnlineSession;
+
 UCLASS()
 class PROPHUNT_API UPropHuntSubsystem : public UGameInstanceSubsystem
 {
@@ -25,6 +27,7 @@ public:
 
 	void CreateSession(FName& SessionName, FString& LevelName, int32& NumPublicConnections, bool IsLANMatch);
 	void DestroySession(FName& SessionName);
+	FNamedOnlineSession* FindSessionByName(FName SessionName);
 	void FindSessions(int32 MaxSearchResults, bool IsLANQuery);
 
 	FPHOnCreateSessionComplete OnCreateSessionCompleteEvent;
