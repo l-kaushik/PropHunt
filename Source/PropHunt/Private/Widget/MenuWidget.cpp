@@ -3,6 +3,7 @@
 
 #include "Widget/MenuWidget.h"
 #include "Widget/HostWidget.h"
+#include "Widget/JoinGameWidget.h"
 
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
@@ -24,6 +25,12 @@ UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	if (HostWidgetBPClass.Succeeded())
 	{
 		HostWidgetBPClassRef = HostWidgetBPClass.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<UJoinGameWidget> JoinGameWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_JoinGame"));
+	if (JoinGameWidgetBPClass.Succeeded())
+	{
+		JoinGameWidgetBPClassRef = JoinGameWidgetBPClass.Class;
 	}
 }
 
@@ -105,6 +112,15 @@ void UMenuWidget::OnHostGameButonClicked()
 void UMenuWidget::OnJoinGameButtonClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Join Game Button Clicked!"));
+
+	if (!JoinGameWidgetBPClassRef)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Join widget blueprinnt class reference is nullptr"));
+		return;
+	}
+
+	this->SetVisibility(ESlateVisibility::Collapsed);
+	CreateAndAddWidget<UJoinGameWidget>(JoinGameWidgetBPClassRef);
 }
 
 void UMenuWidget::OnBackButtonClicked()

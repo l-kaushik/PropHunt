@@ -98,8 +98,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* HostGameButton;
 
-	TSubclassOf<class UHostWidget> HostWidgetBPClassRef;;
-
 	UPROPERTY(meta = (BindWidget))
 	class UButton* JoinGameButton;
 
@@ -108,4 +106,7 @@ private:
 	class UButton* BackButton;
 
 	EMenuState MenuState;
+
+	TSubclassOf<class UHostWidget> HostWidgetBPClassRef;
+	TSubclassOf<class UJoinGameWidget> JoinGameWidgetBPClassRef;
 };
