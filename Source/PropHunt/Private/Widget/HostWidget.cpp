@@ -4,6 +4,7 @@
 #include "Widget/HostWidget.h"
 #include "Widget/MenuWidget.h"
 #include "Controller/MenuController.h"
+#include "Subsystem/PropHuntSubsystem.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
@@ -68,13 +69,33 @@ void UHostWidget::OnHostButtonClicked()
 
 	// host server
 
-	if (AMenuController* Controller = Cast<AMenuController>(GetOwningPlayer()))
+	UPropHuntSubsystem* PropHuntSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UPropHuntSubsystem>();
+
+	if (PropHuntSubsystem)
 	{
-		Controller->HostServer(ServerName, PlayerNumbers);
+		PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
+		PropHuntSubsystem->CreateSession(PlayerNumbers, true);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to get the subsystem"));
 	}
 
 	// display players joined
 
+}
+
+void UHostWidget::OnCreateSessionCompleted(bool Successful)
+{
+	if (Successful)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("insde host widget Session created successfully"));
+	}
+	else
+	{
+
+		UE_LOG(LogTemp, Warning, TEXT("insde host widget Failed to create session"));
+	}
 }
 
 bool UHostWidget::VerifyServerInfo()

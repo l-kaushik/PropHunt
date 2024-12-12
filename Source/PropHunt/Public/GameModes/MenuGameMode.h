@@ -18,9 +18,4 @@ class PROPHUNT_API AMenuGameMode : public AGameModeBase, public IMenuInterface
 public:
 	AMenuGameMode();
 
-public:
-	// Interface functions
-
-	virtual void HostServer(const FString& ServerName, const int32& NumberOfPlayers) override;
-
 };

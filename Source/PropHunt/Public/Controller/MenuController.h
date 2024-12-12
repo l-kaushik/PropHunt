@@ -22,14 +22,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-public:
-	// interface functions
-	virtual void HostServer(const FString& ServerName, const int32& NumberOfPlayers) override;
-
-private:
-	UFUNCTION(Server, Reliable)
-	void RequestHostServer(const FString& ServerName, const int32& NumberOfPlayers);
-
 private:
 	TSubclassOf<UMenuWidget> MenuWidgetBPClassRef;
 

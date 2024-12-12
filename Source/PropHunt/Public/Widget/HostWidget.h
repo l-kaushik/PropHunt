@@ -17,6 +17,8 @@ class PROPHUNT_API UHostWidget : public UUserWidget
 public:
 	void SetParentWidget(class UMenuWidget* InParentWidget);
 
+	void OnCreateSessionCompleted(bool Successful);
+
 private:
 
 	virtual void NativeConstruct() override;
