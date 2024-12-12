@@ -18,6 +18,7 @@ public:
 	void SetParentWidget(class UMenuWidget* InParentWidget);
 
 	void OnCreateSessionCompleted(bool Successful);
+	void OnDestroySessionCompleted(bool Successful);
 
 private:
 

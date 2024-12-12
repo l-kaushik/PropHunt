@@ -64,7 +64,7 @@ void UHostWidget::OnHostButtonClicked()
 {
 	if (!VerifyServerInfo()) return;
 
-	FName ServerName(*ServerNameText->GetText().ToString());
+	FName SessionName(*ServerNameText->GetText().ToString());
 	int32 PlayerNumbers = FCString::Atoi(*(NumberOfPlayersText->GetText().ToString()));
 	FString LevelName = "ThirdPersonMap";
 	// host server
@@ -73,8 +73,17 @@ void UHostWidget::OnHostButtonClicked()
 
 	if (PropHuntSubsystem)
 	{
+		// clear existing bindings
+		PropHuntSubsystem->OnCreateSessionCompleteEvent.Clear();
+		PropHuntSubsystem->OnDestroySessionCompleteEvent.Clear();
+
+		// add new bindings
+		PropHuntSubsystem->OnDestroySessionCompleteEvent.AddUObject(this, &ThisClass::OnDestroySessionCompleted);
 		PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
-		PropHuntSubsystem->CreateSession(ServerName, LevelName, PlayerNumbers, true);
+
+		// find the session, if present destroy then create new session
+		PropHuntSubsystem->DestroySession(SessionName);
+		PropHuntSubsystem->CreateSession(SessionName, LevelName, PlayerNumbers, true);
 	}
 	else
 	{
@@ -94,6 +103,23 @@ void UHostWidget::OnCreateSessionCompleted(bool Successful)
 	{
 
 		UE_LOG(LogTemp, Warning, TEXT("insde host widget Failed to create session"));
+
+		// display error
+	}
+}
+
+void UHostWidget::OnDestroySessionCompleted(bool Successful)
+{
+	if (Successful)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("insde host widget Session destroyed successfully"));
+
+		// open player list window
+	}
+	else
+	{
+
+		UE_LOG(LogTemp, Warning, TEXT("insde host widget Failed to destroy session"));
 
 		// display error
 	}

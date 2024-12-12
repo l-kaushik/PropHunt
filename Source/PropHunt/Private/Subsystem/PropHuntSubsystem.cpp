@@ -13,7 +13,8 @@
 // the order of initialization is depends on the order of declaration in class
 
 UPropHuntSubsystem::UPropHuntSubsystem()
-	: CreateSessionCompleteDelegate(FOnUpdateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionCompleted))
+	: CreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionCompleted))
+	, DestroySessionCompleteDelegate(FOnDestroySessionCompleteDelegate::CreateUObject(this, &ThisClass::OnDestroySessionCompleted))
 {
 }
 
@@ -70,4 +71,35 @@ void UPropHuntSubsystem::OnCreateSessionCompleted(FName SessionName, bool Succes
 
 	OnCreateSessionCompleteEvent.Broadcast(Successful);
 
+}
+
+void UPropHuntSubsystem::DestroySession(FName& SessionName)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		OnDestroySessionCompleteEvent.Broadcast(false);
+		return;
+	}
+
+	DestroySessionCompleteDelegateHandle =
+		SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegate);
+
+	if (!SessionInterface->DestroySession(SessionName))
+	{
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+
+		OnDestroySessionCompleteEvent.Broadcast(false);
+	}
+}
+
+void UPropHuntSubsystem::OnDestroySessionCompleted(FName SessionName, bool Successful)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (SessionInterface)
+	{
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+	}
+
+	OnDestroySessionCompleteEvent.Broadcast(Successful);
 }
