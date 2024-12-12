@@ -132,6 +132,8 @@ void UPropHuntSubsystem::FindSessions(int32 MaxSearchResults, bool IsLANQuery)
 	LastSessionSearch->MaxSearchResults = MaxSearchResults;
 	LastSessionSearch->bIsLanQuery = IsLANQuery;
 	
+	// this line makes sure that server hosted by a player are visible in search result rather than dedicated one.
+	// another thing is there is no need for player to be on same wifi, as it uses steam or xbox live, to show world's from friend list.
 	LastSessionSearch->QuerySettings.Set(TEXT("PRESENCESEARCH"), true, EOnlineComparisonOp::Equals);
 
 	const ULocalPlayer* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();
