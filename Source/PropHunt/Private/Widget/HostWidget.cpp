@@ -64,9 +64,9 @@ void UHostWidget::OnHostButtonClicked()
 {
 	if (!VerifyServerInfo()) return;
 
-	const FString ServerName = ServerNameText->GetText().ToString();
-	const int32 PlayerNumbers = FCString::Atoi(*(NumberOfPlayersText->GetText().ToString()));
-
+	FName ServerName(*ServerNameText->GetText().ToString());
+	int32 PlayerNumbers = FCString::Atoi(*(NumberOfPlayersText->GetText().ToString()));
+	FString LevelName = "ThirdPersonMap";
 	// host server
 
 	UPropHuntSubsystem* PropHuntSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UPropHuntSubsystem>();
@@ -74,15 +74,12 @@ void UHostWidget::OnHostButtonClicked()
 	if (PropHuntSubsystem)
 	{
 		PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
-		PropHuntSubsystem->CreateSession(PlayerNumbers, true);
+		PropHuntSubsystem->CreateSession(ServerName, LevelName, PlayerNumbers, true);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to get the subsystem"));
 	}
-
-	// display players joined
-
 }
 
 void UHostWidget::OnCreateSessionCompleted(bool Successful)
@@ -90,11 +87,15 @@ void UHostWidget::OnCreateSessionCompleted(bool Successful)
 	if (Successful)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("insde host widget Session created successfully"));
+
+		// open player list window
 	}
 	else
 	{
 
 		UE_LOG(LogTemp, Warning, TEXT("insde host widget Failed to create session"));
+
+		// display error
 	}
 }
 

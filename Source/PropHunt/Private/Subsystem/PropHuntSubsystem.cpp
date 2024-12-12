@@ -17,7 +17,7 @@ UPropHuntSubsystem::UPropHuntSubsystem()
 {
 }
 
-void UPropHuntSubsystem::CreateSession(int32 NumPublicConnections, bool IsLANMatch)
+void UPropHuntSubsystem::CreateSession(FName& SessionName, FString& LevelName, int32& NumPublicConnections, bool IsLANMatch)
 {
 	// return and broadcast false if session interface is not found
 	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
@@ -41,7 +41,7 @@ void UPropHuntSubsystem::CreateSession(int32 NumPublicConnections, bool IsLANMat
 	LastSessionSettings->bShouldAdvertise = true;
 
 	// set map name
-	LastSessionSettings->Set(SETTING_MAPNAME, FString("Your Level Name"), EOnlineDataAdvertisementType::ViaOnlineService);
+	LastSessionSettings->Set(SETTING_MAPNAME, LevelName, EOnlineDataAdvertisementType::ViaOnlineService);
 
 	// adding delegate to on complete and storing handle as well
 	CreateSessionCompleteDelegateHandle = SessionInterface->AddOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegate);
@@ -50,7 +50,7 @@ void UPropHuntSubsystem::CreateSession(int32 NumPublicConnections, bool IsLANMat
 	// if fails, clears the delegate and broadcast false
 	// set a custom session name, instead of using NAME_GameSession
 	const ULocalPlayer* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	if (!SessionInterface->CreateSession(*localPlayer->GetPreferredUniqueNetId(), NAME_GameSession, *LastSessionSettings))
+	if (!SessionInterface->CreateSession(*localPlayer->GetPreferredUniqueNetId(), SessionName, *LastSessionSettings))
 	{
 		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
 
