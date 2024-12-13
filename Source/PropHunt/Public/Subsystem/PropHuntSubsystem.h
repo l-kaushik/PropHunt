@@ -15,6 +15,9 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnDestroySessionComplete, bool Successful
 DECLARE_MULTICAST_DELEGATE_TwoParams
 (FPHOnFindSessionsComplete, const TArray<FOnlineSessionSearchResult>& SessionResults, bool Successful);
 DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnJoinSessionComplete, EOnJoinSessionCompleteResult::Type Result);
+DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnStartSessionComplete, bool Successful);
+DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnEndSessionComplete, bool Successful);
+DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnUpdateSessionComplete, bool Successful);
 
 class FNamedOnlineSession;
 
@@ -31,11 +34,17 @@ public:
 	FNamedOnlineSession* FindSessionByName(FName SessionName);
 	void FindSessions(int32 MaxSearchResults, bool IsLANQuery);
 	void JoinSession(const FName& SessionName, const FOnlineSessionSearchResult& SessionResult);
+	void StartSession(const FName& SessionName);
+	void EndSession(const FName& SessionName);
+	void UpdateSession(const FName& SessionName, const FString& NewLevelName);
 
 	FPHOnCreateSessionComplete OnCreateSessionCompleteEvent;
 	FPHOnDestroySessionComplete OnDestroySessionCompleteEvent;
 	FPHOnFindSessionsComplete OnFindSessionsCompleteEvent;
 	FPHOnJoinSessionComplete OnJoinSessionCompleteEvent;
+	FPHOnStartSessionComplete OnStartSessionCompleteEvent;
+	FPHOnEndSessionComplete OnEndSessionCompleteEvent;
+	FPHOnUpdateSessionComplete OnUpdateSessionCompleteEvent;
 
 protected:
 	void OnCreateSessionCompleted(FName SessionName, bool Successful);
@@ -43,6 +52,9 @@ protected:
 	void OnFindSessionsCompleted(bool Successful);
 	void OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 	bool TryTravelToCurrentSession(const FName& SessionName);
+	void OnStartSessionCompleted(FName SessionName, bool Successful);
+	void OnEndSessionCompleted(FName SessionName, bool Successful);
+	void OnUpdateSessionCompleted(FName SessionName, bool Successful);
 
 private:
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
@@ -59,5 +71,13 @@ private:
 
 	FOnJoinSessionCompleteDelegate JoinSessionCompleteDelegate;
 	FDelegateHandle JoinSessionCompleteDelegateHandle;
-	
+
+	FOnStartSessionCompleteDelegate StartSessionCompleteDelegate;
+	FDelegateHandle StartSessionCompleteDelegateHandle;
+
+	FOnEndSessionCompleteDelegate EndSessionCompleteDelegate;
+	FDelegateHandle EndSessionCompleteDelegateHandle;
+
+	FOnUpdateSessionCompleteDelegate UpdateSessionCompleteDelegate;
+	FDelegateHandle UpdateSessionCompleteDelegateHandle;
 };

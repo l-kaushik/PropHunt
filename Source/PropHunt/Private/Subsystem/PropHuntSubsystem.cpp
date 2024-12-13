@@ -17,6 +17,10 @@ UPropHuntSubsystem::UPropHuntSubsystem()
 	, DestroySessionCompleteDelegate(FOnDestroySessionCompleteDelegate::CreateUObject(this, &ThisClass::OnDestroySessionCompleted))
 	, FindSessionsCompleteDelegate(FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionsCompleted))
 	, JoinSessionCompleteDelegate(FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionCompleted))
+	, StartSessionCompleteDelegate(FOnStartSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnStartSessionCompleted))
+	, EndSessionCompleteDelegate(FOnEndSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnEndSessionCompleted))
+	, UpdateSessionCompleteDelegate(FOnUpdateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnUpdateSessionCompleted))
+
 {
 }
 
@@ -212,4 +216,104 @@ bool UPropHuntSubsystem::TryTravelToCurrentSession(const FName& SessionName)
 	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
 	playerController->ClientTravel(connectString, TRAVEL_Absolute);
 	return true;
+}
+
+void UPropHuntSubsystem::StartSession(const FName& SessionName)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		OnStartSessionCompleteEvent.Broadcast(false);
+		return;
+	}
+
+	StartSessionCompleteDelegateHandle =
+		SessionInterface->AddOnStartSessionCompleteDelegate_Handle(StartSessionCompleteDelegate);
+
+	if (!SessionInterface->StartSession(SessionName))
+	{
+		SessionInterface->ClearOnStartSessionCompleteDelegate_Handle(StartSessionCompleteDelegateHandle);
+
+		OnStartSessionCompleteEvent.Broadcast(false);
+	}
+}
+
+void UPropHuntSubsystem::OnStartSessionCompleted(FName SessionName, bool Successful)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (SessionInterface)
+	{
+		SessionInterface->ClearOnStartSessionCompleteDelegate_Handle(StartSessionCompleteDelegateHandle);
+	}
+
+	OnStartSessionCompleteEvent.Broadcast(Successful);
+}
+
+void UPropHuntSubsystem::EndSession(const FName& SessionName)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		OnEndSessionCompleteEvent.Broadcast(false);
+		return;
+	}
+
+	EndSessionCompleteDelegateHandle =
+		SessionInterface->AddOnEndSessionCompleteDelegate_Handle(EndSessionCompleteDelegate);
+
+	if (!SessionInterface->EndSession(SessionName))
+	{
+		SessionInterface->ClearOnEndSessionCompleteDelegate_Handle(EndSessionCompleteDelegateHandle);
+
+		OnEndSessionCompleteEvent.Broadcast(false);
+	}
+}
+
+void UPropHuntSubsystem::OnEndSessionCompleted(FName SessionName, bool Successful)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());;
+	if (SessionInterface)
+	{
+		SessionInterface->ClearOnEndSessionCompleteDelegate_Handle(EndSessionCompleteDelegateHandle);
+	}
+
+	OnEndSessionCompleteEvent.Broadcast(Successful);
+}
+
+void UPropHuntSubsystem::UpdateSession(const FName& SessionName, const FString& NewLevelName)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		OnUpdateSessionCompleteEvent.Broadcast(false);
+		return;
+	}
+
+	TSharedPtr<FOnlineSessionSettings> updatedSessionSettings = MakeShareable(new FOnlineSessionSettings(*LastSessionSettings));
+	updatedSessionSettings->Set(SETTING_MAPNAME, NewLevelName, EOnlineDataAdvertisementType::ViaOnlineService);
+
+	UpdateSessionCompleteDelegateHandle =
+		SessionInterface->AddOnUpdateSessionCompleteDelegate_Handle(UpdateSessionCompleteDelegate);
+
+	if (!SessionInterface->UpdateSession(SessionName, *updatedSessionSettings))
+	{
+		SessionInterface->ClearOnUpdateSessionCompleteDelegate_Handle(UpdateSessionCompleteDelegateHandle);
+
+		OnUpdateSessionCompleteEvent.Broadcast(false);
+	}
+	else
+	{
+		LastSessionSettings = updatedSessionSettings;
+	}
+}
+
+void UPropHuntSubsystem::OnUpdateSessionCompleted(FName SessionName, bool Successful)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (SessionInterface)
+	{
+		SessionInterface->ClearOnUpdateSessionCompleteDelegate_Handle(UpdateSessionCompleteDelegateHandle);
+	}
+
+	OnUpdateSessionCompleteEvent.Broadcast(Successful);
 }
