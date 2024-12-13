@@ -16,6 +16,7 @@ UPropHuntSubsystem::UPropHuntSubsystem()
 	: CreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionCompleted))
 	, DestroySessionCompleteDelegate(FOnDestroySessionCompleteDelegate::CreateUObject(this, &ThisClass::OnDestroySessionCompleted))
 	, FindSessionsCompleteDelegate(FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionsCompleted))
+	, JoinSessionCompleteDelegate(FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionCompleted))
 {
 }
 
@@ -74,7 +75,7 @@ void UPropHuntSubsystem::OnCreateSessionCompleted(FName SessionName, bool Succes
 
 }
 
-void UPropHuntSubsystem::DestroySession(FName& SessionName)
+void UPropHuntSubsystem::DestroySession(const FName& SessionName)
 {
 	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
 	if (!SessionInterface.IsValid())
@@ -160,4 +161,55 @@ void UPropHuntSubsystem::OnFindSessionsCompleted(bool Successful)
 	}
 
 	OnFindSessionsCompleteEvent.Broadcast(LastSessionSearch->SearchResults, Successful);
+}
+
+void UPropHuntSubsystem::JoinSession(const FName& SessionName, const FOnlineSessionSearchResult& SessionResult)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		OnJoinSessionCompleteEvent.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
+		return;
+	}
+
+	JoinSessionCompleteDelegateHandle =
+		SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegate);
+
+	const ULocalPlayer* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+	if (!sessionInterface->JoinSession(*localPlayer->GetPreferredUniqueNetId(), SessionName, SessionResult))
+	{
+		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
+
+		OnJoinSessionCompleteEvent.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
+	}
+}
+
+void UPropHuntSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (SessionInterface)
+	{
+		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
+	}
+
+	OnJoinSessionCompleteEvent.Broadcast(Result);
+}
+
+bool UPropHuntSubsystem::TryTravelToCurrentSession(const FName& SessionName)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		return false;
+	}
+
+	FString connectString;
+	if (!SessionInterface->GetResolvedConnectString(SessionName, connectString))
+	{
+		return false;
+	}
+
+	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+	playerController->ClientTravel(connectString, TRAVEL_Absolute);
+	return true;
 }
