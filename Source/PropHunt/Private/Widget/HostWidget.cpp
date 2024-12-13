@@ -5,14 +5,12 @@
 #include "Widget/MenuWidget.h"
 #include "Widget/LobbyWidget.h"
 #include "Controller/MenuController.h"
-#include "Subsystem/PropHuntSubsystem.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 #include "Internationalization/Regex.h"
 #include "Kismet/GameplayStatics.h"
-#include "OnlineSessionSettings.h"
 #include "UObject/ConstructorHelpers.h"
 
 UHostWidget::UHostWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -33,6 +31,8 @@ void UHostWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	BindEvents();
+
+	MenuController = Cast<AMenuController>(GetOwningPlayer());
 }
 
 void UHostWidget::NativePreConstruct()
@@ -80,65 +80,10 @@ void UHostWidget::OnHostButtonClicked()
 	int32 PlayerNumbers = FCString::Atoi(*(NumberOfPlayersText->GetText().ToString()));
 	FString LevelName = "ThirdPersonMap";
 	// host server
+	
+	// use controller to host server
+	MenuController->ClientWantsToHost(SessionName, LevelName, PlayerNumbers);
 
-	UPropHuntSubsystem* PropHuntSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UPropHuntSubsystem>();
-
-	if (PropHuntSubsystem)
-	{
-		// clear existing bindings
-		PropHuntSubsystem->OnCreateSessionCompleteEvent.Clear();
-		PropHuntSubsystem->OnDestroySessionCompleteEvent.Clear();
-
-		// add new bindings
-		PropHuntSubsystem->OnDestroySessionCompleteEvent.AddUObject(this, &ThisClass::OnDestroySessionCompleted);
-		PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
-
-		// find the session, if present destroy then create new session
-		if (PropHuntSubsystem->FindSessionByName(SessionName))
-		{
-			PropHuntSubsystem->DestroySession(SessionName);
-		}
-		PropHuntSubsystem->CreateSession(SessionName, LevelName, PlayerNumbers, true);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to get the subsystem"));
-	}
-}
-
-void UHostWidget::OnCreateSessionCompleted(bool Successful)
-{
-	if (Successful)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("inside host widget Session created successfully"));
-
-		// open player list window
-		CreateLobbyWidget();
-	}
-	else
-	{
-
-		UE_LOG(LogTemp, Warning, TEXT("inside host widget Failed to create session"));
-
-		// display error
-	}
-}
-
-void UHostWidget::OnDestroySessionCompleted(bool Successful)
-{
-	if (Successful)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("insde host widget Session destroyed successfully"));
-
-		// open player list window
-	}
-	else
-	{
-
-		UE_LOG(LogTemp, Warning, TEXT("insde host widget Failed to destroy session"));
-
-		// display error
-	}
 }
 
 bool UHostWidget::VerifyServerInfo()

@@ -25,7 +25,7 @@ class PROPHUNT_API UPropHuntSubsystem : public UGameInstanceSubsystem
 public:
 	UPropHuntSubsystem();
 
-	void CreateSession(FName& SessionName, FString& LevelName, int32& NumPublicConnections, bool IsLANMatch);
+	void CreateSession(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch);
 	void DestroySession(FName& SessionName);
 	FNamedOnlineSession* FindSessionByName(FName SessionName);
 	void FindSessions(int32 MaxSearchResults, bool IsLANQuery);

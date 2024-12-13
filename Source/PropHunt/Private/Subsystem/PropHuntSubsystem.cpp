@@ -19,7 +19,7 @@ UPropHuntSubsystem::UPropHuntSubsystem()
 {
 }
 
-void UPropHuntSubsystem::CreateSession(FName& SessionName, FString& LevelName, int32& NumPublicConnections, bool IsLANMatch)
+void UPropHuntSubsystem::CreateSession(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch)
 {
 	// return and broadcast false if session interface is not found
 	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
