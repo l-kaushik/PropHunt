@@ -123,13 +123,3 @@ bool UHostWidget::VerifyServerInfo()
 	return true;
 }
 
-void UHostWidget::CreateLobbyWidget()
-{
-	ULobbyWidget* WidgetRef = CreateWidget<ULobbyWidget>(this, LobbyWidgetBPClassRef);
-	check(WidgetRef);
-	WidgetRef->AddToViewport();
-	WidgetRef->SetParentWidget(this);
-	WidgetRef->SetIsHost(true);
-
-	this->SetVisibility(ESlateVisibility::Collapsed);
-}

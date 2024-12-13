@@ -36,8 +36,6 @@ private:
 
 	bool VerifyServerInfo();
 
-	void CreateLobbyWidget();
-
 private:
 	// Reference to parent widget
 	UPROPERTY()

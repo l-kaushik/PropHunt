@@ -3,6 +3,8 @@
 
 #include "Controller/MenuController.h"
 #include "Widget/MenuWidget.h"
+#include "Widget/HostWidget.h"
+#include "Widget/JoinGameWidget.h"
 #include "GameModes/MenuGameMode.h"
 #include "Subsystem/PropHuntSubsystem.h"
 
@@ -17,6 +19,18 @@ AMenuController::AMenuController()
 	{
 		MenuWidgetBPClassRef = MenuWidgetBPClass.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<UHostWidget> HostWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Host"));
+	if (HostWidgetBPClass.Succeeded())
+	{
+		HostWidgetBPClassRef = HostWidgetBPClass.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<UJoinGameWidget> JoinGameWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_JoinGame"));
+	if (JoinGameWidgetBPClass.Succeeded())
+	{
+		JoinGameWidgetBPClassRef = JoinGameWidgetBPClass.Class;
+	}
 }
 
 void AMenuController::BeginPlay()
@@ -29,16 +43,23 @@ void AMenuController::BeginPlay()
 	}
 
 	if ((HasAuthority() && IsLocalPlayerController()) || !HasAuthority()) {
-		if (!MenuWidgetBPClassRef) return;
 
-		MenuWidgetRef = CreateWidget<UMenuWidget>(this, MenuWidgetBPClassRef);
-		check(MenuWidgetRef);
-		MenuWidgetRef->AddToViewport();
+		MenuWidgetRef = CreateAndAddWidget<UMenuWidget>(MenuWidgetBPClassRef);
 
 		SetInputMode(FInputModeUIOnly());
 		SetShowMouseCursor(true);
 	}
 
+}
+
+void AMenuController::CreateHostWidget()
+{
+	CreateSubWidgetAndHideParent<UHostWidget, UMenuWidget>(HostWidgetBPClassRef, MenuWidgetRef);
+}
+
+void AMenuController::CreateJoinWidget()
+{
+	CreateSubWidgetAndHideParent<UJoinGameWidget, UMenuWidget>(JoinGameWidgetBPClassRef, MenuWidgetRef);
 }
 
 void AMenuController::ClientWantsToHost(const FName& SessionName, const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch)

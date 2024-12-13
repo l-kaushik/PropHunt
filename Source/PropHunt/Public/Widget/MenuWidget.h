@@ -15,11 +15,6 @@ UCLASS()
 class PROPHUNT_API UMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
-public:
-	UMenuWidget(const FObjectInitializer& ObjectInitializer);
-
-
 private:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
@@ -64,16 +59,6 @@ private:
 	void SetMainMenuButtons(class UButton* Button);
 
 	// sub widget creator for this Menu Widget
-	template<typename T>
-	T* CreateAndAddWidget(UClass* WidgetBPClassRef)
-	{
-		T* WidgetRef = CreateWidget<T>(this, WidgetBPClassRef);
-		check(WidgetRef);
-		WidgetRef->AddToViewport();
-		WidgetRef->SetParentWidget(this);
-
-		return WidgetRef;
-	}
 
 private:
 
@@ -106,7 +91,5 @@ private:
 	class UButton* BackButton;
 
 	EMenuState MenuState;
-
-	TSubclassOf<class UHostWidget> HostWidgetBPClassRef;
-	TSubclassOf<class UJoinGameWidget> JoinGameWidgetBPClassRef;
+	class AMenuController* MenuController;
 };

@@ -4,11 +4,11 @@
 #include "Widget/MenuWidget.h"
 #include "Widget/HostWidget.h"
 #include "Widget/JoinGameWidget.h"
+#include "Controller/MenuController.h"
 
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
-#include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
 
 // custom macro to make on click binding generic
@@ -18,26 +18,12 @@
         Button->OnClicked.AddDynamic(this, Function); \
     }
 
-
-UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{
-	static ConstructorHelpers::FClassFinder<UHostWidget> HostWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Host"));
-	if (HostWidgetBPClass.Succeeded())
-	{
-		HostWidgetBPClassRef = HostWidgetBPClass.Class;
-	}
-
-	static ConstructorHelpers::FClassFinder<UJoinGameWidget> JoinGameWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_JoinGame"));
-	if (JoinGameWidgetBPClass.Succeeded())
-	{
-		JoinGameWidgetBPClassRef = JoinGameWidgetBPClass.Class;
-	}
-}
-
 void UMenuWidget::NativeConstruct()
 {
 	BindClickEvents();
 	InitializeComponents();
+
+	MenuController = Cast<AMenuController>(GetOwningPlayer());
 }
 
 void UMenuWidget::NativePreConstruct()
@@ -96,31 +82,12 @@ void UMenuWidget::OnQuitGameButtonClicked()
 
 void UMenuWidget::OnHostGameButonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Host Game Button Clicked!"));
-
-	if (!HostWidgetBPClassRef)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Host widget blueprint class reference is nullptr"));
-		return;
-	}
-
-	this->SetVisibility(ESlateVisibility::Collapsed);
-	CreateAndAddWidget<UHostWidget>(HostWidgetBPClassRef);
-
+	MenuController->CreateHostWidget();
 }
 
 void UMenuWidget::OnJoinGameButtonClicked()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Join Game Button Clicked!"));
-
-	if (!JoinGameWidgetBPClassRef)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Join widget blueprinnt class reference is nullptr"));
-		return;
-	}
-
-	this->SetVisibility(ESlateVisibility::Collapsed);
-	CreateAndAddWidget<UJoinGameWidget>(JoinGameWidgetBPClassRef);
+{;
+	MenuController->CreateJoinWidget();
 }
 
 void UMenuWidget::OnBackButtonClicked()
