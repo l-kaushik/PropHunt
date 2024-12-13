@@ -180,7 +180,7 @@ void UPropHuntSubsystem::JoinSession(const FName& SessionName, const FOnlineSess
 		SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegate);
 
 	const ULocalPlayer* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	if (!sessionInterface->JoinSession(*localPlayer->GetPreferredUniqueNetId(), SessionName, SessionResult))
+	if (!SessionInterface->JoinSession(*localPlayer->GetPreferredUniqueNetId(), SessionName, SessionResult))
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
 
