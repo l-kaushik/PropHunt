@@ -49,6 +49,8 @@ void UPropHuntSubsystem::CreateSession(const FName& SessionName,const FString& L
 
 	// set map name
 	LastSessionSettings->Set(SETTING_MAPNAME, LevelName, EOnlineDataAdvertisementType::ViaOnlineService);
+	// set display name
+	LastSessionSettings->Set(TEXT("SESSION_DISPLAY_NAME"), SessionName.ToString(), EOnlineDataAdvertisementType::ViaOnlineService);
 
 	// adding delegate to on complete and storing handle as well
 	CreateSessionCompleteDelegateHandle = SessionInterface->AddOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegate);
