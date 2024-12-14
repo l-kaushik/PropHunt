@@ -3,24 +3,12 @@
 
 #include "Widget/HostWidget.h"
 #include "Widget/MenuWidget.h"
-#include "Widget/LobbyWidget.h"
 #include "Controller/MenuController.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 #include "Internationalization/Regex.h"
-#include "Kismet/GameplayStatics.h"
-#include "UObject/ConstructorHelpers.h"
-
-UHostWidget::UHostWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{
-	static ConstructorHelpers::FClassFinder<ULobbyWidget> LobbyWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Lobby"));
-	if (LobbyWidgetBPClass.Succeeded())
-	{
-		LobbyWidgetBPClassRef = LobbyWidgetBPClass.Class;
-	}
-}
 
 void UHostWidget::SetParentWidget(UMenuWidget* InParentWidget)
 {
