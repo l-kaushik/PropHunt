@@ -5,8 +5,9 @@
 #include "Widget/MenuWidget.h"
 #include "Widget/HostWidget.h"
 #include "Widget/JoinGameWidget.h"
+#include "Widget/LobbyWidget.h"
 #include "GameModes/MenuGameMode.h"
-#include "Subsystem/PropHuntSubsystem.h"
+#include "GameInstance/PropHuntGameInstance.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -31,6 +32,12 @@ AMenuController::AMenuController()
 	{
 		JoinGameWidgetBPClassRef = JoinGameWidgetBPClass.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<ULobbyWidget> LobbyWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Lobby"));
+	if (LobbyWidgetBPClass.Succeeded())
+	{
+		LobbyWidgetBPClassRef = LobbyWidgetBPClass.Class;
+	}
 }
 
 void AMenuController::BeginPlay()
@@ -39,7 +46,7 @@ void AMenuController::BeginPlay()
 
 	if (HasAuthority())
 	{
-		PropHuntSubsystem = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<UPropHuntSubsystem>();
+		PropHuntGameInstance = Cast<UPropHuntGameInstance>(GetWorld()->GetGameInstance());
 	}
 
 	if ((HasAuthority() && IsLocalPlayerController()) || !HasAuthority()) {
@@ -69,19 +76,5 @@ void AMenuController::ClientWantsToHost(const FName& SessionName, const FString&
 
 void AMenuController::ClientWantsToHostOnServer_Implementation(const FName& SessionName, const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch)
 {
-	PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
-	PropHuntSubsystem->CreateSession(SessionName, LevelName, NumPublicConnections, IsLANMatch);
-}
-
-// callback functions for session management
-void AMenuController::OnCreateSessionCompleted(bool Successful)
-{
-	if (Successful)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Menu Controller: session created successfully"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Menu Controller: Failed to create session"));
-	}
+	PropHuntGameInstance->HostSession(SessionName, LevelName, NumPublicConnections, IsLANMatch);
 }

@@ -11,7 +11,8 @@
  */
 
 class UMenuWidget;
-class UPropHuntSubsystem;
+class UPropHuntGameInstance;
+
 UCLASS()
 class PROPHUNT_API AMenuController : public APlayerController 
 {
@@ -31,10 +32,6 @@ public:
 protected:
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToHostOnServer(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatc);
-
-protected:
-	// callback functions for session management
-	void OnCreateSessionCompleted(bool Successful);
 
 private:
 	template<typename T>
@@ -79,6 +76,7 @@ private:
 
 	TSubclassOf<class UHostWidget> HostWidgetBPClassRef;
 	TSubclassOf<class UJoinGameWidget> JoinGameWidgetBPClassRef;
+	TSubclassOf<class ULobbyWidget> LobbyWidgetBPClassRef;
 
-	UPropHuntSubsystem* PropHuntSubsystem;
+	UPropHuntGameInstance* PropHuntGameInstance;
 };
