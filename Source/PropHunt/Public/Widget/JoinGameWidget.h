@@ -16,6 +16,8 @@ class PROPHUNT_API UJoinGameWidget : public UUserWidget
 
 public:
 	void SetParentWidget(class UMenuWidget* InParentWidget);
+
+	void AddServerToList(UUserWidget* ServerEntry);
 	
 private:
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "MenuController.generated.h"
 
 /**
@@ -15,8 +16,10 @@ class ULobbyWidget;
 class UHostWidget;
 class UJoinGameWidget;
 class UPlayerEntryWidget;
+class UServerEntryWidget;
 class UPropHuntGameInstance;
 class APropHuntPlayerState;
+class FOnlineSessionSearchResult;
 
 UCLASS()
 class PROPHUNT_API AMenuController : public APlayerController 
@@ -34,9 +37,16 @@ public:
 	void CreateHostWidget();
 	void CreateJoinWidget();
 
+	void SearchSessions();
+	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& SearchResults);
+
 protected:
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToHostOnServer(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatc);
+
+	UFUNCTION(Server, Reliable)
+	void SearchSessionsOnServer();
+
 private:
 	void SetupWidgetForMuliplayer();
 
@@ -92,6 +102,7 @@ private:
 
 private:
 	UMenuWidget* MenuWidgetRef;
+	UJoinGameWidget* JoinGameWidgetRef;
 	ULobbyWidget* LobbyWidgetRef;
 
 	TSubclassOf<UMenuWidget> MenuWidgetBPClassRef;
@@ -99,6 +110,7 @@ private:
 	TSubclassOf<UJoinGameWidget> JoinGameWidgetBPClassRef;
 	TSubclassOf<ULobbyWidget> LobbyWidgetBPClassRef;
 	TSubclassOf<UPlayerEntryWidget> PlayerEntryWidgetBPClassRef;
+	TSubclassOf<UServerEntryWidget> ServerEntryWidgetBPClassRef;
 
 	UPropHuntGameInstance* PropHuntGameInstance;
 	APropHuntPlayerState* PropHuntPlayerState;

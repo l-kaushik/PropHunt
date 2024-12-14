@@ -3,6 +3,9 @@
 
 #include "GameInstance/PropHuntGameInstance.h"
 #include "Subsystem/PropHuntSubsystem.h"
+#include "Controller/MenuController.h"
+
+#include "Interfaces/OnlineSessionInterface.h"
 
 void UPropHuntGameInstance::Init()
 {
@@ -41,5 +44,25 @@ void UPropHuntGameInstance::OnCreateSessionCompleted(bool Successful)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Menu Controller: Failed to seamless travel"));
+	}
+}
+
+void UPropHuntGameInstance::FindSessions(int32 MaxSearchResults, bool IsLANQuery)
+{
+	PropHuntSubsystem->OnFindSessionsCompleteEvent.AddUObject(this, &ThisClass::OnFindSessionsCompleted);
+	PropHuntSubsystem->FindSessions(MaxSearchResults, IsLANQuery);
+}
+
+void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionSearchResult>& SearchResults, bool Successful)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Game Instance: find session completed"));
+
+	if (Successful)
+	{
+		// add to list
+		auto* PlayerController = Cast<AMenuController>(GetWorld()->GetFirstPlayerController());
+
+		PlayerController->LoadSessionsInList(SearchResults);
+		return;
 	}
 }

@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "OnlineSessionSettings.h"
 #include "PropHuntGameInstance.generated.h"
 
 class UPropHuntSubsystem;
+class FOnlineSessionSearchResult;
 
 UCLASS()
 class PROPHUNT_API UPropHuntGameInstance : public UGameInstance
@@ -19,11 +21,13 @@ public:
 	bool GetIsMultiplayer();
 
 	// session related functions
-	void HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch);
+	void HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
+	void FindSessions(int32 MaxSearchResults, bool IsLANQuery = true);
 
 protected:
 	// callback functions for session management
 	void OnCreateSessionCompleted(bool Successful);
+	void OnFindSessionsCompleted(const TArray<FOnlineSessionSearchResult>& SearchResults, bool Successful);
 
 private:
 	virtual void Init() override;

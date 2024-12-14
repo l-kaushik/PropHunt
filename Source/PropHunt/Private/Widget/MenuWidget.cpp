@@ -88,6 +88,7 @@ void UMenuWidget::OnHostGameButonClicked()
 void UMenuWidget::OnJoinGameButtonClicked()
 {;
 	MenuController->CreateJoinWidget();
+	MenuController->SearchSessions();
 }
 
 void UMenuWidget::OnBackButtonClicked()

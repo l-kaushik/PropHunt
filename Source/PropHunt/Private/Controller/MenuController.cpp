@@ -7,6 +7,7 @@
 #include "Widget/JoinGameWidget.h"
 #include "Widget/LobbyWidget.h"
 #include "Widget/PlayerEntryWidget.h"
+#include "Widget/ServerEntryWidget.h"
 #include "GameModes/MenuGameMode.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "States/PropHuntPlayerState.h"
@@ -14,6 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
+#include "OnlineSessionSettings.h"
 
 AMenuController::AMenuController()
 {
@@ -24,6 +26,7 @@ AMenuController::AMenuController()
 	JoinGameWidgetBPClassRef = LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
 	LobbyWidgetBPClassRef = LoadWidgetBlueprint<ULobbyWidget>(BasePath + FString("WB_Lobby"));
 	PlayerEntryWidgetBPClassRef = LoadWidgetBlueprint<UPlayerEntryWidget>(BasePath + FString("WB_PlayerEntry"));
+	ServerEntryWidgetBPClassRef = LoadWidgetBlueprint<UServerEntryWidget>(BasePath + FString("WB_ServerEntry"));
 }
 
 void AMenuController::BeginPlay()
@@ -53,7 +56,7 @@ void AMenuController::CreateHostWidget()
 
 void AMenuController::CreateJoinWidget()
 {
-	CreateSubWidgetAndHideParent<UJoinGameWidget, UMenuWidget>(JoinGameWidgetBPClassRef, MenuWidgetRef);
+	JoinGameWidgetRef = CreateSubWidgetAndHideParent<UJoinGameWidget, UMenuWidget>(JoinGameWidgetBPClassRef, MenuWidgetRef);
 }
 
 void AMenuController::SetupWidgetForMuliplayer()
@@ -78,4 +81,48 @@ void AMenuController::ClientWantsToHost(const FName& SessionName, const FString&
 void AMenuController::ClientWantsToHostOnServer_Implementation(const FName& SessionName, const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch)
 {
 	PropHuntGameInstance->HostSession(SessionName, LevelName, NumPublicConnections, IsLANMatch);
+}
+
+void AMenuController::SearchSessions()
+{
+	SearchSessionsOnServer();
+}
+
+void AMenuController::SearchSessionsOnServer_Implementation()
+{
+	PropHuntGameInstance->FindSessions(10);
+}
+
+void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& SearchResults)
+{
+	if (SearchResults.Num() < 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No sessions found"));
+		return;
+	}
+
+	for (const auto& SearchResult : SearchResults)
+	{
+		// Check if the search result is valid
+		if (!SearchResult.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Invalid session result."));
+			continue;
+		}
+
+		FString ServerName = SearchResult.Session.OwningUserName;
+		int32 Ping = SearchResult.PingInMs;
+		FString Status = FString::Printf(TEXT("%d/%d"),
+			SearchResult.Session.NumOpenPublicConnections,
+			SearchResult.Session.SessionSettings.NumPublicConnections);
+
+		if (auto* ServerEntryWidgetRef = CreateAndValidateWidget<UServerEntryWidget>(ServerEntryWidgetBPClassRef))
+		{
+			ServerEntryWidgetRef->SetServerNameText(ServerName);
+			ServerEntryWidgetRef->SetPingText(FString::Printf(TEXT("%dms"), Ping));
+			ServerEntryWidgetRef->SetStatusText(Status);
+
+			JoinGameWidgetRef->AddServerToList(ServerEntryWidgetRef);
+		}
+	}
 }

@@ -12,6 +12,11 @@ void UJoinGameWidget::SetParentWidget(UMenuWidget* InParentWidget)
 	ParentWidget = InParentWidget;
 }
 
+void UJoinGameWidget::AddServerToList(UUserWidget* ServerEntry)
+{
+	ServerListVBox->AddChild(ServerEntry);
+}
+
 void UJoinGameWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
