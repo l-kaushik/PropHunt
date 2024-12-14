@@ -11,6 +11,8 @@
  */
 
 class UMenuWidget;
+class UHostWidget;
+class UJoinGameWidget;
 class UPropHuntGameInstance;
 
 UCLASS()
@@ -36,6 +38,11 @@ protected:
 private:
 	template<typename T>
 	T* CreateAndAddWidget(UClass* WidgetBPClassRef)
+	TSubclassOf<T> LoadWidgetBlueprint(const FString WidgetPath)
+	{
+		static ConstructorHelpers::FClassFinder<T> WidgetBPClass(*WidgetPath);
+		return WidgetBPClass.Succeeded() ? WidgetBPClass.Class : nullptr;
+	}
 	{
 		if (!WidgetBPClassRef)
 		{
@@ -77,6 +84,10 @@ private:
 	TSubclassOf<class UHostWidget> HostWidgetBPClassRef;
 	TSubclassOf<class UJoinGameWidget> JoinGameWidgetBPClassRef;
 	TSubclassOf<class ULobbyWidget> LobbyWidgetBPClassRef;
+	TSubclassOf<UMenuWidget> MenuWidgetBPClassRef;
+	TSubclassOf<UHostWidget> HostWidgetBPClassRef;
+	TSubclassOf<UJoinGameWidget> JoinGameWidgetBPClassRef;
+	TSubclassOf<ULobbyWidget> LobbyWidgetBPClassRef;
 
 	UPropHuntGameInstance* PropHuntGameInstance;
 };

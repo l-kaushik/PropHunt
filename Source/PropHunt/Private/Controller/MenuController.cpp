@@ -15,29 +15,12 @@
 
 AMenuController::AMenuController()
 {
-	static ConstructorHelpers::FClassFinder<UUserWidget> MenuWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Menu"));
-	if (MenuWidgetBPClass.Succeeded())
-	{
-		MenuWidgetBPClassRef = MenuWidgetBPClass.Class;
-	}
+	FString BasePath = "/Game/ThirdPerson/Widgets/";
 
-	static ConstructorHelpers::FClassFinder<UHostWidget> HostWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Host"));
-	if (HostWidgetBPClass.Succeeded())
-	{
-		HostWidgetBPClassRef = HostWidgetBPClass.Class;
-	}
-
-	static ConstructorHelpers::FClassFinder<UJoinGameWidget> JoinGameWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_JoinGame"));
-	if (JoinGameWidgetBPClass.Succeeded())
-	{
-		JoinGameWidgetBPClassRef = JoinGameWidgetBPClass.Class;
-	}
-
-	static ConstructorHelpers::FClassFinder<ULobbyWidget> LobbyWidgetBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_Lobby"));
-	if (LobbyWidgetBPClass.Succeeded())
-	{
-		LobbyWidgetBPClassRef = LobbyWidgetBPClass.Class;
-	}
+	MenuWidgetBPClassRef = LoadWidgetBlueprint<UMenuWidget>(BasePath + FString("WB_Menu"));
+	HostWidgetBPClassRef = LoadWidgetBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
+	JoinGameWidgetBPClassRef = LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
+	LobbyWidgetBPClassRef = LoadWidgetBlueprint<ULobbyWidget>(BasePath + FString("WB_Lobby"));
 }
 
 void AMenuController::BeginPlay()
