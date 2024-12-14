@@ -23,6 +23,11 @@ void ULobbyWidget::SetParentWidget(UUserWidget* InParentWidget)
 	ParentWidget = InParentWidget;
 }
 
+void ULobbyWidget::AddPlayerToList(UUserWidget* PlayerWidget)
+{
+	PlayersListVBox->AddChild(PlayerWidget);
+}
+
 void ULobbyWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

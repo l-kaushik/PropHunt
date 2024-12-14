@@ -11,9 +11,12 @@
  */
 
 class UMenuWidget;
+class ULobbyWidget;
 class UHostWidget;
 class UJoinGameWidget;
+class UPlayerEntryWidget;
 class UPropHuntGameInstance;
+class APropHuntPlayerState;
 
 UCLASS()
 class PROPHUNT_API AMenuController : public APlayerController 
@@ -34,15 +37,19 @@ public:
 protected:
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToHostOnServer(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatc);
+private:
+	void SetupWidgetForMuliplayer();
 
 private:
 	template<typename T>
-	T* CreateAndAddWidget(UClass* WidgetBPClassRef)
 	TSubclassOf<T> LoadWidgetBlueprint(const FString WidgetPath)
 	{
 		static ConstructorHelpers::FClassFinder<T> WidgetBPClass(*WidgetPath);
 		return WidgetBPClass.Succeeded() ? WidgetBPClass.Class : nullptr;
 	}
+
+	template<typename T>
+	T* CreateAndValidateWidget(UClass* WidgetBPClassRef)
 	{
 		if (!WidgetBPClassRef)
 		{
@@ -58,8 +65,14 @@ private:
 			return nullptr;
 		}
 
-		WidgetRef->AddToViewport();
+		return WidgetRef;
+	}
 
+	template<typename T>
+	T* CreateAndAddWidget(UClass* WidgetBPClassRef)
+	{
+		T* WidgetRef = CreateAndValidateWidget<T>(WidgetBPClassRef);
+		WidgetRef->AddToViewport();
 		return WidgetRef;
 	}
 
@@ -78,16 +91,15 @@ private:
 	}
 
 private:
-	TSubclassOf<UMenuWidget> MenuWidgetBPClassRef;
 	UMenuWidget* MenuWidgetRef;
+	ULobbyWidget* LobbyWidgetRef;
 
-	TSubclassOf<class UHostWidget> HostWidgetBPClassRef;
-	TSubclassOf<class UJoinGameWidget> JoinGameWidgetBPClassRef;
-	TSubclassOf<class ULobbyWidget> LobbyWidgetBPClassRef;
 	TSubclassOf<UMenuWidget> MenuWidgetBPClassRef;
 	TSubclassOf<UHostWidget> HostWidgetBPClassRef;
 	TSubclassOf<UJoinGameWidget> JoinGameWidgetBPClassRef;
 	TSubclassOf<ULobbyWidget> LobbyWidgetBPClassRef;
+	TSubclassOf<UPlayerEntryWidget> PlayerEntryWidgetBPClassRef;
 
 	UPropHuntGameInstance* PropHuntGameInstance;
+	APropHuntPlayerState* PropHuntPlayerState;
 };

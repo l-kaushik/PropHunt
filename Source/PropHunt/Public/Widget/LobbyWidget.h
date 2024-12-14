@@ -16,9 +16,11 @@ class PROPHUNT_API ULobbyWidget : public UUserWidget
 
 public:
 	void SetIsHost(bool bIsHost);
+	void SetParentWidget(class UUserWidget* InParentWidget);
+	void AddPlayerToList(UUserWidget* PlayerWidget);
+
 	bool GetIsHost();
 
-	void SetParentWidget(class UUserWidget* InParentWidget);
 	
 private:
 	virtual void NativeConstruct() override;

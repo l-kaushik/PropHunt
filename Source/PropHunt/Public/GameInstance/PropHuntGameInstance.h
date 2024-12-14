@@ -14,6 +14,11 @@ class PROPHUNT_API UPropHuntGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+
+	// getters
+	bool GetIsMultiplayer();
+
+	// session related functions
 	void HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch);
 
 protected:
@@ -25,5 +30,7 @@ private:
 
 private:
 	UPropHuntSubsystem* PropHuntSubsystem;
+
+	bool bIsMultiplayer;
 	
 };

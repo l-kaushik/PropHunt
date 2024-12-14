@@ -9,6 +9,12 @@ void UPropHuntGameInstance::Init()
 	Super::Init();
 
 	PropHuntSubsystem = GetSubsystem<UPropHuntSubsystem>();
+	bIsMultiplayer = false;
+}
+
+bool UPropHuntGameInstance::GetIsMultiplayer()
+{
+	return bIsMultiplayer;
 }
 
 void UPropHuntGameInstance::HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch)
@@ -29,6 +35,7 @@ void UPropHuntGameInstance::OnCreateSessionCompleted(bool Successful)
 		if (GetWorld()->ServerTravel(LevelPath + CommandString))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Menu Controller: Seamless travel succeeded"));
+			bIsMultiplayer = true;
 		}
 	}
 	else
