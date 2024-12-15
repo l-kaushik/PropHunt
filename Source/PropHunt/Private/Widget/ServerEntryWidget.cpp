@@ -2,6 +2,7 @@
 
 
 #include "Widget/ServerEntryWidget.h"
+#include "Controller/MenuController.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
@@ -19,4 +20,26 @@ void UServerEntryWidget::SetPingText(const FString& InPing)
 void UServerEntryWidget::SetStatusText(const FString& InStatus)
 {
 	StatusText->SetText(FText::FromString(InStatus));
+}
+
+void UServerEntryWidget::SetSessionResultIndex(int32 InServerResultIndex)
+{
+	SessionResultIndex = InServerResultIndex;
+}
+
+void UServerEntryWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	MenuController = Cast<AMenuController>(GetOwningPlayer());
+
+	if (JoinButton)
+	{
+		JoinButton->OnClicked.AddDynamic(this, &ThisClass::OnJoinButtonClicked);
+	}
+}
+
+void UServerEntryWidget::OnJoinButtonClicked()
+{
+	MenuController->ClientWantsToJoin(SessionResultIndex);
 }

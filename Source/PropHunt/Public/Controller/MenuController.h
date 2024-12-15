@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
 #include "MenuController.generated.h"
 
 /**
@@ -33,16 +34,20 @@ public:
 
 public:
 	void ClientWantsToHost(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
+	void ClientWantsToJoin(int32 SessionResultIndex);
 
 	void CreateHostWidget();
 	void CreateJoinWidget();
 
 	void SearchSessions();
-	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& SearchResults);
+	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);
 
 protected:
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToHostOnServer(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatc);
+
+	UFUNCTION(Server, Reliable)
+	void ClientWantsToJoinOnServer(int32 SessionResultIndex);
 
 	UFUNCTION(Server, Reliable)
 	void SearchSessionsOnServer();
@@ -114,4 +119,5 @@ private:
 
 	UPropHuntGameInstance* PropHuntGameInstance;
 	APropHuntPlayerState* PropHuntPlayerState;
+	TArray<FOnlineSessionSearchResult> SearchResults;
 };

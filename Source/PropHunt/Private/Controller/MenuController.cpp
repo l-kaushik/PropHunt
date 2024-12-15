@@ -93,36 +93,56 @@ void AMenuController::SearchSessionsOnServer_Implementation()
 	PropHuntGameInstance->FindSessions(10);
 }
 
-void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& SearchResults)
+void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults)
 {
-	if (SearchResults.Num() < 0)
+	if (InSearchResults.Num() < 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No sessions found"));
 		return;
 	}
 
-	for (const auto& SearchResult : SearchResults)
+	// store session results array
+	SearchResults = InSearchResults;
+
+	for (int32 i = 0; i < InSearchResults.Num(); i++)
 	{
 		// Check if the search result is valid
-		if (!SearchResult.IsValid())
+		if (!InSearchResults[i].IsValid())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Invalid session result."));
 			continue;
 		}
 
-		FString ServerName = SearchResult.Session.OwningUserName;
-		int32 Ping = SearchResult.PingInMs;
-		FString Status = FString::Printf(TEXT("%d/%d"),
-			SearchResult.Session.NumOpenPublicConnections,
-			SearchResult.Session.SessionSettings.NumPublicConnections);
+		FString ServerName;
+		InSearchResults[i].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerName);
+		int32 NumOpenPublicConnections = InSearchResults[i].Session.NumOpenPublicConnections;
+		int32 NumPublicConnections = InSearchResults[i].Session.SessionSettings.NumPublicConnections;
+		int32 Ping = InSearchResults[i].PingInMs;
+		FString Status = FString::Printf(TEXT("%d/%d"), NumPublicConnections - NumOpenPublicConnections, NumPublicConnections);
 
 		if (auto* ServerEntryWidgetRef = CreateAndValidateWidget<UServerEntryWidget>(ServerEntryWidgetBPClassRef))
 		{
 			ServerEntryWidgetRef->SetServerNameText(ServerName);
 			ServerEntryWidgetRef->SetPingText(FString::Printf(TEXT("%dms"), Ping));
 			ServerEntryWidgetRef->SetStatusText(Status);
+			ServerEntryWidgetRef->SetSessionResultIndex(i);
 
 			JoinGameWidgetRef->AddServerToList(ServerEntryWidgetRef);
 		}
 	}
+}
+
+void AMenuController::ClientWantsToJoin(int32 SessionResultIndex)
+{
+	ClientWantsToJoinOnServer(SessionResultIndex);
+}
+
+void AMenuController::ClientWantsToJoinOnServer_Implementation(int32 SessionResultIndex)
+{
+	FString ServerNameStr;
+	FName SessionName(*ServerNameStr);
+	FOnlineSessionSearchResult SessionResult = SearchResults[SessionResultIndex];
+	SearchResults[SessionResultIndex].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerNameStr);
+
+	PropHuntGameInstance->JoinGameSession(SessionName, SessionResult);
 }

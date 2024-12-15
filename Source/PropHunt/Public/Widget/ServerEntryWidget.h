@@ -8,6 +8,7 @@
 
 class UTextBlock;
 class UButton;
+class AMenuController;
 
 UCLASS()
 class PROPHUNT_API UServerEntryWidget : public UUserWidget
@@ -18,8 +19,14 @@ public:
 	void SetServerNameText(const FString& InSessionName);
 	void SetPingText(const FString& InPing);
 	void SetStatusText(const FString& InStatus);
+	void SetSessionResultIndex(int32 InServerResultIndex);
 	
 private:
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void OnJoinButtonClicked();
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ServerNameText;
 
@@ -31,4 +38,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* JoinButton;
+
+	int32 SessionResultIndex;
+	AMenuController* MenuController;
 };
