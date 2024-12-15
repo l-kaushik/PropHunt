@@ -196,6 +196,11 @@ void UPropHuntSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessio
 	if (SessionInterface)
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
+
+		if (Result == EOnJoinSessionCompleteResult::Type::Success)
+		{
+			TryTravelToCurrentSession(SessionName);
+		}
 	}
 
 	OnJoinSessionCompleteEvent.Broadcast(Result);

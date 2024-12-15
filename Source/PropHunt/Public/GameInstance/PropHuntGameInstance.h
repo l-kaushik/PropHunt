@@ -39,5 +39,6 @@ private:
 	UPropHuntSubsystem* PropHuntSubsystem;
 
 	bool bIsMultiplayer;
+	FName CurrentSessionName;
 	
 };

@@ -71,6 +71,7 @@ void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionS
 
 void UPropHuntGameInstance::JoinGameSession(const FName& SessionName, const FOnlineSessionSearchResult& SessionResult)
 {
+	CurrentSessionName = SessionName;
 	PropHuntSubsystem->OnJoinSessionCompleteEvent.Clear();
 	PropHuntSubsystem->OnJoinSessionCompleteEvent.AddUObject(this, &ThisClass::OnJoinSessionCompleted);
 	PropHuntSubsystem->JoinSession(SessionName, SessionResult);
