@@ -36,12 +36,12 @@ public:
 public:
 	void ClientWantsToHost(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
 	void ClientWantsToJoin(int32 SessionResultIndex);
+	void HostWantsToStartGame();
 
 	void CreateHostWidget();
 	void CreateJoinWidget();
 
 	void SearchSessions();
-	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);
 	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);;
 	void OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates);
 
@@ -55,8 +55,12 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void SearchSessionsOnServer();
 
+	UFUNCTION(Server, Reliable)
+	void HostWantsToStartGameOnServer();
+
 private:
 	void SetupWidgetForMuliplayer();
+	void AddNewPlayerToList(const FString& PlayerName, const FString& PingInms);
 
 private:
 	template<typename T>

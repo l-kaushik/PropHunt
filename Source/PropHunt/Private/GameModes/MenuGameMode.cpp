@@ -38,3 +38,7 @@ void AMenuGameMode::Logout(AController* ExistingPlayer)
 	PropHuntGameState->MenuPlayerControllerList.Remove(Cast<AMenuController>(ExistingPlayer));
 }
 
+void AMenuGameMode::StartGame()
+{
+	GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+}

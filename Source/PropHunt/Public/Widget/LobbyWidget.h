@@ -27,8 +27,12 @@ private:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 
-	void InitializeComponents();
+	void BindEvents();
 
+	UFUNCTION()
+	void OnReadyOrStartButtonClicked();
+
+	void InitializeComponents();
 	void InitializeReadyOrStartButtonText();
 
 private:

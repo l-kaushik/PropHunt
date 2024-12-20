@@ -2,6 +2,7 @@
 
 
 #include "Widget/LobbyWidget.h"
+#include "Controller/MenuController.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -38,6 +39,7 @@ void ULobbyWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	InitializeComponents();
+	BindEvents();
 }
 
 void ULobbyWidget::NativePreConstruct()
@@ -45,6 +47,30 @@ void ULobbyWidget::NativePreConstruct()
 	Super::NativePreConstruct();
 
 	InitializeComponents();
+}
+
+void ULobbyWidget::BindEvents()
+{
+	if (ReadyOrStartButton)
+	{
+		ReadyOrStartButton->OnClicked.AddDynamic(this, &ThisClass::OnReadyOrStartButtonClicked);
+	}
+}
+
+void ULobbyWidget::OnReadyOrStartButtonClicked()
+{
+	auto* MenuController = GetOwningPlayer<AMenuController>();
+	
+	if (!MenuController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to get menu controller"));
+		return;
+	}
+
+	if (IsHost)
+	{
+		MenuController->HostWantsToStartGame();
+	}
 }
 
 void ULobbyWidget::InitializeComponents()

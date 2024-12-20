@@ -164,3 +164,17 @@ void AMenuController::ClientWantsToJoinOnServer_Implementation(int32 SessionResu
 
 	PropHuntGameInstance->JoinGameSession(SessionName, SessionResult);
 }
+
+void AMenuController::HostWantsToStartGame()
+{
+	HostWantsToStartGameOnServer();
+}
+
+void AMenuController::HostWantsToStartGameOnServer_Implementation()
+{
+	AMenuGameMode* GameMode = GetWorld()->GetAuthGameMode<AMenuGameMode>();
+	if (GameMode)
+	{
+		GameMode->StartGame();
+	}
+}
