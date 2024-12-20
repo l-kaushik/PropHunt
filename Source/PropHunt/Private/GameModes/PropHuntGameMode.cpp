@@ -46,18 +46,18 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 void APropHuntGameMode::Logout(AController* ExistingPlayer)
 {
 	Super::Logout(ExistingPlayer);
-	MyGameState->PlayerControllerList.Remove(Cast<APropHuntPlayerController>(ExistingPlayer));
+	MyGameState->GetPlayerControllerList().Remove(Cast<APropHuntPlayerController>(ExistingPlayer));
 }
 
 void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 {
 	GetWorldTimerManager().ClearTimer(GameLoopTimer);
-	MyGameState->bIsPropWon = bIsPropWon;
+	MyGameState->SetIsPropWon(bIsPropWon);
 
-	for (auto& PlayerController : MyGameState->PlayerControllerList) {
+	for (auto& PlayerController : MyGameState->GetPlayerControllerList()) {
 		if (PlayerController)
 		{
-			PlayerController->ShowWinScreenWidget(MyGameState->bIsPropWon);
+			PlayerController->ShowWinScreenWidget(MyGameState->GetIsPropWon());
 		}
 	}
 
@@ -83,9 +83,9 @@ void APropHuntGameMode::CheckGameStarted()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CheckGameStarted..."));
 	// Start game if we have at least MinPlayerNum in game
-	if (!MyGameState->bHasGameStarted) {
+	if (!MyGameState->GetHasGameStarted()) {
 		int32 ArrayLength = MyGameState->GetPlayerControllerList().Num();
-		if (ArrayLength >= MyGameState->MinPlayerNum) {
+		if (ArrayLength >= MyGameState->GetMinPlayerNum()) {
 			StartGameTimer();
 		}
 	}
@@ -112,7 +112,7 @@ void APropHuntGameMode::StartGameTimer()
 void APropHuntGameMode::ChooseHunterCharacter()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ChooseHunterCharacter..."));
-	MyGameState->bHasGameStarted = true;
+	MyGameState->SetHasGameStarted(true);
 
 	int32 Length = MyGameState->GetPlayerControllerList().Num() - 1;
 	int32 RandomIndex = FMath::RandRange(0, Length);
@@ -143,7 +143,7 @@ void APropHuntGameMode::SpawnHunter()
 	/*
 	* taking the 0th indexed hunter controller cuz for now only 2 player exits, but when hunter kills more player, more hunter will join, so I have to maintain a counter or something to note that how many hunters have assigned with their pawns
 	*/
-	APropHuntPlayerController* HunterController = *(MyGameState->HunterList.GetData());
+	APropHuntPlayerController* HunterController = *(MyGameState->GetHunterList().GetData());
 	HunterController->GetPawn()->Destroy();		// destroy current actor owned by hunter controller
 
 	// posses the hunter with the spawned hunter character
@@ -185,7 +185,7 @@ void APropHuntGameMode::SetupInitialWidget(APropHuntPlayerController* HunterCont
 	HunterController->TrySetupPropWidget(false);
 
 	// setup widget for rest of the props
-	for (auto& PlayerController : MyGameState->PlayerControllerList) {
+	for (auto& PlayerController : MyGameState->GetPlayerControllerList()) {
 
 		// setup the timer widget
 		if (PlayerController)

@@ -6,9 +6,6 @@
 #include "GameFramework/GameStateBase.h"
 #include "PropHuntGameState.generated.h"
 
-
-
-
 class APropHuntPlayerController;
 class AMenuController;
 class APropHuntPlayerState;
@@ -26,14 +23,33 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	// Getters
+	TArray<APropHuntPlayerController*>& GetPlayerControllerList();
+	TArray<AMenuController*>& GetMenuPlayerControllerList();
+	TArray<APropHuntPlayerController*>& GetHunterList();
+	bool GetHasGameStarted() const;
+	bool GetIsPropWon() const;
+	int32 GetMinPlayerNum() const;
+
+	// Setters
 	void AddPlayerController(APropHuntPlayerController* NewController);
-	TArray<APropHuntPlayerController*> GetPlayerControllerList() const;
-
-	void AddHunter(APropHuntPlayerController* NewHunter);
-
 	void AddMenuController(AMenuController* NewController);
-public:
+	void AddHunter(APropHuntPlayerController* NewHunter);
+	void SetHasGameStarted(bool InHasGameStarted);
+	void SetIsPropWon(bool InIsPropWon);
+	void SetMinPlayerNum(int32 InMinPlayerNum);
 
+public:
+	FOnPlayerListUpdated OnPlayerListUpdated;
+
+	FVector HunterStartLocation;
+	static const float GAME_TIME_IN_SECONDS;
+
+protected:
+	UFUNCTION()
+	void OnRep_PlayerStates();
+
+private:
 	UPROPERTY(Replicated)
 	TArray<APropHuntPlayerController*> PlayerControllerList;
 
@@ -46,18 +62,12 @@ public:
 	UPROPERTY(ReplicatedUsing = OnRep_PlayerStates)
 	TArray<APropHuntPlayerState*> PlayerStates;
 
-	FOnPlayerListUpdated OnPlayerListUpdated;
-
 	UPROPERTY(Replicated)
 	bool bHasGameStarted;
 
+	UPROPERTY(Replicated)
 	int32 MinPlayerNum;
 
-	FVector HunterStartLocation;
+	UPROPERTY(Replicated)
 	bool bIsPropWon;
-	static const float GAME_TIME_IN_SECONDS;
-
-protected:
-	UFUNCTION()
-	void OnRep_PlayerStates();
 };

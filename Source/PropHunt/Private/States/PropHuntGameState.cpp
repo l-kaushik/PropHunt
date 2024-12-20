@@ -26,23 +26,48 @@ void APropHuntGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(APropHuntGameState, HunterList);
 	DOREPLIFETIME(APropHuntGameState, MenuPlayerControllerList);
 	DOREPLIFETIME(APropHuntGameState, PlayerStates);
+	DOREPLIFETIME(APropHuntGameState, MinPlayerNum);
+	DOREPLIFETIME(APropHuntGameState, bIsPropWon);
 }
+
+// Getters
+
+TArray<APropHuntPlayerController*>& APropHuntGameState::GetPlayerControllerList()
+{
+	return PlayerControllerList;
+}
+
+TArray<AMenuController*>& APropHuntGameState::GetMenuPlayerControllerList()
+{
+	return MenuPlayerControllerList;
+}
+
+TArray<APropHuntPlayerController*>& APropHuntGameState::GetHunterList()
+{
+	return HunterList;
+}
+
+bool APropHuntGameState::GetHasGameStarted() const
+{
+	return bHasGameStarted;
+}
+
+bool APropHuntGameState::GetIsPropWon() const
+{
+	return bIsPropWon;
+}
+
+int32 APropHuntGameState::GetMinPlayerNum() const
+{
+	return MinPlayerNum;
+}
+
+// Setters
 
 void APropHuntGameState::AddPlayerController(APropHuntPlayerController* NewController)
 {
 	if (NewController) {
 		PlayerControllerList.AddUnique(NewController);
-	}
-}
-
-TArray<APropHuntPlayerController*> APropHuntGameState::GetPlayerControllerList() const
-{
-	return PlayerControllerList;
-}
-
-void APropHuntGameState::AddHunter(APropHuntPlayerController* NewHunter) {
-	if (NewHunter) {
-		HunterList.AddUnique(NewHunter);
 	}
 }
 
@@ -55,6 +80,29 @@ void APropHuntGameState::AddMenuController(AMenuController* NewController)
 		OnRep_PlayerStates();	// rep notify doesn't work on server side in cpp, so this explicit call make sure server gets the updated list as well.
 	}
 }
+
+void APropHuntGameState::AddHunter(APropHuntPlayerController* NewHunter) {
+	if (NewHunter) {
+		HunterList.AddUnique(NewHunter);
+	}
+}
+
+void APropHuntGameState::SetHasGameStarted(bool InHasGameStarted)
+{
+	bHasGameStarted = InHasGameStarted;
+}
+
+void APropHuntGameState::SetIsPropWon(bool InIsPropWon)
+{
+	bIsPropWon = InIsPropWon;
+}
+
+void APropHuntGameState::SetMinPlayerNum(int32 InMinPlayerNum)
+{
+	MinPlayerNum = InMinPlayerNum;
+}
+
+// rep notifiers
 
 void APropHuntGameState::OnRep_PlayerStates()
 {

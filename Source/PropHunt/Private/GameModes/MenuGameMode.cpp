@@ -35,7 +35,7 @@ void AMenuGameMode::Logout(AController* ExistingPlayer)
 {
 	Super::Logout(ExistingPlayer);
 
-	PropHuntGameState->MenuPlayerControllerList.Remove(Cast<AMenuController>(ExistingPlayer));
+	PropHuntGameState->GetMenuPlayerControllerList().Remove(Cast<AMenuController>(ExistingPlayer));
 }
 
 void AMenuGameMode::StartGame()
