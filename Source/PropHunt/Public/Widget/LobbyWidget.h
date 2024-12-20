@@ -18,6 +18,7 @@ public:
 	void SetIsHost(bool bIsHost);
 	void SetParentWidget(class UUserWidget* InParentWidget);
 	void AddPlayerToList(UUserWidget* PlayerWidget);
+	void ClearPlayerList();
 
 	bool GetIsHost();
 

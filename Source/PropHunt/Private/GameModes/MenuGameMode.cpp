@@ -15,4 +15,26 @@ AMenuGameMode::AMenuGameMode()
 	bUseSeamlessTravel = true;
 }
 
+void AMenuGameMode::PostLogin(APlayerController* InNewPlayer)
+{
+	Super::PostLogin(InNewPlayer);
+
+	PropHuntGameState = GetGameState<APropHuntGameState>();
+
+	if (PropHuntGameState)
+	{
+		auto* NewPlayer = Cast<AMenuController>(InNewPlayer);
+		PropHuntGameState->AddMenuController(NewPlayer);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("MyGameState is invalid"));
+	}
+}
+
+void AMenuGameMode::Logout(AController* ExistingPlayer)
+{
+	Super::Logout(ExistingPlayer);
+
+	PropHuntGameState->MenuPlayerControllerList.Remove(Cast<AMenuController>(ExistingPlayer));
+}
 

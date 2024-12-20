@@ -3,6 +3,8 @@
 
 #include "States/PropHuntGameState.h"
 #include "Controller/PropHuntPlayerController.h"
+#include "Controller/MenuController.h"
+#include "States/PropHuntPlayerState.h"
 #include "Net/UnrealNetwork.h"
 
 const float APropHuntGameState::GAME_TIME_IN_SECONDS = 300.0f;
@@ -22,6 +24,8 @@ void APropHuntGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(APropHuntGameState, PlayerControllerList);
 	DOREPLIFETIME(APropHuntGameState, bHasGameStarted);
 	DOREPLIFETIME(APropHuntGameState, HunterList);
+	DOREPLIFETIME(APropHuntGameState, MenuPlayerControllerList);
+	DOREPLIFETIME(APropHuntGameState, PlayerStates);
 }
 
 void APropHuntGameState::AddPlayerController(APropHuntPlayerController* NewController)
@@ -40,4 +44,19 @@ void APropHuntGameState::AddHunter(APropHuntPlayerController* NewHunter) {
 	if (NewHunter) {
 		HunterList.AddUnique(NewHunter);
 	}
+}
+
+void APropHuntGameState::AddMenuController(AMenuController* NewController)
+{
+	if (NewController)
+	{
+		MenuPlayerControllerList.AddUnique(NewController);
+		PlayerStates.AddUnique(NewController->GetPlayerState<APropHuntPlayerState>());
+		OnRep_PlayerStates();	// rep notify doesn't work on server side in cpp, so this explicit call make sure server gets the updated list as well.
+	}
+}
+
+void APropHuntGameState::OnRep_PlayerStates()
+{
+	OnPlayerListUpdated.Broadcast(PlayerStates);
 }

@@ -13,11 +13,17 @@ void UPropHuntGameInstance::Init()
 
 	PropHuntSubsystem = GetSubsystem<UPropHuntSubsystem>();
 	bIsMultiplayer = false;
+	bIsHost = false;
 }
 
 bool UPropHuntGameInstance::GetIsMultiplayer()
 {
 	return bIsMultiplayer;
+}
+
+bool UPropHuntGameInstance::GetIsHost()
+{
+	return bIsHost;
 }
 
 void UPropHuntGameInstance::HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch)
@@ -40,6 +46,7 @@ void UPropHuntGameInstance::OnCreateSessionCompleted(bool Successful)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Menu Controller: Seamless travel succeeded"));
 			bIsMultiplayer = true;
+			bIsHost = true;
 		}
 	}
 	else
@@ -83,6 +90,7 @@ void UPropHuntGameInstance::OnJoinSessionCompleted(EOnJoinSessionCompleteResult:
 	{
 	case EOnJoinSessionCompleteResult::Success:
 			UE_LOG(LogTemp, Warning, TEXT("join Session: Success"));
+			bIsMultiplayer = true;
 		break;
 		case EOnJoinSessionCompleteResult::SessionIsFull:
 			UE_LOG(LogTemp, Warning, TEXT("join Session: session is full"));

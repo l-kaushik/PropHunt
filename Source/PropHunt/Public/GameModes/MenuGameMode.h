@@ -10,6 +10,11 @@
 /**
  * 
  */
+
+class APropHuntGameState;
+class AMenuController;
+class UPropHuntGameInstance;
+
 UCLASS()
 class PROPHUNT_API AMenuGameMode : public AGameModeBase, public IMenuInterface
 {
@@ -18,4 +23,8 @@ class PROPHUNT_API AMenuGameMode : public AGameModeBase, public IMenuInterface
 public:
 	AMenuGameMode();
 
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void Logout(AController* ExistingPlayer) override;
+private:
+	APropHuntGameState* PropHuntGameState;
 };

@@ -11,6 +11,7 @@
 #include "GameModes/MenuGameMode.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "States/PropHuntPlayerState.h"
+#include "States/PropHuntGameState.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -33,7 +34,8 @@ void AMenuController::BeginPlay()
 {
 	// Initialize variables
 	PropHuntGameInstance = Cast<UPropHuntGameInstance>(GetWorld()->GetGameInstance());
-	PropHuntPlayerState = GetPlayerState<APropHuntPlayerState>();
+	PropHuntGameState = GetWorld()->GetGameState<APropHuntGameState>();
+	PropHuntGameState->OnPlayerListUpdated.AddUObject(this, &ThisClass::OnPlayerListUpdated);
 
 	if (IsLocalPlayerController()){
 
@@ -46,6 +48,19 @@ void AMenuController::BeginPlay()
 		{
 			SetupWidgetForMuliplayer();
 		}
+	}
+}
+
+void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates)
+{
+	if (!LobbyWidgetRef) return;
+	
+	LobbyWidgetRef->ClearPlayerList();
+
+	for(auto* EachPlayerState : PlayerStates)
+	{
+		if(EachPlayerState)
+			AddNewPlayerToList(EachPlayerState->GetPlayerName(), FString::FromInt(EachPlayerState->GetPingInMilliseconds()));
 	}
 }
 
@@ -62,14 +77,17 @@ void AMenuController::CreateJoinWidget()
 void AMenuController::SetupWidgetForMuliplayer()
 {
 	LobbyWidgetRef = CreateSubWidgetAndHideParent<ULobbyWidget, UMenuWidget>(LobbyWidgetBPClassRef, MenuWidgetRef);
-	LobbyWidgetRef->SetIsHost(true);
+	LobbyWidgetRef->SetIsHost(PropHuntGameInstance->GetIsHost());
+}
 
+void AMenuController::AddNewPlayerToList(const FString& PlayerName, const FString& PingInms)
+{
 	if (auto* PlayerEntryWidgetRef = CreateAndValidateWidget<UPlayerEntryWidget>(PlayerEntryWidgetBPClassRef))
 	{
-		PlayerEntryWidgetRef->SetPlayerNameText(PropHuntPlayerState->GetPlayerName());
-		PlayerEntryWidgetRef->SetPingText(FString::SanitizeFloat(PropHuntPlayerState->GetPingInMilliseconds()));
+		PlayerEntryWidgetRef->SetPlayerNameText(PlayerName);
+		PlayerEntryWidgetRef->SetPingText(PingInms);
 
-		LobbyWidgetRef->AddPlayerToList(PlayerEntryWidgetRef);
+		LobbyWidgetRef->AddPlayerToList(PlayerEntryWidgetRef);;
 	}
 }
 

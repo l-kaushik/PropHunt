@@ -34,6 +34,8 @@ void APropHuntPlayerController::BeginPlay() {
 		MainHudRef = CreateWidget<UMainHud>(this, MainHudBPClassRef);
 		check(MainHudRef);
 		MainHudRef->AddToPlayerScreen();
+		SetInputMode(FInputModeGameOnly());
+		SetShowMouseCursor(false);
 	}
 }
 

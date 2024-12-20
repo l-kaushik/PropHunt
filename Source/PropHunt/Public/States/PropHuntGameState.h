@@ -7,10 +7,14 @@
 #include "PropHuntGameState.generated.h"
 
 
+
+
 class APropHuntPlayerController;
-/**
- * 
- */
+class AMenuController;
+class APropHuntPlayerState;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerListUpdated, const TArray<APropHuntPlayerState*>& PlayerStates);
+
 UCLASS()
 class PROPHUNT_API APropHuntGameState : public AGameStateBase
 {
@@ -27,13 +31,22 @@ public:
 
 	void AddHunter(APropHuntPlayerController* NewHunter);
 
+	void AddMenuController(AMenuController* NewController);
 public:
 
 	UPROPERTY(Replicated)
 	TArray<APropHuntPlayerController*> PlayerControllerList;
 
 	UPROPERTY(Replicated)
+	TArray<AMenuController*> MenuPlayerControllerList;
+
+	UPROPERTY(Replicated)
 	TArray<APropHuntPlayerController*> HunterList;
+
+	UPROPERTY(ReplicatedUsing = OnRep_PlayerStates)
+	TArray<APropHuntPlayerState*> PlayerStates;
+
+	FOnPlayerListUpdated OnPlayerListUpdated;
 
 	UPROPERTY(Replicated)
 	bool bHasGameStarted;
@@ -43,4 +56,8 @@ public:
 	FVector HunterStartLocation;
 	bool bIsPropWon;
 	static const float GAME_TIME_IN_SECONDS;
+
+protected:
+	UFUNCTION()
+	void OnRep_PlayerStates();
 };

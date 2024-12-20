@@ -28,6 +28,11 @@ void ULobbyWidget::AddPlayerToList(UUserWidget* PlayerWidget)
 	PlayersListVBox->AddChild(PlayerWidget);
 }
 
+void ULobbyWidget::ClearPlayerList()
+{
+	PlayersListVBox->ClearChildren();
+}
+
 void ULobbyWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

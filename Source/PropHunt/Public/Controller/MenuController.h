@@ -20,6 +20,7 @@ class UPlayerEntryWidget;
 class UServerEntryWidget;
 class UPropHuntGameInstance;
 class APropHuntPlayerState;
+class APropHuntGameState;
 class FOnlineSessionSearchResult;
 
 UCLASS()
@@ -41,6 +42,8 @@ public:
 
 	void SearchSessions();
 	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);
+	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);;
+	void OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates);
 
 protected:
 	UFUNCTION(Server, Reliable)
@@ -118,6 +121,6 @@ private:
 	TSubclassOf<UServerEntryWidget> ServerEntryWidgetBPClassRef;
 
 	UPropHuntGameInstance* PropHuntGameInstance;
-	APropHuntPlayerState* PropHuntPlayerState;
+	APropHuntGameState* PropHuntGameState;
 	TArray<FOnlineSessionSearchResult> SearchResults;
 };

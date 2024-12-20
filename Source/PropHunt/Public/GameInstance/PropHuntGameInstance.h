@@ -20,6 +20,7 @@ public:
 
 	// getters
 	bool GetIsMultiplayer();
+	bool GetIsHost();
 
 	// session related functions
 	void HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
@@ -39,6 +40,7 @@ private:
 	UPropHuntSubsystem* PropHuntSubsystem;
 
 	bool bIsMultiplayer;
+	bool bIsHost;
 	FName CurrentSessionName;
 	
 };
