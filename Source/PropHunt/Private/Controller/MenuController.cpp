@@ -172,6 +172,7 @@ void AMenuController::HostWantsToStartGame()
 
 void AMenuController::HostWantsToStartGameOnServer_Implementation()
 {
+	PropHuntGameInstance->SetPlayerNum(PropHuntGameState->PlayerArray.Num());
 	AMenuGameMode* GameMode = GetWorld()->GetAuthGameMode<AMenuGameMode>();
 	if (GameMode)
 	{

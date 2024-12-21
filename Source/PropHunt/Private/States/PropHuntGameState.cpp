@@ -5,6 +5,7 @@
 #include "Controller/PropHuntPlayerController.h"
 #include "Controller/MenuController.h"
 #include "States/PropHuntPlayerState.h"
+#include "GameInstance/PropHuntGameInstance.h"
 #include "Net/UnrealNetwork.h"
 
 const float APropHuntGameState::GAME_TIME_IN_SECONDS = 300.0f;
@@ -12,7 +13,6 @@ const float APropHuntGameState::GAME_TIME_IN_SECONDS = 300.0f;
 APropHuntGameState::APropHuntGameState() 
 {
 	bHasGameStarted = false;
-	MinPlayerNum = 2;
 	HunterStartLocation.Set(606.749038, 1241.206218, 99.227695);	// for test purposes only
 	bIsPropWon = false;
 }

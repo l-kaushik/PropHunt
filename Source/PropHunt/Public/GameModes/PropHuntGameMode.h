@@ -21,6 +21,7 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* ExistingPlayer) override;
+	virtual void InitGameState() override;
 
 public:
 	// interface functions

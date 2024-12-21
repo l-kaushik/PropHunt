@@ -5,6 +5,7 @@
 #include "Controller/PropHuntPlayerController.h"
 #include "States/PropHuntGameState.h"
 #include "States/PropHuntPlayerState.h"
+#include "GameInstance/PropHuntGameInstance.h"
 #include "UObject/ConstructorHelpers.h"
 
 APropHuntGameMode::APropHuntGameMode()
@@ -33,7 +34,6 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	MyGameState = GetGameState<APropHuntGameState>();
 	if (MyGameState) {
 		MyGameState->AddPlayerController(Cast<APropHuntPlayerController>(NewPlayer));
 		CheckGameStarted();
@@ -47,6 +47,17 @@ void APropHuntGameMode::Logout(AController* ExistingPlayer)
 {
 	Super::Logout(ExistingPlayer);
 	MyGameState->GetPlayerControllerList().Remove(Cast<APropHuntPlayerController>(ExistingPlayer));
+}
+
+void APropHuntGameMode::InitGameState()
+{
+	Super::InitGameState();
+
+	MyGameState = GetGameState<APropHuntGameState>();
+	if (MyGameState)
+	{
+		MyGameState->SetMinPlayerNum(GetGameInstance<UPropHuntGameInstance>()->GetPlayerNum());
+	}
 }
 
 void APropHuntGameMode::EndTheGame(bool bIsPropWon)
