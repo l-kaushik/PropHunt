@@ -32,6 +32,8 @@ AMenuController::AMenuController()
 
 void AMenuController::BeginPlay()
 {
+	Super::BeginPlay();
+
 	// Initialize variables
 	PropHuntGameInstance = Cast<UPropHuntGameInstance>(GetWorld()->GetGameInstance());
 	PropHuntGameState = GetWorld()->GetGameState<APropHuntGameState>();
