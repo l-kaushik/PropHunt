@@ -75,6 +75,7 @@ void APropHuntGameState::AddMenuController(AMenuController* NewController)
 {
 	if (NewController)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("New Player Added to the list in game state"));
 		MenuPlayerControllerList.AddUnique(NewController);
 		PlayerStates.AddUnique(NewController->GetPlayerState<APropHuntPlayerState>());
 		OnRep_PlayerStates();	// rep notify doesn't work on server side in cpp, so this explicit call make sure server gets the updated list as well.
@@ -106,5 +107,6 @@ void APropHuntGameState::SetMinPlayerNum(int32 InMinPlayerNum)
 
 void APropHuntGameState::OnRep_PlayerStates()
 {
+	UE_LOG(LogTemp, Warning, TEXT("GameState: Broadcasting playerStates, %d"), PlayerStates.Num());
 	OnPlayerListUpdated.Broadcast(PlayerStates);
 }
