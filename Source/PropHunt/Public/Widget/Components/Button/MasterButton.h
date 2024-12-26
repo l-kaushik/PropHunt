@@ -32,9 +32,9 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
-	virtual void NativePreConstruct() override;
-
-	void BindEvent();
 private:
+	bool bEventBound = false;
+
+	UFUNCTION()
 	void HandleButtonClicked();
 };
