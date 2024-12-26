@@ -1,0 +1,1 @@
+"D:\EpicGames\UE_5.5\Engine\Binaries\Win64\UnrealEditor.exe" "D:\Documents\Unreal Projects\PropHunt\PropHunt.uproject" -game -windowed -ResX=600 -ResY=400 -WinX=0 -WinY=20 -log
