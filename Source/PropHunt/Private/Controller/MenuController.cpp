@@ -32,6 +32,8 @@ AMenuController::AMenuController()
 
 void AMenuController::BeginPlay()
 {
+	Super::BeginPlay();
+
 	// Initialize variables
 	PropHuntGameInstance = Cast<UPropHuntGameInstance>(GetWorld()->GetGameInstance());
 	PropHuntGameState = GetWorld()->GetGameState<APropHuntGameState>();
@@ -53,12 +55,14 @@ void AMenuController::BeginPlay()
 
 void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnPlayerListUpdated called"));
 	if (!LobbyWidgetRef) return;
 	
 	LobbyWidgetRef->ClearPlayerList();
 
 	for(auto* EachPlayerState : PlayerStates)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Added player to list"));
 		if(EachPlayerState)
 			AddNewPlayerToList(EachPlayerState->GetPlayerName(), FString::FromInt(EachPlayerState->GetPingInMilliseconds()));
 	}
@@ -157,6 +161,7 @@ void AMenuController::ClientWantsToJoin(int32 SessionResultIndex)
 
 void AMenuController::ClientWantsToJoinOnServer_Implementation(int32 SessionResultIndex)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Join server button clicked"));
 	FString ServerNameStr;
 	FName SessionName(*ServerNameStr);
 	FOnlineSessionSearchResult SessionResult = SearchResults[SessionResultIndex];
@@ -172,6 +177,7 @@ void AMenuController::HostWantsToStartGame()
 
 void AMenuController::HostWantsToStartGameOnServer_Implementation()
 {
+	PropHuntGameInstance->SetPlayerNum(PropHuntGameState->PlayerArray.Num());
 	AMenuGameMode* GameMode = GetWorld()->GetAuthGameMode<AMenuGameMode>();
 	if (GameMode)
 	{

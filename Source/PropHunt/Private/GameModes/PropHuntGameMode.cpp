@@ -1,10 +1,12 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameModes/PropHuntGameMode.h"
+#include "Characters/PropCharacter.h"
 #include "Characters/PropHuntCharacter.h"
 #include "Controller/PropHuntPlayerController.h"
 #include "States/PropHuntGameState.h"
 #include "States/PropHuntPlayerState.h"
+#include "GameInstance/PropHuntGameInstance.h"
 #include "UObject/ConstructorHelpers.h"
 
 APropHuntGameMode::APropHuntGameMode()
@@ -20,11 +22,9 @@ APropHuntGameMode::APropHuntGameMode()
 	}
 
 	// getting reference to prop hunt character blueprint class
-	static ConstructorHelpers::FClassFinder<APropHuntCharacter> PropHuntCharBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
-	if (PropHuntCharBPClass.Succeeded()) 
-	{
-		CharacterBlueprint = PropHuntCharBPClass.Class;
-	}
+	CharacterBlueprint = LoadBlueprint<APropHuntCharacter>(FString("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
+
+	PropCharBlueprintRef = LoadBlueprint<APropCharacter>(FString("/Game/ThirdPerson/Blueprints/BP_PropCharacter"));
 
 	bUseSeamlessTravel = true;
 }
@@ -33,14 +33,11 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	MyGameState = GetGameState<APropHuntGameState>();
-	if (MyGameState) {
-		MyGameState->AddPlayerController(Cast<APropHuntPlayerController>(NewPlayer));
-		CheckGameStarted();
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("MyGameState is invalid"));
-	}
+	auto* PlayerController = Cast<APropHuntPlayerController>(NewPlayer);
+	
+	SpawnPlayer(PlayerController);
+	MyGameState->AddPlayerController(PlayerController);
+	CheckGameStarted();
 }
 
 void APropHuntGameMode::Logout(AController* ExistingPlayer)
@@ -48,6 +45,34 @@ void APropHuntGameMode::Logout(AController* ExistingPlayer)
 	Super::Logout(ExistingPlayer);
 	MyGameState->GetPlayerControllerList().Remove(Cast<APropHuntPlayerController>(ExistingPlayer));
 }
+
+void APropHuntGameMode::InitGameState()
+{
+	Super::InitGameState();
+
+	MyGameState = GetGameState<APropHuntGameState>();
+	if (MyGameState)
+	{
+		MyGameState->SetMinPlayerNum(GetGameInstance<UPropHuntGameInstance>()->GetPlayerNum());
+	}
+}
+
+void APropHuntGameMode::SpawnPlayer(APropHuntPlayerController* PlayerController)
+{
+	if (!PlayerController) return;
+	UWorld* World = GetWorld();
+
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	APropCharacter* PropCharacter = World->SpawnActor<APropCharacter>(PropCharBlueprintRef, SpawnTransform, SpawnParams);
+
+	PlayerController->GetPawn()->Destroy();
+	PlayerController->Possess(PropCharacter);
+}
+
 
 void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 {

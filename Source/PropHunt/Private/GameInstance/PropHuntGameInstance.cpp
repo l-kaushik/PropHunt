@@ -16,12 +16,22 @@ void UPropHuntGameInstance::Init()
 	bIsHost = false;
 }
 
-bool UPropHuntGameInstance::GetIsMultiplayer()
+void UPropHuntGameInstance::SetPlayerNum(int32 InPlayerNum)
+{
+	PlayerNum = InPlayerNum;
+}
+
+int32 UPropHuntGameInstance::GetPlayerNum() const
+{
+	return PlayerNum;
+}
+
+bool UPropHuntGameInstance::GetIsMultiplayer() const
 {
 	return bIsMultiplayer;
 }
 
-bool UPropHuntGameInstance::GetIsHost()
+bool UPropHuntGameInstance::GetIsHost() const
 {
 	return bIsHost;
 }

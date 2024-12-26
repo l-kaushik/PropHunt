@@ -40,12 +40,14 @@ void UPropHuntSubsystem::CreateSession(const FName& SessionName,const FString& L
 	LastSessionSettings->NumPublicConnections = NumPublicConnections;
 	LastSessionSettings->bAllowInvites = true;
 	LastSessionSettings->bAllowJoinInProgress = true;
-	LastSessionSettings->bAllowJoinViaPresence = true;
-	LastSessionSettings->bAllowJoinViaPresenceFriendsOnly = true;
+	LastSessionSettings->bAllowJoinViaPresence = false;
+	LastSessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 	LastSessionSettings->bIsDedicated = false;
-	LastSessionSettings->bUsesPresence = true;
+	LastSessionSettings->bUsesPresence = false;
 	LastSessionSettings->bIsLANMatch = IsLANMatch;
 	LastSessionSettings->bShouldAdvertise = true;
+
+	LastSessionSettings->Set(TEXT("Port"), FString::FromInt(7777), EOnlineDataAdvertisementType::ViaOnlineService);
 
 	// set map name
 	LastSessionSettings->Set(SETTING_MAPNAME, LevelName, EOnlineDataAdvertisementType::ViaOnlineService);
@@ -75,6 +77,25 @@ void UPropHuntSubsystem::OnCreateSessionCompleted(FName SessionName, bool Succes
 	if (SessionInterface)
 	{
 		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
+	}
+	if (Successful)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Session '%s' created successfully."), *SessionName.ToString());
+
+		// Retrieve the resolved connection string (IP:Port)
+		FString ConnectString;
+		if (SessionInterface->GetResolvedConnectString(SessionName, ConnectString))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Session hosted at: %s"), *ConnectString);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to get connection string for session '%s'."), *SessionName.ToString());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to create session '%s'."), *SessionName.ToString());
 	}
 
 	OnCreateSessionCompleteEvent.Broadcast(Successful);
@@ -199,7 +220,10 @@ void UPropHuntSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessio
 
 		if (Result == EOnJoinSessionCompleteResult::Type::Success)
 		{
-			TryTravelToCurrentSession(SessionName);
+			if (!TryTravelToCurrentSession(SessionName))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed to travel to session"));
+			}
 		}
 	}
 
@@ -215,9 +239,9 @@ bool UPropHuntSubsystem::TryTravelToCurrentSession(const FName& SessionName)
 	}
 
 	FString connectString;
-	if (!SessionInterface->GetResolvedConnectString(SessionName, connectString))
+	if (SessionInterface->GetResolvedConnectString(SessionName, connectString))
 	{
-		return false;
+		UE_LOG(LogTemp, Warning, TEXT("Connecting with string: %s"), *connectString);
 	}
 
 	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
