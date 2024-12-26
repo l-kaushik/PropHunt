@@ -8,7 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 
 APropHuntPlayerController::APropHuntPlayerController() {
-	static ConstructorHelpers::FClassFinder<UUserWidget> MainHudBPClass(TEXT("/Game/ThirdPerson/Widgets/WB_MainHud"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> MainHudBPClass(TEXT("/Game/Widgets/WB_MainHud"));
 	if (MainHudBPClass.Succeeded()) {
 		MainHudBPClassRef = MainHudBPClass.Class;
 	}

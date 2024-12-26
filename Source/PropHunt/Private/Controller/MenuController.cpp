@@ -20,7 +20,7 @@
 
 AMenuController::AMenuController()
 {
-	FString BasePath = "/Game/ThirdPerson/Widgets/";
+	FString BasePath = "/Game/Widgets/";
 
 	MenuWidgetBPClassRef = LoadWidgetBlueprint<UMenuWidget>(BasePath + FString("WB_Menu"));
 	HostWidgetBPClassRef = LoadWidgetBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
