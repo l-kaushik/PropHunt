@@ -11,6 +11,8 @@
 /**
  * 
  */
+
+class UMasterButton;
 UCLASS()
 class PROPHUNT_API UMenuWidget : public UUserWidget
 {
@@ -44,9 +46,7 @@ private:
 	// Functions to initialize components
 	// Main Menu Components Initializers
 	void InitializeMainMenuVBox();
-	void InitializePlayGameButton();
-	void InitializeOptionsButton();
-	void InitializeQuitGameButton();
+	void InitializeMenuButton(UMasterButton* Button, FString ButtonLabel);
 
 	// Play Game Menu Components Initializers
 	void InitializePlayGameMenuVBox();
@@ -56,7 +56,7 @@ private:
 	void InitializeBackButton();
 
 	// Utility functions
-	void SetMainMenuButtons(class UButton* Button);
+	void SetMainMenuButtons(UMasterButton* Button);
 
 	// sub widget creator for this Menu Widget
 
@@ -67,13 +67,13 @@ private:
 	class UVerticalBox* MainMenuVBox;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* PlayGameButton;
+	UMasterButton* PlayGameButton;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* OptionsButton;
+	UMasterButton* OptionsButton;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* QuitGameButton;
+	UMasterButton* QuitGameButton;
 
 
 	// Play Game Menu Components
@@ -81,14 +81,14 @@ private:
 	class UVerticalBox* PlayGameMenuVBox;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* HostGameButton;
+	UMasterButton* HostGameButton;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* JoinGameButton;
+	UMasterButton* JoinGameButton;
 
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
-	class UButton* BackButton;
+	UMasterButton* BackButton;
 
 	EMenuState MenuState;
 	class AMenuController* MenuController;

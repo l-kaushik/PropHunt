@@ -4,9 +4,11 @@
 #include "Widget/MenuWidget.h"
 #include "Widget/HostWidget.h"
 #include "Widget/JoinGameWidget.h"
+#include "Widget/Components/Button/MasterButton.h"
 #include "Controller/MenuController.h"
 
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
 #include "Kismet/GameplayStatics.h"
@@ -15,12 +17,13 @@
 #define BIND_BUTTON_CLICK(Button, Function) \
     if (Button)                             \
     {                                       \
-        Button->OnClicked.AddDynamic(this, Function); \
+        Button->OnClicked.AddUObject(this, Function); \
     }
 
 void UMenuWidget::NativeConstruct()
 {
-	BindClickEvents();
+	Super::NativeConstruct();
+
 	InitializeComponents();
 
 	MenuController = Cast<AMenuController>(GetOwningPlayer());
@@ -28,12 +31,18 @@ void UMenuWidget::NativeConstruct()
 
 void UMenuWidget::NativePreConstruct()
 {
+	Super::NativePreConstruct();
+
 	InitializeComponents();
+
+	BindClickEvents();
 }
 
 // Bind fucntion to click of buttons
 void UMenuWidget::BindClickEvents()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Bind click events called"));
+
 	BIND_BUTTON_CLICK(PlayGameButton, &UMenuWidget::OnPlayGameButtonClicked);
 	BIND_BUTTON_CLICK(OptionsButton, &UMenuWidget::OnOptionsButtonClicked);
 	BIND_BUTTON_CLICK(QuitGameButton, &UMenuWidget::OnQuitGameButtonClicked);
@@ -47,13 +56,13 @@ void UMenuWidget::BindClickEvents()
 void UMenuWidget::InitializeComponents()
 {
 	InitializeMainMenuVBox();
-	InitializePlayGameButton();
-	InitializeOptionsButton();
-	InitializeQuitGameButton();
-
 	InitializePlayGameMenuVBox();
-	InitializeHostGameButton();
-	InitializeJoinGameButton();
+
+	InitializeMenuButton(PlayGameButton, "Play Game");
+	InitializeMenuButton(OptionsButton, "Options");
+	InitializeMenuButton(QuitGameButton, "Quit Game");
+	InitializeMenuButton(HostGameButton, "Host Game");
+	InitializeMenuButton(JoinGameButton, "Join Game");
 
 	InitializeBackButton();
 }
@@ -117,28 +126,12 @@ void UMenuWidget::InitializeMainMenuVBox()
 	}
 }
 
-void UMenuWidget::InitializePlayGameButton()
+void UMenuWidget::InitializeMenuButton(UMasterButton* Button, FString ButtonLabel)
 {
-	if (PlayGameButton)
+	if (Button)
 	{
-		SetMainMenuButtons(PlayGameButton);
-	}
-}
-
-void UMenuWidget::InitializeOptionsButton()
-{
-	if (OptionsButton)
-	{
-		SetMainMenuButtons(OptionsButton);
-	}
-}
-
-void UMenuWidget::InitializeQuitGameButton()
-{
-	if (QuitGameButton)
-	{
-		SetMainMenuButtons(QuitGameButton);
-
+		Button->ButtonLabel->SetText(FText::FromString(ButtonLabel));
+		SetMainMenuButtons(Button);
 	}
 }
 
@@ -155,33 +148,18 @@ void UMenuWidget::InitializePlayGameMenuVBox()
 	}
 }
 
-void UMenuWidget::InitializeHostGameButton()
-{
-	if (HostGameButton)
-	{
-		SetMainMenuButtons(HostGameButton);
-	}
-}
-
-void UMenuWidget::InitializeJoinGameButton()
-{
-	if (JoinGameButton)
-	{
-		SetMainMenuButtons(JoinGameButton);
-	}
-}
-
 void UMenuWidget::InitializeBackButton()
 {
 	if (BackButton)
 	{
+		BackButton->ButtonLabel->SetText(FText::FromString("Back"));
 		BackButton->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
 // Utility functions
 
-void UMenuWidget::SetMainMenuButtons(UButton* Button)
+void UMenuWidget::SetMainMenuButtons(UMasterButton* Button)
 {
 	UVerticalBoxSlot* ButtonSlot = Cast<UVerticalBoxSlot>(Button->Slot);
 	if (ButtonSlot)
