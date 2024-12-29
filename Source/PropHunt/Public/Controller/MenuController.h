@@ -45,6 +45,14 @@ public:
 	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);;
 	void OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates);
 
+public:
+	template<typename T>
+	static TSubclassOf<T> LoadWidgetBlueprint(const FString WidgetPath)
+	{
+		static ConstructorHelpers::FClassFinder<T> WidgetBPClass(*WidgetPath);
+		return WidgetBPClass.Succeeded() ? WidgetBPClass.Class : nullptr;
+	}
+
 protected:
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToHostOnServer(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatc);
@@ -63,13 +71,6 @@ private:
 	void AddNewPlayerToList(const FString& PlayerName, const FString& PingInms);
 
 private:
-	template<typename T>
-	TSubclassOf<T> LoadWidgetBlueprint(const FString WidgetPath)
-	{
-		static ConstructorHelpers::FClassFinder<T> WidgetBPClass(*WidgetPath);
-		return WidgetBPClass.Succeeded() ? WidgetBPClass.Class : nullptr;
-	}
-
 	template<typename T>
 	T* CreateAndValidateWidget(UClass* WidgetBPClassRef)
 	{
