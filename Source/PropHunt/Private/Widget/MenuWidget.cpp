@@ -6,11 +6,17 @@
 #include "Widget/JoinGameWidget.h"
 #include "Widget/Components/Button/MasterButton.h"
 #include "Controller/MenuController.h"
+#include "Utils/WidgetUtils.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
+#include "Components/WidgetSwitcher.h"
+#include "Components/HorizontalBox.h"
+#include "Components/HorizontalBoxSlot.h"
+#include "Components/Spacer.h"
+#include "Components/Border.h"
 #include "Kismet/GameplayStatics.h"
 
 // custom macro to make on click binding generic
@@ -20,13 +26,22 @@
         Button->OnClicked.AddUObject(this, Function); \
     }
 
+UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	FString BasePath = "/Game/Widgets/";
+
+	HostWidgetBPClassRef = AMenuController::LoadWidgetBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
+	JoinGameWidgetBPClassRef = AMenuController::LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
+}
+
 void UMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	InitializeComponents();
-
 	MenuController = Cast<AMenuController>(GetOwningPlayer());
+
+	InitializeComponents();
+	BindClickEvents();
 }
 
 void UMenuWidget::NativePreConstruct()
@@ -34,8 +49,6 @@ void UMenuWidget::NativePreConstruct()
 	Super::NativePreConstruct();
 
 	InitializeComponents();
-
-	BindClickEvents();
 }
 
 // Bind fucntion to click of buttons
@@ -53,11 +66,28 @@ void UMenuWidget::BindClickEvents()
 	BIND_BUTTON_CLICK(BackButton, &UMenuWidget::OnBackButtonClicked);
 }
 
+// Initialize every component of the widget, by calling relevant function
 void UMenuWidget::InitializeComponents()
 {
-	InitializeMainMenuVBox();
-	InitializePlayGameMenuVBox();
+	// Initialize MenuVBox components
+	WidgetUtils::InitializeContainerBox(MainMenuVBox, PlayGameButton);
+	WidgetUtils::InitializeContainerBox(MainMenuVBox, OptionsButton);
+	WidgetUtils::InitializeContainerBox(MainMenuVBox, QuitGameButton);
 
+	// Initialize SessionButton border components
+	WidgetUtils::InitializeContainerBox<UBorder, UMasterButton>(JoinButtonBorder, JoinGameButton);
+	WidgetUtils::InitializeContainerBox<UBorder, UMasterButton>(HostButtonBorder, HostGameButton);
+
+	// Initialize SessionButtonHBox components
+	WidgetUtils::InitializeContainerBox<UHorizontalBox, UBorder>(SessionButtonsHBox, JoinButtonBorder);
+	WidgetUtils::InitializeContainerBox<UHorizontalBox, UBorder>(SessionButtonsHBox, HostButtonBorder);
+	WidgetUtils::InitializeContainerBox(SessionButtonsHBox, SessionButtonSpacer);
+
+	// Initialize PlayGameMenuVBox components
+	WidgetUtils::InitializeContainerBox<UVerticalBox, UHorizontalBox>(PlayGameMenuVBox, SessionButtonsHBox);
+	WidgetUtils::InitializeContainerBox<UVerticalBox, UWidgetSwitcher>(PlayGameMenuVBox, PlayGameMenuSwitcher);
+
+	// Initialize all UMasterButtons
 	InitializeMenuButton(PlayGameButton, "Play Game");
 	InitializeMenuButton(OptionsButton, "Options");
 	InitializeMenuButton(QuitGameButton, "Quit Game");
@@ -65,9 +95,71 @@ void UMenuWidget::InitializeComponents()
 	InitializeMenuButton(JoinGameButton, "Join Game");
 
 	InitializeBackButton();
+	FillPlayMenuWidgetSwitcher();
+	SetupInitialProperties();
 }
 
-// Functions to initialize components
+// Set initial values for components properties.
+
+void UMenuWidget::SetupInitialProperties()
+{
+	PlayGameMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+
+	FLinearColor BroderBoxColor(0.5f, 0.5f, 0.5f, 0.1f);	// light grey
+
+	JoinButtonBorder->SetBrushColor(BroderBoxColor);
+	HostButtonBorder->SetBrushColor(BroderBoxColor);
+
+	WidgetUtils::SetPaddingAndSize<UBorder, UHorizontalBoxSlot>(JoinButtonBorder, FMargin(0.0f), FSlateChildSize(ESlateSizeRule::Fill));
+	WidgetUtils::SetPaddingAndSize<UBorder, UHorizontalBoxSlot>(HostButtonBorder, FMargin(0.0f), FSlateChildSize(ESlateSizeRule::Fill));
+	WidgetUtils::SetPaddingAndSize<USpacer, UHorizontalBoxSlot>(SessionButtonSpacer, FMargin(0.0f), FSlateChildSize(ESlateSizeRule::Fill));
+	WidgetUtils::SetPaddingAndSize<UWidgetSwitcher, UVerticalBoxSlot>(PlayGameMenuSwitcher, FMargin(0.0f), FSlateChildSize(ESlateSizeRule::Fill));
+
+	PlayGameMenuSwitcher->SetActiveWidgetIndex(0);
+}
+
+// Create, validate and then add widget in widget swticher
+
+void UMenuWidget::FillPlayMenuWidgetSwitcher()
+{
+	WidgetUtils::AddWidgetToWidgetSwitcher<UHostWidget>(this, PlayGameMenuSwitcher, HostWidgetBPClassRef);
+	WidgetUtils::AddWidgetToWidgetSwitcher<UJoinGameWidget>(this, PlayGameMenuSwitcher, JoinGameWidgetBPClassRef);
+}
+
+// Main Menu UI Components
+void UMenuWidget::InitializeMenuButton(UMasterButton* Button, FString ButtonLabel)
+{
+	if (Button)
+	{
+		Button->SetLabel(ButtonLabel);
+		SetMainMenuButtons(Button);
+	}
+}
+
+// Back button initializer
+
+void UMenuWidget::InitializeBackButton()
+{
+	if (BackButton)
+	{
+		BackButton->ButtonLabel->SetText(FText::FromString("Back"));
+		BackButton->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+// Utility functions
+
+void UMenuWidget::SetMainMenuButtons(UMasterButton* Button)
+{
+	UVerticalBoxSlot* ButtonSlot = Cast<UVerticalBoxSlot>(Button->Slot);
+	if (ButtonSlot)
+	{
+		ButtonSlot->SetPadding(FMargin(0.0f, 10.0f, 0.0f, 10.0f));
+		ButtonSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+	}
+}
+
+// Delegate methods, bind with button click
 
 void UMenuWidget::OnPlayGameButtonClicked()
 {
@@ -111,60 +203,5 @@ void UMenuWidget::OnBackButtonClicked()
 		// do all kind of cleanups
 		MainMenuVBox->SetVisibility(ESlateVisibility::Visible);
 		BackButton->SetVisibility(ESlateVisibility::Hidden);
-	}
-}
-
-// Main Menu UI Components
-
-void UMenuWidget::InitializeMainMenuVBox()
-{
-	if (MainMenuVBox)
-	{
-		MainMenuVBox->AddChild(PlayGameButton);
-		MainMenuVBox->AddChild(OptionsButton);
-		MainMenuVBox->AddChild(QuitGameButton);
-	}
-}
-
-void UMenuWidget::InitializeMenuButton(UMasterButton* Button, FString ButtonLabel)
-{
-	if (Button)
-	{
-		Button->ButtonLabel->SetText(FText::FromString(ButtonLabel));
-		SetMainMenuButtons(Button);
-	}
-}
-
-// Play Game Menu Components Initializers
-
-void UMenuWidget::InitializePlayGameMenuVBox()
-{
-	if (PlayGameMenuVBox)
-	{
-		PlayGameMenuVBox->AddChildToVerticalBox(HostGameButton);
-		PlayGameMenuVBox->AddChildToVerticalBox(JoinGameButton);
-
-		PlayGameMenuVBox->SetVisibility(ESlateVisibility::Hidden);
-	}
-}
-
-void UMenuWidget::InitializeBackButton()
-{
-	if (BackButton)
-	{
-		BackButton->ButtonLabel->SetText(FText::FromString("Back"));
-		BackButton->SetVisibility(ESlateVisibility::Hidden);
-	}
-}
-
-// Utility functions
-
-void UMenuWidget::SetMainMenuButtons(UMasterButton* Button)
-{
-	UVerticalBoxSlot* ButtonSlot = Cast<UVerticalBoxSlot>(Button->Slot);
-	if (ButtonSlot)
-	{
-		ButtonSlot->SetPadding(FMargin(0.0f, 10.0f, 0.0f, 10.0f));
-		ButtonSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
 	}
 }

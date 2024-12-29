@@ -13,16 +13,34 @@
  */
 
 class UMasterButton;
+class UWidgetSwitcher;
+class UVerticalBox;
+class AMenuController;
+class UHorizontalBox;
+class USpacer;
+class UHostWidget;
+class UJoinGameWidget;
+class UBorder;
+
 UCLASS()
 class PROPHUNT_API UMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+	UMenuWidget(const FObjectInitializer& ObjectInitializer);
+
 private:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 
 	void BindClickEvents();
+
 	void InitializeComponents();
+	void SetupInitialProperties();
+	void FillPlayMenuWidgetSwitcher();
+	void InitializeMenuButton(UMasterButton* Button, FString ButtonLabel);
+	void InitializeBackButton();
+	void SetMainMenuButtons(UMasterButton* Button);
 
 	// OnClicked event functions
 	UFUNCTION()
@@ -43,28 +61,15 @@ private:
 	UFUNCTION()
 	void OnBackButtonClicked();
 
-	// Functions to initialize components
-	// Main Menu Components Initializers
-	void InitializeMainMenuVBox();
-	void InitializeMenuButton(UMasterButton* Button, FString ButtonLabel);
-
-	// Play Game Menu Components Initializers
-	void InitializePlayGameMenuVBox();
-	void InitializeHostGameButton();
-	void InitializeJoinGameButton();
-
-	void InitializeBackButton();
-
-	// Utility functions
-	void SetMainMenuButtons(UMasterButton* Button);
-
-	// sub widget creator for this Menu Widget
-
 private:
+
+	// Blueprint widget class references
+	TSubclassOf<UHostWidget> HostWidgetBPClassRef;
+	TSubclassOf<UJoinGameWidget> JoinGameWidgetBPClassRef;
 
 	// Main Menu Components
 	UPROPERTY(meta = (BindWidget))
-	class UVerticalBox* MainMenuVBox;
+	UVerticalBox* MainMenuVBox;
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* PlayGameButton;
@@ -75,21 +80,35 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* QuitGameButton;
 
-
 	// Play Game Menu Components
 	UPROPERTY(meta = (BindWidget))
-	class UVerticalBox* PlayGameMenuVBox;
+	UVerticalBox* PlayGameMenuVBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* SessionButtonsHBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UWidgetSwitcher* PlayGameMenuSwitcher;
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* HostGameButton;
 
 	UPROPERTY(meta = (BindWidget))
+	UBorder* HostButtonBorder;
+
+	UPROPERTY(meta = (BindWidget))
 	UMasterButton* JoinGameButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UBorder* JoinButtonBorder;
+
+	UPROPERTY(meta = (BindWidget))
+	USpacer* SessionButtonSpacer;
 
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* BackButton;
 
 	EMenuState MenuState;
-	class AMenuController* MenuController;
+	AMenuController* MenuController;
 };
