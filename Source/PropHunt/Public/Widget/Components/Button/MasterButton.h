@@ -22,6 +22,10 @@ class PROPHUNT_API UMasterButton : public UUserWidget
 
 public:
 
+	void SetLabel(FString NewLabel);
+
+public:
+
 	FOnButtonClicked OnClicked;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "Label Properties")

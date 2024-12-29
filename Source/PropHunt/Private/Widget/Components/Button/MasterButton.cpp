@@ -7,6 +7,11 @@
 
 
 
+void UMasterButton::SetLabel(FString NewLabel)
+{
+	ButtonLabel->SetText(FText::FromString(NewLabel));
+}
+
 void UMasterButton::NativeConstruct()
 {
 	Super::NativeConstruct();
