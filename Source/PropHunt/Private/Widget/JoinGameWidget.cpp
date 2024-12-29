@@ -32,6 +32,7 @@ void UJoinGameWidget::BindEvents()
 {
 	if (BackButton)
 	{
+		BackButton->OnClicked.RemoveAll(this);
 		BackButton->OnClicked.AddDynamic(this, &ThisClass::OnBackButtonClicked);
 	}
 }

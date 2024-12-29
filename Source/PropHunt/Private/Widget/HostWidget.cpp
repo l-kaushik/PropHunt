@@ -33,11 +33,13 @@ void UHostWidget::BindEvents()
 {
 	if (BackButton)
 	{
+		BackButton->OnClicked.RemoveAll(this);
 		BackButton->OnClicked.AddDynamic(this, &UHostWidget::OnBackButtonClicked);
 	}
 
 	if (HostButton)
 	{
+		HostButton->OnClicked.RemoveAll(this);
 		HostButton->OnClicked.AddDynamic(this, &UHostWidget::OnHostButtonClicked);
 	}
 }
