@@ -38,9 +38,6 @@ public:
 	void ClientWantsToJoin(int32 SessionResultIndex);
 	void HostWantsToStartGame();
 
-	void CreateHostWidget();
-	void CreateJoinWidget();
-
 	void SearchSessions();
 	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);;
 	void OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates);

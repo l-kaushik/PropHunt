@@ -28,6 +28,7 @@ class PROPHUNT_API UMenuWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	UMenuWidget(const FObjectInitializer& ObjectInitializer);
+	void AddServerToList(UUserWidget* ServerEntry);
 
 private:
 	virtual void NativeConstruct() override;
@@ -111,4 +112,5 @@ private:
 
 	EMenuState MenuState;
 	AMenuController* MenuController;
+	UJoinGameWidget* JoinGameWidgetRef;
 };

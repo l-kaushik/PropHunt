@@ -34,6 +34,11 @@ UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	JoinGameWidgetBPClassRef = AMenuController::LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
 }
 
+void UMenuWidget::AddServerToList(UUserWidget* ServerEntry)
+{
+	JoinGameWidgetRef->AddServerToList(ServerEntry);
+}
+
 void UMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -116,14 +121,20 @@ void UMenuWidget::SetupInitialProperties()
 	WidgetUtils::SetPaddingAndSize<UWidgetSwitcher, UVerticalBoxSlot>(PlayGameMenuSwitcher, FMargin(0.0f), FSlateChildSize(ESlateSizeRule::Fill));
 
 	PlayGameMenuSwitcher->SetActiveWidgetIndex(0);
+	HostGameButton->Button->SetBackgroundColor(FLinearColor::Blue);
 }
 
 // Create, validate and then add widget in widget swticher
 
 void UMenuWidget::FillPlayMenuWidgetSwitcher()
 {
+	PlayGameMenuSwitcher->ClearChildren();
+
 	WidgetUtils::AddWidgetToWidgetSwitcher<UHostWidget>(this, PlayGameMenuSwitcher, HostWidgetBPClassRef);
-	WidgetUtils::AddWidgetToWidgetSwitcher<UJoinGameWidget>(this, PlayGameMenuSwitcher, JoinGameWidgetBPClassRef);
+
+	JoinGameWidgetRef = WidgetUtils::CreateAndValidateWidget<UJoinGameWidget>(this, JoinGameWidgetBPClassRef);
+	PlayGameMenuSwitcher->AddChild(JoinGameWidgetRef);
+	
 }
 
 // Main Menu UI Components
@@ -183,12 +194,16 @@ void UMenuWidget::OnQuitGameButtonClicked()
 
 void UMenuWidget::OnHostGameButonClicked()
 {
-	MenuController->CreateHostWidget();
+	HostGameButton->Button->SetBackgroundColor(FLinearColor::Blue);
+	JoinGameButton->Button->SetBackgroundColor(FLinearColor(0.5f, 0.5f, 0.5f, 1.0f));
+	PlayGameMenuSwitcher->SetActiveWidgetIndex(0);
 }
 
 void UMenuWidget::OnJoinGameButtonClicked()
-{;
-	MenuController->CreateJoinWidget();
+{
+	JoinGameButton->Button->SetBackgroundColor(FLinearColor::Blue);
+	HostGameButton->Button->SetBackgroundColor(FLinearColor(0.5f, 0.5f, 0.5f, 1.0f));
+	PlayGameMenuSwitcher->SetActiveWidgetIndex(1);
 	MenuController->SearchSessions();
 }
 

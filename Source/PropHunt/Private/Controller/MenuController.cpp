@@ -68,16 +68,6 @@ void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &P
 	}
 }
 
-void AMenuController::CreateHostWidget()
-{
-	CreateSubWidgetAndHideParent<UHostWidget, UMenuWidget>(HostWidgetBPClassRef, MenuWidgetRef);
-}
-
-void AMenuController::CreateJoinWidget()
-{
-	JoinGameWidgetRef = CreateSubWidgetAndHideParent<UJoinGameWidget, UMenuWidget>(JoinGameWidgetBPClassRef, MenuWidgetRef);
-}
-
 void AMenuController::SetupWidgetForMuliplayer()
 {
 	LobbyWidgetRef = CreateSubWidgetAndHideParent<ULobbyWidget, UMenuWidget>(LobbyWidgetBPClassRef, MenuWidgetRef);
@@ -149,7 +139,7 @@ void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult
 			ServerEntryWidgetRef->SetStatusText(Status);
 			ServerEntryWidgetRef->SetSessionResultIndex(i);
 
-			JoinGameWidgetRef->AddServerToList(ServerEntryWidgetRef);
+			MenuWidgetRef->AddServerToList(ServerEntryWidgetRef);
 		}
 	}
 }
