@@ -166,7 +166,7 @@ void UMainHud::SetCrosshairImage()
 {
 	if (Crosshair)
 	{
-		if (UTexture2D* CrosshairTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/ThirdPerson/Widgets/Textures/crosshair.crosshair"))) {
+		if (UTexture2D* CrosshairTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Widgets/Textures/crosshair.crosshair"))) {
 			Crosshair->SetBrushFromTexture(CrosshairTexture);
 		}
 		Crosshair->SetVisibility(ESlateVisibility::Hidden);
@@ -177,7 +177,7 @@ void UMainHud::SetHitMarker()
 {
 	if (HitMarker)
 	{
-		if (UTexture2D* HitMarkerTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/ThirdPerson/Widgets/Textures/crosshair.crosshair"))) {
+		if (UTexture2D* HitMarkerTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Widgets/Textures/crosshair.crosshair"))) {
 			HitMarker->SetBrushFromTexture(HitMarkerTexture);
 		}
 		HitMarker->SetVisibility(ESlateVisibility::Hidden);
@@ -239,7 +239,7 @@ void UMainHud::SetTimerIcon()
 {
 	if (TimerIcon)
 	{
-		if (UTexture2D* TimerIconTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/ThirdPerson/Widgets/Textures/timericon.timericon"))) {
+		if (UTexture2D* TimerIconTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Widgets/Textures/timericon.timericon"))) {
 			TimerIcon->SetBrushFromTexture(TimerIconTexture);
 		}
 	}
