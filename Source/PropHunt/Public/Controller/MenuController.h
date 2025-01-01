@@ -68,49 +68,6 @@ private:
 	void AddNewPlayerToList(const FString& PlayerName, const FString& PingInms);
 
 private:
-	template<typename T>
-	T* CreateAndValidateWidget(UClass* WidgetBPClassRef)
-	{
-		if (!WidgetBPClassRef)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("WidgetBPClassRef is invalid"));
-			return nullptr;
-		}
-
-		T* WidgetRef = CreateWidget<T>(this, WidgetBPClassRef);
-
-		if (!WidgetRef)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to create widget, check template argument type and WidgetBPClassRef"));
-			return nullptr;
-		}
-
-		return WidgetRef;
-	}
-
-	template<typename T>
-	T* CreateAndAddWidget(UClass* WidgetBPClassRef)
-	{
-		T* WidgetRef = CreateAndValidateWidget<T>(WidgetBPClassRef);
-		WidgetRef->AddToViewport();
-		return WidgetRef;
-	}
-
-	template<typename T, typename U>
-	T* CreateSubWidgetAndHideParent(UClass* WidgetBPClassRef, U* ParentWidget)
-	{
-		T* WidgetRef = CreateAndAddWidget<T>(WidgetBPClassRef);
-
-		if (WidgetRef)
-		{
-			WidgetRef->SetParentWidget(ParentWidget);
-			ParentWidget->SetVisibility(ESlateVisibility::Collapsed);
-		}
-
-		return WidgetRef;
-	}
-
-private:
 	UMenuWidget* MenuWidgetRef;
 	UJoinGameWidget* JoinGameWidgetRef;
 	ULobbyWidget* LobbyWidgetRef;

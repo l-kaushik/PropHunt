@@ -12,6 +12,7 @@
 #include "GameInstance/PropHuntGameInstance.h"
 #include "States/PropHuntPlayerState.h"
 #include "States/PropHuntGameState.h"
+#include "Utils/WidgetUtils.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -41,7 +42,7 @@ void AMenuController::BeginPlay()
 
 	if (IsLocalPlayerController()){
 
-		MenuWidgetRef = CreateAndAddWidget<UMenuWidget>(MenuWidgetBPClassRef);
+		MenuWidgetRef = WidgetUtils::CreateAndAddWidget<UMenuWidget>(this, MenuWidgetBPClassRef);
 		SetInputMode(FInputModeUIOnly());
 		SetShowMouseCursor(true);
 
@@ -70,13 +71,13 @@ void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &P
 
 void AMenuController::SetupWidgetForMuliplayer()
 {
-	LobbyWidgetRef = CreateSubWidgetAndHideParent<ULobbyWidget, UMenuWidget>(LobbyWidgetBPClassRef, MenuWidgetRef);
+	LobbyWidgetRef = WidgetUtils::CreateSubWidgetAndHideParent<ULobbyWidget, UMenuWidget>(this, LobbyWidgetBPClassRef, MenuWidgetRef);
 	LobbyWidgetRef->SetIsHost(PropHuntGameInstance->GetIsHost());
 }
 
 void AMenuController::AddNewPlayerToList(const FString& PlayerName, const FString& PingInms)
 {
-	if (auto* PlayerEntryWidgetRef = CreateAndValidateWidget<UPlayerEntryWidget>(PlayerEntryWidgetBPClassRef))
+	if (auto* PlayerEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UPlayerEntryWidget>(this, PlayerEntryWidgetBPClassRef))
 	{
 		PlayerEntryWidgetRef->SetPlayerNameText(PlayerName);
 		PlayerEntryWidgetRef->SetPingText(PingInms);
@@ -132,7 +133,7 @@ void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult
 		int32 Ping = InSearchResults[i].PingInMs;
 		FString Status = FString::Printf(TEXT("%d/%d"), NumPublicConnections - NumOpenPublicConnections, NumPublicConnections);
 
-		if (auto* ServerEntryWidgetRef = CreateAndValidateWidget<UServerEntryWidget>(ServerEntryWidgetBPClassRef))
+		if (auto* ServerEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UServerEntryWidget>(this, ServerEntryWidgetBPClassRef))
 		{
 			ServerEntryWidgetRef->SetServerNameText(ServerName);
 			ServerEntryWidgetRef->SetPingText(FString::Printf(TEXT("%dms"), Ping));
