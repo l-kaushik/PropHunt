@@ -9,6 +9,12 @@
 /**
  * 
  */
+
+class UVerticalBox;
+class UEditableText;
+class UMasterButton;
+class AMenuController;
+
 UCLASS()
 class PROPHUNT_API UHostWidget : public UUserWidget
 {
@@ -21,6 +27,7 @@ private:
 	void BindEvents();
 
 	void InitializeServerInfoVBox();
+	void InitializeHostButton();
 
 	UFUNCTION()
 	void OnHostButtonClicked();
@@ -30,18 +37,18 @@ private:
 private:
 	// Components related to server info box
 	UPROPERTY(meta = (BindWidget))
-	class UVerticalBox* ServerInfoVBox;
+	UVerticalBox* ServerInfoVBox;
 
 	UPROPERTY(meta = (BindWidget))
-	class UEditableText* ServerNameText;
+	UEditableText* ServerNameText;
 
 	UPROPERTY(meta = (BindWidget))
-	class UEditableText* NumberOfPlayersText;
+	UEditableText* NumberOfPlayersText;
 
 	// add combo box for map selection
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* HostButton;
+	UMasterButton* HostButton;
 	
-	class AMenuController* MenuController;
+	AMenuController* MenuController;
 };

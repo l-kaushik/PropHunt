@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
+#include "Widget/Components/Button/MasterButton.h"
 #include "Internationalization/Regex.h"
 
 void UHostWidget::NativeConstruct()
@@ -22,6 +23,8 @@ void UHostWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
+	InitializeHostButton();
+
 }
 
 void UHostWidget::BindEvents()
@@ -29,7 +32,7 @@ void UHostWidget::BindEvents()
 	if (HostButton)
 	{
 		HostButton->OnClicked.RemoveAll(this);
-		HostButton->OnClicked.AddDynamic(this, &UHostWidget::OnHostButtonClicked);
+		HostButton->OnClicked.AddUObject(this, &UHostWidget::OnHostButtonClicked);
 	}
 }
 
@@ -39,6 +42,11 @@ void UHostWidget::InitializeServerInfoVBox()
 	{
 
 	}
+}
+
+void UHostWidget::InitializeHostButton()
+{
+	HostButton->SetLabel("Host");
 }
 
 void UHostWidget::OnHostButtonClicked()
