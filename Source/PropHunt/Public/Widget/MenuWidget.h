@@ -21,6 +21,8 @@ class USpacer;
 class UHostWidget;
 class UJoinGameWidget;
 class UBorder;
+class UImage;
+class UOverlay;
 
 UCLASS()
 class PROPHUNT_API UMenuWidget : public UUserWidget
@@ -42,6 +44,9 @@ private:
 	void InitializeMenuButton(UMasterButton* Button, FString ButtonLabel);
 	void InitializeBackButton();
 	void SetMainMenuButtons(UMasterButton* Button);
+	void ChangeBackgroundTintToDark();
+	void ChangeBackgroundTintToLight();
+	void SwitchSessionButtonsProperty();
 
 	// OnClicked event functions
 	UFUNCTION()
@@ -63,12 +68,19 @@ private:
 	void OnBackButtonClicked();
 
 private:
+	// instance variables
+	EMenuState MenuState;
+	AMenuController* MenuController;
+	UJoinGameWidget* JoinGameWidgetRef;
 
 	// Blueprint widget class references
 	TSubclassOf<UHostWidget> HostWidgetBPClassRef;
 	TSubclassOf<UJoinGameWidget> JoinGameWidgetBPClassRef;
 
 	// Main Menu Components
+	UPROPERTY(meta = (BindWidget))
+	UImage* BackgroundTint;
+
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* MainMenuVBox;
 
@@ -82,6 +94,9 @@ private:
 	UMasterButton* QuitGameButton;
 
 	// Play Game Menu Components
+	UPROPERTY(meta = (BindWidget))
+	UOverlay* PlayGameMenuOverlay;
+
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* PlayGameMenuVBox;
 
@@ -109,8 +124,4 @@ private:
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* BackButton;
-
-	EMenuState MenuState;
-	AMenuController* MenuController;
-	UJoinGameWidget* JoinGameWidgetRef;
 };

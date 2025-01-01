@@ -17,6 +17,8 @@
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Spacer.h"
 #include "Components/Border.h"
+#include "Components/Image.h"
+#include "Components/Overlay.h"
 #include "Kismet/GameplayStatics.h"
 
 // custom macro to make on click binding generic
@@ -108,7 +110,7 @@ void UMenuWidget::InitializeComponents()
 
 void UMenuWidget::SetupInitialProperties()
 {
-	PlayGameMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+	PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
 
 	FLinearColor BroderBoxColor(0.5f, 0.5f, 0.5f, 0.1f);	// light grey
 
@@ -170,6 +172,29 @@ void UMenuWidget::SetMainMenuButtons(UMasterButton* Button)
 	}
 }
 
+void UMenuWidget::ChangeBackgroundTintToDark()
+{
+	BackgroundTint->SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.5));
+}
+
+void UMenuWidget::ChangeBackgroundTintToLight()
+{
+	BackgroundTint->SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.3));
+}
+
+void UMenuWidget::SwitchSessionButtonsProperty()
+{
+	static bool IsHostButtonSelected = true;
+	static FLinearColor BlueColor = FLinearColor::Blue;
+	static FLinearColor GreyShade = FLinearColor(0.5f, 0.5f, 0.5f, 1.0f);
+
+	IsHostButtonSelected = !IsHostButtonSelected;
+
+	HostGameButton->SetBackgroundColor(IsHostButtonSelected ? BlueColor : GreyShade);
+	JoinGameButton->SetBackgroundColor(!IsHostButtonSelected ? BlueColor : GreyShade);
+	PlayGameMenuSwitcher->SetActiveWidgetIndex(!IsHostButtonSelected);
+}
+
 // Delegate methods, bind with button click
 
 void UMenuWidget::OnPlayGameButtonClicked()
@@ -177,8 +202,9 @@ void UMenuWidget::OnPlayGameButtonClicked()
 	UE_LOG(LogTemp, Warning, TEXT("Play Game Button Clicked!"));
 
 	MenuState = EMenuState::PlayGameMenu;
+	ChangeBackgroundTintToDark();
 	MainMenuVBox->SetVisibility(ESlateVisibility::Hidden);
-	PlayGameMenuVBox->SetVisibility(ESlateVisibility::Visible);
+	PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Visible);
 	BackButton->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -194,16 +220,12 @@ void UMenuWidget::OnQuitGameButtonClicked()
 
 void UMenuWidget::OnHostGameButonClicked()
 {
-	HostGameButton->Button->SetBackgroundColor(FLinearColor::Blue);
-	JoinGameButton->Button->SetBackgroundColor(FLinearColor(0.5f, 0.5f, 0.5f, 1.0f));
-	PlayGameMenuSwitcher->SetActiveWidgetIndex(0);
+	SwitchSessionButtonsProperty();
 }
 
 void UMenuWidget::OnJoinGameButtonClicked()
 {
-	JoinGameButton->Button->SetBackgroundColor(FLinearColor::Blue);
-	HostGameButton->Button->SetBackgroundColor(FLinearColor(0.5f, 0.5f, 0.5f, 1.0f));
-	PlayGameMenuSwitcher->SetActiveWidgetIndex(1);
+	SwitchSessionButtonsProperty();
 	MenuController->SearchSessions();
 }
 
@@ -214,7 +236,8 @@ void UMenuWidget::OnBackButtonClicked()
 	if (MenuState == EMenuState::PlayGameMenu)
 	{
 		MenuState = EMenuState::MainMenu;
-		PlayGameMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+		ChangeBackgroundTintToLight();
+		PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
 		// do all kind of cleanups
 		MainMenuVBox->SetVisibility(ESlateVisibility::Visible);
 		BackButton->SetVisibility(ESlateVisibility::Hidden);
