@@ -7,6 +7,7 @@
 #include "Widget/Components/Button/MasterButton.h"
 #include "Controller/MenuController.h"
 #include "Utils/WidgetUtils.h"
+#include "Utils/GlobalUtils.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -32,8 +33,8 @@ UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(Ob
 {
 	FString BasePath = "/Game/Widgets/";
 
-	HostWidgetBPClassRef = AMenuController::LoadWidgetBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
-	JoinGameWidgetBPClassRef = AMenuController::LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
+	HostWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
+	JoinGameWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
 }
 
 void UMenuWidget::AddServerToList(UUserWidget* ServerEntry)

@@ -13,6 +13,7 @@
 #include "States/PropHuntPlayerState.h"
 #include "States/PropHuntGameState.h"
 #include "Utils/WidgetUtils.h"
+#include "Utils/GlobalUtils.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -23,12 +24,12 @@ AMenuController::AMenuController()
 {
 	FString BasePath = "/Game/Widgets/";
 
-	MenuWidgetBPClassRef = LoadWidgetBlueprint<UMenuWidget>(BasePath + FString("WB_Menu"));
-	HostWidgetBPClassRef = LoadWidgetBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
-	JoinGameWidgetBPClassRef = LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
-	LobbyWidgetBPClassRef = LoadWidgetBlueprint<ULobbyWidget>(BasePath + FString("WB_Lobby"));
-	PlayerEntryWidgetBPClassRef = LoadWidgetBlueprint<UPlayerEntryWidget>(BasePath + FString("WB_PlayerEntry"));
-	ServerEntryWidgetBPClassRef = LoadWidgetBlueprint<UServerEntryWidget>(BasePath + FString("WB_ServerEntry"));
+	MenuWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UMenuWidget>(BasePath + FString("WB_Menu"));
+	HostWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
+	JoinGameWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
+	LobbyWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<ULobbyWidget>(BasePath + FString("WB_Lobby"));
+	PlayerEntryWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UPlayerEntryWidget>(BasePath + FString("WB_PlayerEntry"));
+	ServerEntryWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UServerEntryWidget>(BasePath + FString("WB_ServerEntry"));
 }
 
 void AMenuController::BeginPlay()
