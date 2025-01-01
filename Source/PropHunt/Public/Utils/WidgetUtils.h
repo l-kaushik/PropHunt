@@ -18,7 +18,7 @@ public:
 public:
 	// Widget creation methods
 	template<typename WidgetType, typename OwnerType = UObject>
-	static WidgetType* CreateAndValidateWidget(OwnerType Owner, TSubclassOf<UUserWidget> WidgetBPClassRef = WidgetType::StaticClass())
+	static WidgetType* CreateAndValidateWidget(OwnerType* Owner, TSubclassOf<UUserWidget> WidgetBPClassRef = WidgetType::StaticClass())
 	{
 		if (!WidgetBPClassRef)
 		{
@@ -37,8 +37,29 @@ public:
 		return WidgetRef;
 	}
 
+	template<typename WidgetType = UUserWidget, typename OwnerType = UObject>
+	static WidgetType* CreateAndAddWidget(OwnerType* Owner, UClass* WidgetBPClassRef)
+	{
+		WidgetType* WidgetRef = CreateAndValidateWidget<WidgetType>(Owner, WidgetBPClassRef);
+		if (!WidgetRef) return nullptr;
+		WidgetRef->AddToViewport();
+		return WidgetRef;
+	}
+
+	template<typename WidgetType = UUserWidget, typename ParentWidgetType = UUserWidget, typename OwnerType = UObject>
+	static WidgetType* CreateSubWidgetAndHideParent(OwnerType* Owner, UClass* WidgetBPClassRef, ParentWidgetType* ParentWidget)
+	{
+		WidgetType* WidgetRef = CreateAndAddWidget<WidgetType>(Owner, WidgetBPClassRef);
+
+		if (!WidgetRef) return nullptr;
+
+		WidgetRef->SetParentWidget(ParentWidget);
+		ParentWidget->SetVisibility(ESlateVisibility::Collapsed);
+		return WidgetRef;
+	}
+
 	template<typename WidgetType, typename WidgetSwitcherT = UWidgetSwitcher, typename OwnerType = UObject>
-	static void AddWidgetToWidgetSwitcher(OwnerType Owner, WidgetSwitcherT* WidgetSwitcher, TSubclassOf<UUserWidget> WidgetBPClassRef = WidgetType::StaticClass())
+	static void AddWidgetToWidgetSwitcher(OwnerType* Owner, WidgetSwitcherT* WidgetSwitcher, TSubclassOf<UUserWidget> WidgetBPClassRef = WidgetType::StaticClass())
 	{
 		if (!WidgetBPClassRef)
 		{
