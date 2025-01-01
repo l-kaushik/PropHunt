@@ -13,10 +13,6 @@ UCLASS()
 class PROPHUNT_API UHostWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
-public:
-	void SetParentWidget(class UMenuWidget* InParentWidget);
-
 private:
 
 	virtual void NativeConstruct() override;
@@ -27,18 +23,11 @@ private:
 	void InitializeServerInfoVBox();
 
 	UFUNCTION()
-	void OnBackButtonClicked();
-
-	UFUNCTION()
 	void OnHostButtonClicked();
 
 	bool VerifyServerInfo();
 
 private:
-	// Reference to parent widget
-	UPROPERTY()
-	class UMenuWidget* ParentWidget;
-
 	// Components related to server info box
 	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* ServerInfoVBox;
@@ -53,9 +42,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* HostButton;
-
-	UPROPERTY(meta = (BindWidget))
-	class UButton* BackButton;
 	
 	class AMenuController* MenuController;
 };

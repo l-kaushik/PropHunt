@@ -15,8 +15,6 @@ class PROPHUNT_API UJoinGameWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetParentWidget(class UMenuWidget* InParentWidget);
-
 	void AddServerToList(UUserWidget* ServerEntry);
 	
 private:
@@ -26,15 +24,7 @@ private:
 
 	void BindEvents();
 
-	UFUNCTION()
-	void OnBackButtonClicked();
-
 private:
-	class UMenuWidget* ParentWidget;
-
-	UPROPERTY(meta = (BindWidget))
-	class UButton* BackButton;
-	
 	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* ServerListVBox;
 };

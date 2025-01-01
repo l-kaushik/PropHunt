@@ -10,11 +10,6 @@
 #include "Components/EditableText.h"
 #include "Internationalization/Regex.h"
 
-void UHostWidget::SetParentWidget(UMenuWidget* InParentWidget)
-{
-	ParentWidget = InParentWidget;
-}
-
 void UHostWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -31,12 +26,6 @@ void UHostWidget::NativePreConstruct()
 
 void UHostWidget::BindEvents()
 {
-	if (BackButton)
-	{
-		BackButton->OnClicked.RemoveAll(this);
-		BackButton->OnClicked.AddDynamic(this, &UHostWidget::OnBackButtonClicked);
-	}
-
 	if (HostButton)
 	{
 		HostButton->OnClicked.RemoveAll(this);
@@ -49,16 +38,6 @@ void UHostWidget::InitializeServerInfoVBox()
 	if (ServerInfoVBox)
 	{
 
-	}
-}
-
-void UHostWidget::OnBackButtonClicked()
-{
-	this->RemoveFromParent();
-
-	if (ParentWidget)
-	{
-		ParentWidget->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
