@@ -46,8 +46,6 @@ void UMenuWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	MenuController = Cast<AMenuController>(GetOwningPlayer());
-
-	InitializeComponents();
 	BindClickEvents();
 }
 
