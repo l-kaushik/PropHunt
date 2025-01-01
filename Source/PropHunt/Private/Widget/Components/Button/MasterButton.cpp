@@ -12,6 +12,11 @@ void UMasterButton::SetLabel(FString NewLabel)
 	ButtonLabel->SetText(FText::FromString(NewLabel));
 }
 
+void UMasterButton::SetBackgroundColor(FLinearColor NewColor)
+{
+	Button->SetBackgroundColor(NewColor);
+}
+
 void UMasterButton::NativeConstruct()
 {
 	Super::NativeConstruct();

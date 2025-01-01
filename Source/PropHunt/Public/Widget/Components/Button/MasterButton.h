@@ -23,6 +23,7 @@ class PROPHUNT_API UMasterButton : public UUserWidget
 public:
 
 	void SetLabel(FString NewLabel);
+	void SetBackgroundColor(FLinearColor NewColor);
 
 public:
 
