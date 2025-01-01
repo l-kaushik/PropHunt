@@ -155,7 +155,7 @@ void UMenuWidget::InitializeBackButton()
 {
 	if (BackButton)
 	{
-		BackButton->ButtonLabel->SetText(FText::FromString("Back"));
+		BackButton->ButtonLabel->SetText(FText::FromString("X"));
 		BackButton->SetVisibility(ESlateVisibility::Hidden);
 	}
 }

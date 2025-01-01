@@ -123,5 +123,5 @@ private:
 
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
-	UMasterButton* BackButton;
+	UMasterButton* BackButton;	// represented as close icon in game
 };
