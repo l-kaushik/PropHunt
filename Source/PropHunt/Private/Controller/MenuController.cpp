@@ -127,8 +127,8 @@ void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult
 			continue;
 		}
 
-		FString ServerName;
-		InSearchResults[i].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerName);
+		FString ServerName("Test");
+		//InSearchResults[i].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerName);
 		int32 NumOpenPublicConnections = InSearchResults[i].Session.NumOpenPublicConnections;
 		int32 NumPublicConnections = InSearchResults[i].Session.SessionSettings.NumPublicConnections;
 		int32 Ping = InSearchResults[i].PingInMs;
@@ -157,7 +157,7 @@ void AMenuController::ClientWantsToJoinOnServer_Implementation(int32 SessionResu
 	FString ServerNameStr;
 	FName SessionName(*ServerNameStr);
 	FOnlineSessionSearchResult SessionResult = SearchResults[SessionResultIndex];
-	SearchResults[SessionResultIndex].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerNameStr);
+	//SearchResults[SessionResultIndex].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerNameStr);
 
 	PropHuntGameInstance->JoinGameSession(SessionName, SessionResult);
 }

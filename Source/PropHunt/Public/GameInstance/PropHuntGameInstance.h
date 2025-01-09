@@ -40,7 +40,8 @@ private:
 	virtual void Init() override;
 
 private:
-	UPropHuntSubsystem* PropHuntSubsystem;
+	//UPropHuntSubsystem* PropHuntSubsystem;
+	class UCSSessionSubsystem* PropHuntSubsystem;
 
 	bool bIsMultiplayer;
 	bool bIsHost;
