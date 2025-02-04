@@ -14,8 +14,7 @@ void UPropHuntGameInstance::Init()
 {
 	Super::Init();
 
-	//PropHuntSubsystem = GetSubsystem<UPropHuntSubsystem>();
-	PropHuntSubsystem = GetSubsystem<UCSSessionSubsystem>();
+	PropHuntSubsystem = GetSubsystem<UPropHuntSubsystem>();
 	bIsMultiplayer = false;
 	bIsHost = false;
 }
@@ -42,10 +41,10 @@ bool UPropHuntGameInstance::GetIsHost() const
 
 void UPropHuntGameInstance::HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch)
 {
+	CurrentSessionName = SessionName;
 	PropHuntSubsystem->OnCreateSessionCompleteEvent.Clear();
 	PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
-/*	PropHuntSubsystem->CreateSession(SessionName, LevelName, NumPublicConnections, IsLANMatch)*/;	
-	PropHuntSubsystem->CreateSession(5, true);
+	PropHuntSubsystem->CreateSession(SessionName, LevelName, NumPublicConnections, IsLANMatch);	
 }
 
 void UPropHuntGameInstance::OnCreateSessionCompleted(bool Successful)
@@ -74,13 +73,17 @@ void UPropHuntGameInstance::FindSessions(int32 MaxSearchResults, bool IsLANQuery
 {
 	PropHuntSubsystem->OnFindSessionsCompleteEvent.Clear();
 	PropHuntSubsystem->OnFindSessionsCompleteEvent.AddUObject(this, &ThisClass::OnFindSessionsCompleted);
-	//PropHuntSubsystem->FindSessions(MaxSearchResults, IsLANQuery);
-	PropHuntSubsystem->FindSessions(10, true);
+	PropHuntSubsystem->FindSessions(MaxSearchResults, IsLANQuery);
 }
 
 void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionSearchResult>& SearchResults, bool Successful)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Game Instance: find session completed"));
+
+	if (SearchResults.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Instance: Find session result is empty."));
+	}
 
 	if (Successful)
 	{
@@ -95,12 +98,9 @@ void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionS
 void UPropHuntGameInstance::JoinGameSession(const FName& SessionName, const FOnlineSessionSearchResult& SessionResult)
 {
 	CurrentSessionName = SessionName;
-	//PropHuntSubsystem->OnJoinSessionCompleteEvent.Clear();
-	//PropHuntSubsystem->OnJoinSessionCompleteEvent.AddUObject(this, &ThisClass::OnJoinSessionCompleted);
-	//PropHuntSubsystem->JoinSession(SessionName, SessionResult);
-	PropHuntSubsystem->OnJoinGameSessionCompleteEvent.Clear();
-	PropHuntSubsystem->OnJoinGameSessionCompleteEvent.AddUObject(this, &UPropHuntGameInstance::OnJoinSessionCompleted);
-	PropHuntSubsystem->JoinGameSession(SessionResult);
+	PropHuntSubsystem->OnJoinSessionCompleteEvent.Clear();
+	PropHuntSubsystem->OnJoinSessionCompleteEvent.AddUObject(this, &ThisClass::OnJoinSessionCompleted);
+	PropHuntSubsystem->JoinSession(SessionName, SessionResult);
 }
 
 void UPropHuntGameInstance::OnJoinSessionCompleted(EOnJoinSessionCompleteResult::Type Result)
@@ -110,7 +110,7 @@ void UPropHuntGameInstance::OnJoinSessionCompleted(EOnJoinSessionCompleteResult:
 	case EOnJoinSessionCompleteResult::Success:
 			UE_LOG(LogTemp, Warning, TEXT("join Session: Success"));
 			bIsMultiplayer = true;
-			PropHuntSubsystem->TryTravelToCurrentSession();
+			PropHuntSubsystem->TryTravelToSession(CurrentSessionName);
 		break;
 		case EOnJoinSessionCompleteResult::SessionIsFull:
 			UE_LOG(LogTemp, Warning, TEXT("join Session: session is full"));
