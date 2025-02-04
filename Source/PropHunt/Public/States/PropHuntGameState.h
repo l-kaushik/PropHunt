@@ -27,6 +27,7 @@ public:
 	TArray<APropHuntPlayerController*>& GetPlayerControllerList();
 	TArray<AMenuController*>& GetMenuPlayerControllerList();
 	TArray<APropHuntPlayerController*>& GetHunterList();
+	const TArray<APropHuntPlayerState*>& GetPlayerStates() const;
 	bool GetHasGameStarted() const;
 	bool GetIsPropWon() const;
 	int32 GetMinPlayerNum() const;

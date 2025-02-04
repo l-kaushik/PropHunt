@@ -49,6 +49,11 @@ TArray<APropHuntPlayerController*>& APropHuntGameState::GetHunterList()
 	return HunterList;
 }
 
+const TArray<APropHuntPlayerState*>& APropHuntGameState::GetPlayerStates() const
+{
+	return PlayerStates;
+}
+
 bool APropHuntGameState::GetHasGameStarted() const
 {
 	return bHasGameStarted;

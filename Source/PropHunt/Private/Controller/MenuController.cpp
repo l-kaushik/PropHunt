@@ -52,6 +52,7 @@ void AMenuController::BeginPlay()
 		if (PropHuntGameInstance->GetIsMultiplayer())
 		{
 			SetupWidgetForMuliplayer();
+			OnPlayerListUpdated(PropHuntGameState->GetPlayerStates());	// explicitly calling to update widget for host as well
 		}
 	}
 }
