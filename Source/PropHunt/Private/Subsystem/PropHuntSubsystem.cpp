@@ -44,10 +44,8 @@ void UPropHuntSubsystem::CreateSession(const FName& SessionName,const FString& L
 	LastSessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 	LastSessionSettings->bIsDedicated = false;
 	LastSessionSettings->bUsesPresence = false;
-	LastSessionSettings->bIsLANMatch = IsLANMatch;
+	LastSessionSettings->bIsLANMatch = IsLANMatch;	// IsLanMatch
 	LastSessionSettings->bShouldAdvertise = true;
-
-	LastSessionSettings->Set(TEXT("Port"), FString::FromInt(7777), EOnlineDataAdvertisementType::ViaOnlineService);
 
 	// set map name
 	LastSessionSettings->Set(SETTING_MAPNAME, LevelName, EOnlineDataAdvertisementType::ViaOnlineService);
@@ -162,7 +160,6 @@ void UPropHuntSubsystem::FindSessions(int32 MaxSearchResults, bool IsLANQuery)
 	
 	// this line makes sure that server hosted by a player are visible in search result rather than dedicated one.
 	// another thing is there is no need for player to be on same wifi, as it uses steam or xbox live, to show world's from friend list.
-	LastSessionSearch->QuerySettings.Set(TEXT("PRESENCESEARCH"), true, EOnlineComparisonOp::Equals);
 
 	const ULocalPlayer* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	if (!SessionInterface->FindSessions(*localPlayer->GetPreferredUniqueNetId(), LastSessionSearch.ToSharedRef()))
@@ -217,14 +214,6 @@ void UPropHuntSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessio
 	if (SessionInterface)
 	{
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
-
-		if (Result == EOnJoinSessionCompleteResult::Type::Success)
-		{
-			if (!TryTravelToCurrentSession(SessionName))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Failed to travel to session"));
-			}
-		}
 	}
 
 	OnJoinSessionCompleteEvent.Broadcast(Result);
@@ -247,6 +236,18 @@ bool UPropHuntSubsystem::TryTravelToCurrentSession(const FName& SessionName)
 	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
 	playerController->ClientTravel(connectString, TRAVEL_Absolute);
 	return true;
+}
+
+void UPropHuntSubsystem::TryTravelToSession(const FName& SessionName)
+{
+	if (TryTravelToCurrentSession(SessionName))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Subsystem: client travel success"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Subsystem: client travel failed"));
+	}
 }
 
 void UPropHuntSubsystem::StartSession(const FName& SessionName)

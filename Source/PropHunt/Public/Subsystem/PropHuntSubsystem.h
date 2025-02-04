@@ -38,6 +38,7 @@ public:
 	void StartSession(const FName& SessionName);
 	void EndSession(const FName& SessionName);
 	void UpdateSession(const FName& SessionName, const FString& NewLevelName);
+	void TryTravelToSession(const FName& SessionName);
 
 	FPHOnCreateSessionComplete OnCreateSessionCompleteEvent;
 	FPHOnDestroySessionComplete OnDestroySessionCompleteEvent;
