@@ -12,7 +12,6 @@ AMenuGameMode::AMenuGameMode()
 	GameStateClass = APropHuntGameState::StaticClass();
 	PlayerStateClass = APropHuntPlayerState::StaticClass();
 	DefaultPawnClass = nullptr;
-	bUseSeamlessTravel = true;
 }
 
 void AMenuGameMode::PostLogin(APlayerController* InNewPlayer)
