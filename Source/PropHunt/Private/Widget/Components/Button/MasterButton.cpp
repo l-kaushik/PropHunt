@@ -23,7 +23,6 @@ void UMasterButton::NativeConstruct()
 
 	if (Button && !bEventBound)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Bind event for master button called"));
 		Button->OnClicked.AddDynamic(this, &UMasterButton::HandleButtonClicked);
 		bEventBound = true;
 	}

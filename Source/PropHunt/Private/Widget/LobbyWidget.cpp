@@ -3,6 +3,7 @@
 
 #include "Widget/LobbyWidget.h"
 #include "Controller/MenuController.h"
+#include "Utils/PropHuntLog.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -63,7 +64,7 @@ void ULobbyWidget::OnReadyOrStartButtonClicked()
 	
 	if (!MenuController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to get menu controller"));
+		UE_LOG(LogPropHuntWidget, Error, TEXT("Failed to get menu controller"));
 		return;
 	}
 

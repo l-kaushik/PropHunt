@@ -2,6 +2,7 @@
 
 
 #include "Subsystem/PropHuntSubsystem.h"
+#include "Utils/PropHuntLog.h"
 
 #include "OnlineSubsystemUtils.h"
 #include "OnlineSessionSettings.h"
@@ -78,22 +79,22 @@ void UPropHuntSubsystem::OnCreateSessionCompleted(FName SessionName, bool Succes
 	}
 	if (Successful)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Session '%s' created successfully."), *SessionName.ToString());
+		UE_LOG(LogPropHuntSubsystem, Display, TEXT("Session '%s' created successfully."), *SessionName.ToString());
 
 		// Retrieve the resolved connection string (IP:Port)
 		FString ConnectString;
 		if (SessionInterface->GetResolvedConnectString(SessionName, ConnectString))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Session hosted at: %s"), *ConnectString);
+			UE_LOG(LogPropHuntSubsystem, Display, TEXT("Session hosted at: %s"), *ConnectString);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to get connection string for session '%s'."), *SessionName.ToString());
+			UE_LOG(LogPropHuntSubsystem, Warning, TEXT("Failed to get connection string for session '%s'."), *SessionName.ToString());
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to create session '%s'."), *SessionName.ToString());
+		UE_LOG(LogPropHuntSubsystem, Warning, TEXT("Failed to create session '%s'."), *SessionName.ToString());
 	}
 
 	OnCreateSessionCompleteEvent.Broadcast(Successful);
@@ -230,7 +231,7 @@ bool UPropHuntSubsystem::TryTravelToCurrentSession(const FName& SessionName)
 	FString connectString;
 	if (SessionInterface->GetResolvedConnectString(SessionName, connectString))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Connecting with string: %s"), *connectString);
+		UE_LOG(LogPropHuntSubsystem, Display, TEXT("Connecting with string: %s"), *connectString);
 	}
 
 	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
@@ -242,11 +243,11 @@ void UPropHuntSubsystem::TryTravelToSession(const FName& SessionName)
 {
 	if (TryTravelToCurrentSession(SessionName))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Subsystem: client travel success"));
+		UE_LOG(LogPropHuntSubsystem, Display, TEXT("Client travel success"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Subsystem: client travel failed"));
+		UE_LOG(LogPropHuntSubsystem, Warning, TEXT("Client travel failed"));
 	}
 }
 

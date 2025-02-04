@@ -8,6 +8,7 @@
 #include "Controller/MenuController.h"
 #include "Utils/WidgetUtils.h"
 #include "Utils/GlobalUtils.h"
+#include "Utils/PropHuntLog.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -60,8 +61,6 @@ void UMenuWidget::NativePreConstruct()
 // Bind fucntion to click of buttons
 void UMenuWidget::BindClickEvents()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Bind click events called"));
-
 	BIND_BUTTON_CLICK(PlayGameButton, &UMenuWidget::OnPlayGameButtonClicked);
 	BIND_BUTTON_CLICK(OptionsButton, &UMenuWidget::OnOptionsButtonClicked);
 	BIND_BUTTON_CLICK(QuitGameButton, &UMenuWidget::OnQuitGameButtonClicked);
@@ -195,7 +194,7 @@ void UMenuWidget::SwitchSessionButtonsProperty(bool HostButtonClicked)
 
 void UMenuWidget::OnPlayGameButtonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Play Game Button Clicked!"));
+	UE_LOG_BUILD(LogPropHuntWidget, Display, TEXT("Play game button clicked!"));
 
 	MenuState = EMenuState::PlayGameMenu;
 	ChangeBackgroundTintToDark();
@@ -206,12 +205,12 @@ void UMenuWidget::OnPlayGameButtonClicked()
 
 void UMenuWidget::OnOptionsButtonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Options Button Clicked!"));
+	UE_LOG_BUILD(LogPropHuntWidget, Display, TEXT("Options button clicked!"));
 }
 
 void UMenuWidget::OnQuitGameButtonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Quit Game Button Clicked!"));
+	UE_LOG_BUILD(LogPropHuntWidget, Display, TEXT("Quit game button clicked!"));
 }
 
 void UMenuWidget::OnHostGameButonClicked()
@@ -227,7 +226,7 @@ void UMenuWidget::OnJoinGameButtonClicked()
 
 void UMenuWidget::OnBackButtonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Back Button Clicked!"));
+	UE_LOG_BUILD(LogPropHuntWidget, Display, TEXT("Back button clicked!"));
 
 	if (MenuState == EMenuState::PlayGameMenu)
 	{

@@ -7,6 +7,8 @@
 #include "States/PropHuntGameState.h"
 #include "States/PropHuntPlayerState.h"
 #include "GameInstance/PropHuntGameInstance.h"
+#include "Utils/PropHuntLog.h"
+
 #include "UObject/ConstructorHelpers.h"
 
 APropHuntGameMode::APropHuntGameMode()
@@ -94,19 +96,19 @@ void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 		5.0f,
 		false
 	);
-	UE_LOG(LogTemp, Warning, TEXT("end the game..."));
+	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("EndTheGame called"));
 }
 
 void APropHuntGameMode::StartNextGame()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Start next game..."));
+	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("StartNextGame called"));
 
 	GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/ThirdPersonMap"));
 }
 
 void APropHuntGameMode::CheckGameStarted()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CheckGameStarted..."));
+	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("CheckGameStarted called"));
 	// Start game if we have at least MinPlayerNum in game
 	if (!MyGameState->GetHasGameStarted()) {
 		int32 ArrayLength = MyGameState->GetPlayerControllerList().Num();
@@ -122,7 +124,7 @@ void APropHuntGameMode::CheckGameStarted()
 
 void APropHuntGameMode::StartGameTimer()
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartGameTimer..."));
+	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("StartGameTimer called"));
 	float CountdownSeconds = 5.0f;
 	FTimerHandle StartGameCountdownHandler;
 
@@ -136,7 +138,7 @@ void APropHuntGameMode::StartGameTimer()
 
 void APropHuntGameMode::ChooseHunterCharacter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ChooseHunterCharacter..."));
+	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("ChooseHunterCharacter called"));
 	MyGameState->SetHasGameStarted(true);
 
 	int32 Length = MyGameState->GetPlayerControllerList().Num() - 1;
@@ -155,7 +157,7 @@ void APropHuntGameMode::ChooseHunterCharacter()
 
 void APropHuntGameMode::SpawnHunter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("SpawnHunter..."));
+	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("SpawnHunter called"));
 	UWorld* World = GetWorld();
 
 	FTransform SpawnTransform;

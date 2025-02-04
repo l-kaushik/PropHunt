@@ -5,6 +5,7 @@
 #include "Controller/MenuController.h"
 #include "States/PropHuntGameState.h"
 #include "States/PropHuntPlayerState.h"
+#include "Utils/PropHuntLog.h"
 
 AMenuGameMode::AMenuGameMode()
 {
@@ -26,7 +27,7 @@ void AMenuGameMode::PostLogin(APlayerController* InNewPlayer)
 		PropHuntGameState->AddMenuController(NewPlayer);
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("MyGameState is invalid"));
+		UE_LOG(LogPropHuntMenuGameMode, Warning, TEXT("MyGameState is invalid"));
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "Widget/HostWidget.h"
 #include "Widget/MenuWidget.h"
 #include "Controller/MenuController.h"
+#include "Utils/PropHuntLog.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
@@ -79,7 +80,7 @@ bool UHostWidget::VerifyServerInfo()
 	FRegexMatcher ServerNameMatcher(ServerNamePattern, ServerName);
 
 	if (!ServerNameMatcher.FindNext()) {
-		UE_LOG(LogTemp, Warning, TEXT("Invalid server name: %s"), *ServerName);
+		UE_LOG(LogPropHuntWidget, Warning, TEXT("Invalid server name: %s"), *ServerName);
 		return false;
 	}
 
@@ -91,7 +92,7 @@ bool UHostWidget::VerifyServerInfo()
 	const FRegexPattern PlayerNumberPattern(TEXT("^[2-9][0-9]{0,1}$"));
 	FRegexMatcher PlayerNumberMatcher(PlayerNumberPattern, PlayerNumber);
 	if (!PlayerNumberMatcher.FindNext()) {
-		UE_LOG(LogTemp, Warning, TEXT("Invalid player number: %s"), *PlayerNumber);
+		UE_LOG(LogPropHuntWidget, Warning, TEXT("Invalid player number: %s"), *PlayerNumber);
 		return false;
 	}
 

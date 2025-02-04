@@ -4,6 +4,7 @@
 #include "GameInstance/PropHuntGameInstance.h"
 #include "Subsystem/PropHuntSubsystem.h"
 #include "Controller/MenuController.h"
+#include "Utils/PropHuntLog.h"
 
 #include "OnlineSubsystemTypes.h"
 #include "OnlineSubsystemUtils.h"
@@ -51,21 +52,21 @@ void UPropHuntGameInstance::OnCreateSessionCompleted(bool Successful)
 {
 	if (Successful)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Menu Controller: session created successfully"));
+		UE_LOG(LogPropHuntGameInstance, Display, TEXT("OnCreateSessionCompleted: session created successfully"));
 
 		FString LevelPath("/Game/ThirdPerson/Maps/MenuMap");
 		FString CommandString("?listen");
 
 		if (GetWorld()->ServerTravel(LevelPath + CommandString))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Menu Controller: Seamless travel succeeded"));
+			UE_LOG(LogPropHuntGameInstance, Display, TEXT("OnCreateSessionCompleted: Seamless travel succeeded"));
 			bIsMultiplayer = true;
 			bIsHost = true;
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Menu Controller: Failed to seamless travel"));
+		UE_LOG(LogPropHuntGameInstance, Error, TEXT("OnCreateSessionCompleted: Failed to create session"));
 	}
 }
 
@@ -78,11 +79,11 @@ void UPropHuntGameInstance::FindSessions(int32 MaxSearchResults, bool IsLANQuery
 
 void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionSearchResult>& SearchResults, bool Successful)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Game Instance: find session completed"));
+	UE_LOG(LogPropHuntGameInstance, Display, TEXT("OnFindSessionsCompleted: Find session completed"));
 
 	if (SearchResults.IsEmpty())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Game Instance: Find session result is empty."));
+		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("OnFindSessionsCompleted: Find session result is empty."));
 	}
 
 	if (Successful)
@@ -108,24 +109,24 @@ void UPropHuntGameInstance::OnJoinSessionCompleted(EOnJoinSessionCompleteResult:
 	switch (Result)
 	{
 	case EOnJoinSessionCompleteResult::Success:
-			UE_LOG(LogTemp, Warning, TEXT("join Session: Success"));
+			UE_LOG(LogPropHuntGameInstance, Display, TEXT("OnJoinSessionCompleted: Success"));
 			bIsMultiplayer = true;
 			PropHuntSubsystem->TryTravelToSession(CurrentSessionName);
 		break;
 		case EOnJoinSessionCompleteResult::SessionIsFull:
-			UE_LOG(LogTemp, Warning, TEXT("join Session: session is full"));
+			UE_LOG(LogPropHuntGameInstance, Warning, TEXT("OnJoinSessionCompleted: session is full"));
 		break;
 		case EOnJoinSessionCompleteResult::SessionDoesNotExist:
-			UE_LOG(LogTemp, Warning, TEXT("join Session: session doesn't exist"));
+			UE_LOG(LogPropHuntGameInstance, Warning, TEXT("OnJoinSessionCompleted: session doesn't exist"));
 		break;
 		case EOnJoinSessionCompleteResult::CouldNotRetrieveAddress:
-			UE_LOG(LogTemp, Warning, TEXT("join Session: could not retrieve address"));
+			UE_LOG(LogPropHuntGameInstance, Warning, TEXT("OnJoinSessionCompleted: could not retrieve address"));
 		break;
 		case EOnJoinSessionCompleteResult::AlreadyInSession:
-			UE_LOG(LogTemp, Warning, TEXT("join Session: already in session"));
+			UE_LOG(LogPropHuntGameInstance, Warning, TEXT("OnJoinSessionCompleted: already in session"));
 		break;
 		case EOnJoinSessionCompleteResult::UnknownError:
-			UE_LOG(LogTemp, Warning, TEXT("join Session: unknown error"));
+			UE_LOG(LogPropHuntGameInstance, Warning, TEXT("OnJoinSessionCompleted: unknown error"));
 		break;
 	default:
 		break;

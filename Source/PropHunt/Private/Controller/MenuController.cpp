@@ -14,6 +14,7 @@
 #include "States/PropHuntGameState.h"
 #include "Utils/WidgetUtils.h"
 #include "Utils/GlobalUtils.h"
+#include "Utils/PropHuntLog.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -57,14 +58,14 @@ void AMenuController::BeginPlay()
 
 void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnPlayerListUpdated called"));
+	UE_LOG(LogPropHuntMenuController, Display, TEXT("OnPlayerListUpdated called"));
 	if (!LobbyWidgetRef) return;
 	
 	LobbyWidgetRef->ClearPlayerList();
 
 	for(auto* EachPlayerState : PlayerStates)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Added player to list"));
+		UE_LOG(LogPropHuntMenuController, Display, TEXT("Added player to list"));
 		if(EachPlayerState)
 			AddNewPlayerToList(EachPlayerState->GetPlayerName(), FString::FromInt(EachPlayerState->GetPingInMilliseconds()));
 	}
@@ -104,6 +105,7 @@ void AMenuController::SearchSessions()
 
 void AMenuController::SearchSessionsOnServer_Implementation()
 {
+	UE_LOG(LogPropHuntMenuController, Display, TEXT("Client sent a search session request"));
 	PropHuntGameInstance->FindSessions(10);
 }
 
@@ -111,7 +113,7 @@ void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult
 {
 	if (InSearchResults.Num() < 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No sessions found"));
+		UE_LOG(LogPropHuntMenuController, Display, TEXT("No sessions found"));
 		return;
 	}
 
@@ -123,12 +125,12 @@ void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult
 		// Check if the search result is valid
 		if (!InSearchResults[i].IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Invalid session result."));
+			UE_LOG(LogPropHuntMenuController, Error, TEXT("Invalid session result."));
 			continue;
 		}
 
 		FString ServerName("Test");
-		//InSearchResults[i].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerName);
+		InSearchResults[i].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerName);
 		int32 NumOpenPublicConnections = InSearchResults[i].Session.NumOpenPublicConnections;
 		int32 NumPublicConnections = InSearchResults[i].Session.SessionSettings.NumPublicConnections;
 		int32 Ping = InSearchResults[i].PingInMs;
@@ -144,6 +146,8 @@ void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult
 			MenuWidgetRef->AddServerToList(ServerEntryWidgetRef);
 		}
 	}
+
+	UE_LOG(LogPropHuntMenuController, Display, TEXT("Sessions written to the list"));
 }
 
 void AMenuController::ClientWantsToJoin(int32 SessionResultIndex)
@@ -153,11 +157,11 @@ void AMenuController::ClientWantsToJoin(int32 SessionResultIndex)
 
 void AMenuController::ClientWantsToJoinOnServer_Implementation(int32 SessionResultIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Join server button clicked"));
+	UE_LOG(LogPropHuntMenuController, Display, TEXT("Join server button clicked"));
 	FString ServerNameStr;
 	FName SessionName(*ServerNameStr);
 	FOnlineSessionSearchResult SessionResult = SearchResults[SessionResultIndex];
-	//SearchResults[SessionResultIndex].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerNameStr);
+	SearchResults[SessionResultIndex].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerNameStr);
 
 	PropHuntGameInstance->JoinGameSession(SessionName, SessionResult);
 }
