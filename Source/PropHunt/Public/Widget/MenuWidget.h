@@ -46,7 +46,7 @@ private:
 	void SetMainMenuButtons(UMasterButton* Button);
 	void ChangeBackgroundTintToDark();
 	void ChangeBackgroundTintToLight();
-	void SwitchSessionButtonsProperty();
+	void SwitchSessionButtonsProperty(bool HostButtonClicked = true);
 
 	// OnClicked event functions
 	UFUNCTION()

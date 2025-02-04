@@ -181,17 +181,14 @@ void UMenuWidget::ChangeBackgroundTintToLight()
 	BackgroundTint->SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.3));
 }
 
-void UMenuWidget::SwitchSessionButtonsProperty()
+void UMenuWidget::SwitchSessionButtonsProperty(bool HostButtonClicked)
 {
-	static bool IsHostButtonSelected = true;
 	static FLinearColor BlueColor = FLinearColor::Blue;
 	static FLinearColor GreyShade = FLinearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-	IsHostButtonSelected = !IsHostButtonSelected;
-
-	HostGameButton->SetBackgroundColor(IsHostButtonSelected ? BlueColor : GreyShade);
-	JoinGameButton->SetBackgroundColor(!IsHostButtonSelected ? BlueColor : GreyShade);
-	PlayGameMenuSwitcher->SetActiveWidgetIndex(!IsHostButtonSelected);
+	HostGameButton->SetBackgroundColor(HostButtonClicked ? BlueColor : GreyShade);
+	JoinGameButton->SetBackgroundColor(!HostButtonClicked ? BlueColor : GreyShade);
+	PlayGameMenuSwitcher->SetActiveWidgetIndex(!HostButtonClicked);
 }
 
 // Delegate methods, bind with button click
@@ -219,12 +216,12 @@ void UMenuWidget::OnQuitGameButtonClicked()
 
 void UMenuWidget::OnHostGameButonClicked()
 {
-	SwitchSessionButtonsProperty();
+	SwitchSessionButtonsProperty(true);
 }
 
 void UMenuWidget::OnJoinGameButtonClicked()
 {
-	SwitchSessionButtonsProperty();
+	SwitchSessionButtonsProperty(false);
 	MenuController->SearchSessions();
 }
 
