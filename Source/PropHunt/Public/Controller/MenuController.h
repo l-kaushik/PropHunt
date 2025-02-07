@@ -58,6 +58,7 @@ protected:
 private:
 	void SetupWidgetForMuliplayer();
 	void AddNewPlayerToList(const FString& PlayerName, const FString& PingInms);
+	void AddServersToList();
 
 private:
 	UMenuWidget* MenuWidgetRef;

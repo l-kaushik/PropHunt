@@ -120,21 +120,25 @@ void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult
 
 	// store session results array
 	SearchResults = InSearchResults;
+	AddServersToList();
+}
 
-	for (int32 i = 0; i < InSearchResults.Num(); i++)
+void AMenuController::AddServersToList()
+{
+	for (int32 i = 0; i < SearchResults.Num(); i++)
 	{
 		// Check if the search result is valid
-		if (!InSearchResults[i].IsValid())
+		if (!SearchResults[i].IsValid())
 		{
 			UE_LOG(LogPropHuntMenuController, Error, TEXT("Invalid session result."));
 			continue;
 		}
 
 		FString ServerName("Test");
-		InSearchResults[i].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerName);
-		int32 NumOpenPublicConnections = InSearchResults[i].Session.NumOpenPublicConnections;
-		int32 NumPublicConnections = InSearchResults[i].Session.SessionSettings.NumPublicConnections;
-		int32 Ping = InSearchResults[i].PingInMs;
+		SearchResults[i].Session.SessionSettings.Settings["SESSION_DISPLAY_NAME"].Data.GetValue(ServerName);
+		int32 NumOpenPublicConnections = SearchResults[i].Session.NumOpenPublicConnections;
+		int32 NumPublicConnections = SearchResults[i].Session.SessionSettings.NumPublicConnections;
+		int32 Ping = SearchResults[i].PingInMs;
 		FString Status = FString::Printf(TEXT("%d/%d"), NumPublicConnections - NumOpenPublicConnections, NumPublicConnections);
 
 		if (auto* ServerEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UServerEntryWidget>(this, ServerEntryWidgetBPClassRef))
@@ -175,9 +179,5 @@ void AMenuController::HostWantsToStartGame()
 void AMenuController::HostWantsToStartGameOnServer_Implementation()
 {
 	PropHuntGameInstance->SetPlayerNum(PropHuntGameState->PlayerArray.Num());
-	AMenuGameMode* GameMode = GetWorld()->GetAuthGameMode<AMenuGameMode>();
-	if (GameMode)
-	{
-		GameMode->StartGame();
-	}
+	PropHuntGameInstance->StartSession();
 }
