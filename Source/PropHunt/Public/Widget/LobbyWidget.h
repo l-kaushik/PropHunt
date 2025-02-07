@@ -31,6 +31,8 @@ private:
 
 	UFUNCTION()
 	void OnReadyOrStartButtonClicked();
+	UFUNCTION()
+	void OnBackButtonClicked();
 
 	void InitializeComponents();
 	void InitializeReadyOrStartButtonText();

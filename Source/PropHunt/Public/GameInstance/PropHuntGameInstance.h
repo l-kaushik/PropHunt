@@ -30,6 +30,8 @@ public:
 	void StartSession();
 	void FindSessions(int32 MaxSearchResults, bool IsLANQuery = true);
 	void JoinGameSession(const FName& SessionName, const FOnlineSessionSearchResult& SessionResult);
+	void RegisterPlayer(const FUniqueNetId& PlayerId);
+	void UnregisterPlayer(const FUniqueNetId& PlayerId);
 
 protected:
 	// callback functions for session management
@@ -37,9 +39,12 @@ protected:
 	void OnStartSessionCompleted(bool Successful);
 	void OnFindSessionsCompleted(const TArray<FOnlineSessionSearchResult>& SearchResults, bool Successful);
 	void OnJoinSessionCompleted(EOnJoinSessionCompleteResult::Type Result);
+	void OnRegisterPlayerCompleted(bool Successful);
+	void OnUnregisterPlayerCompleted(bool Successful);
 
 private:
 	virtual void Init() override;
+	bool IsCurrentSessionName(const FString& CalleInfo);
 
 private:
 	UPropHuntSubsystem* PropHuntSubsystem;

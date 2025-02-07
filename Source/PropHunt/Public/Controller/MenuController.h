@@ -37,6 +37,7 @@ public:
 	void ClientWantsToHost(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
 	void ClientWantsToJoin(int32 SessionResultIndex);
 	void HostWantsToStartGame();
+	void ClientWantsToQuit();
 
 	void SearchSessions();
 	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);;

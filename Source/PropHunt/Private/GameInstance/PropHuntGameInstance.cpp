@@ -12,6 +12,9 @@
 #include "Online/OnlineSessionNames.h"
 #include "Interfaces/OnlineSessionInterface.h"
 
+#define GET_CALLEE_INFO() \
+    FString::Printf(TEXT("%s"), *FString(ANSI_TO_TCHAR(__FUNCTION__)))
+
 void UPropHuntGameInstance::Init()
 {
 	Super::Init();
@@ -19,6 +22,19 @@ void UPropHuntGameInstance::Init()
 	PropHuntSubsystem = GetSubsystem<UPropHuntSubsystem>();
 	bIsMultiplayer = false;
 	bIsHost = false;
+}
+
+bool UPropHuntGameInstance::IsCurrentSessionName(const FString& CalleInfo)
+{
+	if (CurrentSessionName.IsNone())
+	{
+		// TODO: show error window
+		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("CurrentSessionName is none in %s"), *CalleInfo);
+
+		return true;
+	}
+
+	return false;
 }
 
 void UPropHuntGameInstance::SetPlayerNum(int32 InPlayerNum)
@@ -155,4 +171,35 @@ void UPropHuntGameInstance::OnStartSessionCompleted(bool Successful)
 	{
 		GameMode->StartGame();
 	}
+}
+
+void UPropHuntGameInstance::RegisterPlayer(const FUniqueNetId& PlayerId)
+{
+	// Prevent registering if there is no session present
+	if (IsCurrentSessionName(GET_CALLEE_INFO())) return;
+
+	PropHuntSubsystem->OnRegisterPlayerCompleteEvent.Clear();
+	PropHuntSubsystem->OnRegisterPlayerCompleteEvent.AddUObject(this, &ThisClass::OnRegisterPlayerCompleted);
+	PropHuntSubsystem->RegisterPlayer(CurrentSessionName, PlayerId);
+}
+
+void UPropHuntGameInstance::OnRegisterPlayerCompleted(bool Successful)
+{
+	// TODO: display proper error
+	// Handle edge cases like: if player couldn't register but joined the world?
+	if(!Successful)
+		UE_LOG(LogPropHuntGameInstance, Error, TEXT("Failed to register player"));
+}
+
+void UPropHuntGameInstance::UnregisterPlayer(const FUniqueNetId& PlayerId)
+{
+	PropHuntSubsystem->OnUnregisterPlayerCompleteEvent.Clear();
+	PropHuntSubsystem->OnUnregisterPlayerCompleteEvent.AddUObject(this, &ThisClass::OnUnregisterPlayerCompleted);
+	PropHuntSubsystem->UnregisterPlayer(CurrentSessionName, PlayerId);
+}
+
+void UPropHuntGameInstance::OnUnregisterPlayerCompleted(bool Successful)
+{
+	// TODO: display proper error
+	UE_LOG(LogPropHuntGameInstance, Error, TEXT("Failed to unregister player"));
 }

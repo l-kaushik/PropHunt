@@ -21,6 +21,8 @@ UPropHuntSubsystem::UPropHuntSubsystem()
 	, StartSessionCompleteDelegate(FOnStartSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnStartSessionCompleted))
 	, EndSessionCompleteDelegate(FOnEndSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnEndSessionCompleted))
 	, UpdateSessionCompleteDelegate(FOnUpdateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnUpdateSessionCompleted))
+	, RegisterPlayerCompleteDelegate(FOnRegisterPlayersCompleteDelegate::CreateUObject(this, &ThisClass::OnRegisterPlayerCompleted))
+	, UnregisterPlayerCompleteDelegate(FOnUnregisterPlayersCompleteDelegate::CreateUObject(this, &ThisClass::OnUnregisterPlayerCompleted))
 
 {
 }
@@ -91,6 +93,8 @@ void UPropHuntSubsystem::OnCreateSessionCompleted(FName SessionName, bool Succes
 		{
 			UE_LOG(LogPropHuntSubsystem, Warning, TEXT("Failed to get connection string for session '%s'."), *SessionName.ToString());
 		}
+
+		UE_LOG(LogTemp, Warning, TEXT("NumOpenPublicConnections: %d"), (SessionInterface->GetNamedSession(SessionName))->NumOpenPublicConnections);
 	}
 	else
 	{
@@ -349,4 +353,75 @@ void UPropHuntSubsystem::OnUpdateSessionCompleted(FName SessionName, bool Succes
 	}
 
 	OnUpdateSessionCompleteEvent.Broadcast(Successful);
+}
+
+void UPropHuntSubsystem::RegisterPlayer(FName SessionName, const FUniqueNetId& PlayerId)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		OnRegisterPlayerCompleteEvent.Broadcast(false);
+		return;
+	}
+
+	RegisterPlayerCompleteDelegateHandle =
+		SessionInterface->AddOnRegisterPlayersCompleteDelegate_Handle(RegisterPlayerCompleteDelegate);
+
+	if (!SessionInterface->RegisterPlayer(SessionName, PlayerId, false))
+	{
+		SessionInterface->ClearOnRegisterPlayersCompleteDelegate_Handle(RegisterPlayerCompleteDelegateHandle);
+
+		OnRegisterPlayerCompleteEvent.Broadcast(false);
+	}
+}
+
+void UPropHuntSubsystem::OnRegisterPlayerCompleted(FName SessionName, const TArray< FUniqueNetIdRef >& PlayerIds, bool Successful)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (SessionInterface)
+	{
+		SessionInterface->ClearOnRegisterPlayersCompleteDelegate_Handle(RegisterPlayerCompleteDelegateHandle);
+
+		if (Successful)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Open connectiosn after register: %d"), SessionInterface->GetNamedSession(SessionName)->NumOpenPublicConnections)
+		}
+	}
+
+	OnRegisterPlayerCompleteEvent.Broadcast(Successful);
+}
+
+void UPropHuntSubsystem::UnregisterPlayer(FName SessionName, const FUniqueNetId& PlayerId)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (!SessionInterface.IsValid())
+	{
+		OnUnregisterPlayerCompleteEvent.Broadcast(false);
+		return;
+	}
+
+	UnregisterPlayerCompleteDelegateHandle = SessionInterface->AddOnUnregisterPlayersCompleteDelegate_Handle(UnregisterPlayerCompleteDelegate);
+
+	if (!SessionInterface->UnregisterPlayer(SessionName, PlayerId))
+	{
+		SessionInterface->ClearOnUnregisterPlayersCompleteDelegate_Handle(UnregisterPlayerCompleteDelegateHandle);
+
+		OnUnregisterPlayerCompleteEvent.Broadcast(false);
+	}
+}
+
+void UPropHuntSubsystem::OnUnregisterPlayerCompleted(FName SessionName, const TArray< FUniqueNetIdRef >& PlayerIds, bool Successful)
+{
+	const IOnlineSessionPtr SessionInterface = Online::GetSessionInterface(GetWorld());
+	if (SessionInterface)
+	{
+		SessionInterface->ClearOnUnregisterPlayersCompleteDelegate_Handle(UnregisterPlayerCompleteDelegateHandle);
+
+		if (Successful)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Open connectiosn after unregister: %d"), SessionInterface->GetNamedSession(SessionName)->NumOpenPublicConnections)
+		}
+	}
+
+	OnUnregisterPlayerCompleteEvent.Broadcast(Successful);
 }

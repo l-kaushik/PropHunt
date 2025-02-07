@@ -19,6 +19,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnJoinSessionComplete, EOnJoinSessionComp
 DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnStartSessionComplete, bool Successful);
 DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnEndSessionComplete, bool Successful);
 DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnUpdateSessionComplete, bool Successful);
+DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnRegisterPlayerComplete, bool Successful);
+DECLARE_MULTICAST_DELEGATE_OneParam(FPHOnUnregisterPlayerComplete, bool Successful);
 
 class FNamedOnlineSession;
 
@@ -39,6 +41,8 @@ public:
 	void EndSession(const FName& SessionName);
 	void UpdateSession(const FName& SessionName, const FString& NewLevelName);
 	void TryTravelToSession(const FName& SessionName);
+	void RegisterPlayer(FName SessionName, const FUniqueNetId& PlayerId);
+	void UnregisterPlayer(FName SessionName, const FUniqueNetId& PlayerId);
 
 	FPHOnCreateSessionComplete OnCreateSessionCompleteEvent;
 	FPHOnDestroySessionComplete OnDestroySessionCompleteEvent;
@@ -47,6 +51,8 @@ public:
 	FPHOnStartSessionComplete OnStartSessionCompleteEvent;
 	FPHOnEndSessionComplete OnEndSessionCompleteEvent;
 	FPHOnUpdateSessionComplete OnUpdateSessionCompleteEvent;
+	FPHOnRegisterPlayerComplete OnRegisterPlayerCompleteEvent;
+	FPHOnUnregisterPlayerComplete OnUnregisterPlayerCompleteEvent;
 
 protected:
 	void OnCreateSessionCompleted(FName SessionName, bool Successful);
@@ -57,6 +63,8 @@ protected:
 	void OnStartSessionCompleted(FName SessionName, bool Successful);
 	void OnEndSessionCompleted(FName SessionName, bool Successful);
 	void OnUpdateSessionCompleted(FName SessionName, bool Successful);
+	void OnRegisterPlayerCompleted(FName SessionName, const TArray< FUniqueNetIdRef >& PlayerIds,  bool Successful);
+	void OnUnregisterPlayerCompleted(FName SessionName, const TArray< FUniqueNetIdRef >& PlayerIds, bool Successful);
 
 private:
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
@@ -82,4 +90,10 @@ private:
 
 	FOnUpdateSessionCompleteDelegate UpdateSessionCompleteDelegate;
 	FDelegateHandle UpdateSessionCompleteDelegateHandle;
+
+	FOnRegisterPlayersCompleteDelegate RegisterPlayerCompleteDelegate;
+	FDelegateHandle RegisterPlayerCompleteDelegateHandle;
+
+	FOnUnregisterPlayersCompleteDelegate UnregisterPlayerCompleteDelegate;
+	FDelegateHandle UnregisterPlayerCompleteDelegateHandle;
 };

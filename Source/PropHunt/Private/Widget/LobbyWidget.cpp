@@ -56,6 +56,11 @@ void ULobbyWidget::BindEvents()
 	{
 		ReadyOrStartButton->OnClicked.AddDynamic(this, &ThisClass::OnReadyOrStartButtonClicked);
 	}
+
+	if (BackButton)
+	{
+		BackButton->OnClicked.AddDynamic(this, &ThisClass::OnBackButtonClicked);
+	}
 }
 
 void ULobbyWidget::OnReadyOrStartButtonClicked()
@@ -71,6 +76,14 @@ void ULobbyWidget::OnReadyOrStartButtonClicked()
 	if (IsHost)
 	{
 		MenuController->HostWantsToStartGame();
+	}
+}
+
+void ULobbyWidget::OnBackButtonClicked()
+{
+	if (auto* MenuController = GetOwningPlayer<AMenuController>())
+	{
+		MenuController->ClientWantsToQuit();
 	}
 }
 

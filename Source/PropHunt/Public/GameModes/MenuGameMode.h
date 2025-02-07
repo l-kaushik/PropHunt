@@ -29,5 +29,9 @@ public:
 	void StartGame();
 
 private:
+	const FUniqueNetId& GetUniqueIdFromController(AMenuController* Player);
+
+private:
 	APropHuntGameState* PropHuntGameState;
+	UPropHuntGameInstance* PropHuntGameInstance;
 };
