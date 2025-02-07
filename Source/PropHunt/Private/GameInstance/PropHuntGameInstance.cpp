@@ -2,6 +2,7 @@
 
 
 #include "GameInstance/PropHuntGameInstance.h"
+#include "GameModes/MenuGameMode.h"
 #include "Subsystem/PropHuntSubsystem.h"
 #include "Controller/MenuController.h"
 #include "Utils/PropHuntLog.h"
@@ -130,5 +131,28 @@ void UPropHuntGameInstance::OnJoinSessionCompleted(EOnJoinSessionCompleteResult:
 		break;
 	default:
 		break;
+	}
+}
+
+void UPropHuntGameInstance::StartSession()
+{
+	PropHuntSubsystem->OnStartSessionCompleteEvent.Clear();
+	PropHuntSubsystem->OnStartSessionCompleteEvent.AddUObject(this, &ThisClass::OnStartSessionCompleted);
+	PropHuntSubsystem->StartSession(CurrentSessionName);
+}
+
+void UPropHuntGameInstance::OnStartSessionCompleted(bool Successful)
+{
+	if (!Successful)
+	{
+		// display proper error to host
+		UE_LOG(LogPropHuntGameInstance, Error, TEXT("Failed to start the session"));
+		return;
+	}
+
+	auto* GameMode = GetWorld()->GetAuthGameMode<AMenuGameMode>();
+	if (GameMode)
+	{
+		GameMode->StartGame();
 	}
 }
