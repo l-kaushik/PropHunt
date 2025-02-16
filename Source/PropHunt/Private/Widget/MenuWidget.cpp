@@ -9,6 +9,7 @@
 #include "Utils/WidgetUtils.h"
 #include "Utils/GlobalUtils.h"
 #include "Utils/PropHuntLog.h"
+#include "Macros/WidgetMacros.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -22,13 +23,6 @@
 #include "Components/Image.h"
 #include "Components/Overlay.h"
 #include "Kismet/GameplayStatics.h"
-
-// custom macro to make on click binding generic
-#define BIND_BUTTON_CLICK(Button, Function) \
-    if (Button)                             \
-    {                                       \
-        Button->OnClicked.AddUObject(this, Function); \
-    }
 
 UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
