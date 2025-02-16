@@ -5,12 +5,23 @@
 #include "Widget/MenuWidget.h"
 #include "Controller/MenuController.h"
 #include "Utils/PropHuntLog.h"
+#include "Widget/ErrorBox/UIErrorBox.h"
+#include "Utils/GlobalUtils.h"
+#include "Utils/WidgetUtils.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 #include "Widget/Components/Button/MasterButton.h"
 #include "Internationalization/Regex.h"
+
+void UHostWidget::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	FString BasePath = TEXT("/Game/Widgets/ErrorBox/WB_UIErrorBox.WB_UIErrorBox_C");
+	UIErrorBoxBPClassRef = Cast<UClass>(StaticLoadClass(UObject::StaticClass(), nullptr, *BasePath));
+}
 
 void UHostWidget::NativeConstruct()
 {
@@ -81,6 +92,9 @@ bool UHostWidget::VerifyServerInfo()
 
 	if (!ServerNameMatcher.FindNext()) {
 		UE_LOG(LogPropHuntWidget, Warning, TEXT("Invalid server name: %s"), *ServerName);
+		auto* WidgetRef = WidgetUtils::CreateAndAddWidget<UUIErrorBox>(this, UIErrorBoxBPClassRef);
+		WidgetRef->SetMessage(FString("Invalid server name: ") + ServerName);
+		//WidgetUtils::ShowError(this, "Invalid server name: " + ServerName);
 		return false;
 	}
 
@@ -93,6 +107,9 @@ bool UHostWidget::VerifyServerInfo()
 	FRegexMatcher PlayerNumberMatcher(PlayerNumberPattern, PlayerNumber);
 	if (!PlayerNumberMatcher.FindNext()) {
 		UE_LOG(LogPropHuntWidget, Warning, TEXT("Invalid player number: %s"), *PlayerNumber);
+		auto* WidgetRef = WidgetUtils::CreateAndAddWidget<UUIErrorBox>(this, UIErrorBoxBPClassRef);
+		WidgetRef->SetMessage(FString("Invalid player number: ") + PlayerNumber);
+		//WidgetUtils::ShowError(this, "Invalid player number: " + PlayerNumber);
 		return false;
 	}
 
