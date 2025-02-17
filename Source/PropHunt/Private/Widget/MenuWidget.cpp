@@ -10,6 +10,7 @@
 #include "Utils/GlobalUtils.h"
 #include "Utils/PropHuntLog.h"
 #include "Macros/WidgetMacros.h"
+#include "Widget/UIManager.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -26,10 +27,8 @@
 
 UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	FString BasePath = "/Game/Widgets/";
-
-	HostWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
-	JoinGameWidgetBPClassRef = GlobalUtils::LoadWidgetBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
+	HostWidgetBPClassRef = UUIManager::Get()->HostWidgetBPClassRef;
+	JoinGameWidgetBPClassRef = UUIManager::Get()->JoinGameWidgetBPClassRef;
 }
 
 void UMenuWidget::AddServerToList(UUserWidget* ServerEntry)

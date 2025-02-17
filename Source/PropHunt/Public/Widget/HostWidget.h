@@ -21,9 +21,6 @@ class PROPHUNT_API UHostWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:
-	virtual void PostInitProperties() override;
-
 private:
 
 	virtual void NativeConstruct() override;
