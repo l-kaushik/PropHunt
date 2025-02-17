@@ -35,6 +35,8 @@ private:
 	void OnHostButtonClicked();
 
 	bool VerifyServerInfo();
+	void ShowServerNameError(const FString& InServerName);
+	void ShowPlayerNumberError(const FString& InPlayerNumber);
 
 private:
 	// Components related to server info box

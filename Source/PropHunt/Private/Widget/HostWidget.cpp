@@ -84,10 +84,7 @@ bool UHostWidget::VerifyServerInfo()
 	FRegexMatcher ServerNameMatcher(ServerNamePattern, ServerName);
 
 	if (!ServerNameMatcher.FindNext()) {
-		UE_LOG(LogPropHuntWidget, Warning, TEXT("Invalid server name: %s"), *ServerName);
-		auto* WidgetRef = WidgetUtils::CreateAndAddWidget<UUIErrorBox>(this, UUIManager::Get()->UIErrorBoxBPClassRef);
-		WidgetRef->SetMessage(FString("Invalid server name: ") + ServerName);
-		//WidgetUtils::ShowError(this, "Invalid server name: " + ServerName);
+		ShowServerNameError(ServerName);
 		return false;
 	}
 
@@ -99,15 +96,36 @@ bool UHostWidget::VerifyServerInfo()
 	const FRegexPattern PlayerNumberPattern(TEXT("^[2-9][0-9]{0,1}$"));
 	FRegexMatcher PlayerNumberMatcher(PlayerNumberPattern, PlayerNumber);
 	if (!PlayerNumberMatcher.FindNext()) {
-		UE_LOG(LogPropHuntWidget, Warning, TEXT("Invalid player number: %s"), *PlayerNumber);
-		auto* WidgetRef = WidgetUtils::CreateAndAddWidget<UUIErrorBox>(this, UUIManager::Get()->UIErrorBoxBPClassRef);
-		WidgetRef->SetMessage(FString("Invalid player number: ") + PlayerNumber);
-		//WidgetUtils::ShowError(this, "Invalid player number: " + PlayerNumber);
+		ShowPlayerNumberError(PlayerNumber);
 		return false;
 	}
 
-	// display proper error message to user
-
 	return true;
+}
+
+void UHostWidget::ShowServerNameError(const FString& InServerName)
+{
+	FString ErrorMessage;
+	if (InServerName.IsEmpty())
+		ErrorMessage = "Server name cannot be empty.";
+	else if (InServerName.Len() < 3 || InServerName.Len() > 20)
+		ErrorMessage = "Server name must be between 3 and 20 characters long.";
+	else if (!FChar::IsAlpha(InServerName[0]))
+		ErrorMessage = "Server name must start with a letter (A-Z or a - z).";
+	else
+		ErrorMessage = "Server name contains invalid characters.\nOnly alphabets, numbers and underscores are allowed.";
+
+	WidgetUtils::ShowError(this, ErrorMessage);
+}
+
+void UHostWidget::ShowPlayerNumberError(const FString& InPlayerNumber)
+{
+	FString ErrorMessage;
+	if (InPlayerNumber.IsEmpty())
+		ErrorMessage = "Player number cannot be empty.";
+	else
+		ErrorMessage = "Invalid player number.\nValid number is in between range of 2 - 99.";
+
+	WidgetUtils::ShowError(this, ErrorMessage);
 }
 

@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include "Utils/PropHuntLog.h"
+#include "Widget/ErrorBox/UIErrorBox.h"
+#include "Widget/UIManager.h"
+
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/WidgetSwitcher.h"
@@ -61,7 +65,7 @@ public:
 	template<typename WidgetType, typename WidgetSwitcherT = UWidgetSwitcher, typename OwnerType = UObject>
 	static void AddWidgetToWidgetSwitcher(OwnerType* Owner, WidgetSwitcherT* WidgetSwitcher, TSubclassOf<UUserWidget> WidgetBPClassRef = WidgetType::StaticClass())
 	{
-		if (!WidgetBPClassRef)
+		if (!WidgetSwitcher)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("WidgetSwitcher object is invalid or null."));
 			return;
@@ -96,5 +100,16 @@ public:
 			ComponentSlot->SetPadding(margin);
 			ComponentSlot->SetSize(ChildSize);
 		}
+	}
+
+	/*
+	* Create UIErroBox widget display error and log the same
+	*/
+	template<typename OwnerType = UObject>
+	static void ShowError(OwnerType* Owner, const FString& InMessage)
+	{
+		UE_LOG(LogPropHuntWidget, Warning, TEXT("%s"), *InMessage);
+		auto* WidgetRef = CreateAndAddWidget<class UUIErrorBox>(Owner, UUIManager::Get()->UIErrorBoxBPClassRef);
+		WidgetRef->SetMessage(InMessage);
 	}
 };
