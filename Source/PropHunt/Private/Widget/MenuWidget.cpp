@@ -7,7 +7,6 @@
 #include "Widget/Components/Button/MasterButton.h"
 #include "Controller/MenuController.h"
 #include "Utils/WidgetUtils.h"
-#include "Utils/GlobalUtils.h"
 #include "Utils/PropHuntLog.h"
 #include "Macros/WidgetMacros.h"
 #include "Widget/UIManager.h"

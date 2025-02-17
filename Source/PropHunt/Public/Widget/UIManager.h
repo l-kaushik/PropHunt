@@ -29,6 +29,17 @@ public:
 	UPROPERTY()
 	TSubclassOf<class UUIErrorBox> UIErrorBoxBPClassRef;
 
+	UPROPERTY()
+	TSubclassOf<class UMenuWidget> MenuWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class ULobbyWidget> LobbyWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UPlayerEntryWidget> PlayerEntryWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UServerEntryWidget> ServerEntryWidgetBPClassRef;
 private:
 	// Private constructor to enforce singleton
 	UUIManager();
