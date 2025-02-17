@@ -15,9 +15,9 @@ public:
 
 public:
 	template<typename T>
-	static TSubclassOf<T> LoadWidgetBlueprint(const FString WidgetPath)
+	static TSubclassOf<T> LoadBlueprint(const FString BlueprintPath)
 	{
-		static ConstructorHelpers::FClassFinder<T> WidgetBPClass(*WidgetPath);
-		return WidgetBPClass.Succeeded() ? WidgetBPClass.Class : nullptr;
+		static ConstructorHelpers::FClassFinder<T> BPClass(*BlueprintPath);
+		return BPClass.Succeeded() ? BPClass.Class : nullptr;
 	}
 };
