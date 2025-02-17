@@ -29,7 +29,7 @@ class PROPHUNT_API UMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UMenuWidget(const FObjectInitializer& ObjectInitializer);
+
 	void AddServerToList(UUserWidget* ServerEntry);
 
 private:
@@ -72,10 +72,6 @@ private:
 	EMenuState MenuState;
 	AMenuController* MenuController;
 	UJoinGameWidget* JoinGameWidgetRef;
-
-	// Blueprint widget class references
-	TSubclassOf<UHostWidget> HostWidgetBPClassRef;
-	TSubclassOf<UJoinGameWidget> JoinGameWidgetBPClassRef;
 
 	// Main Menu Components
 	UPROPERTY(meta = (BindWidget))

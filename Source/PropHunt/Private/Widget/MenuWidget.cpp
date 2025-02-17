@@ -24,12 +24,6 @@
 #include "Components/Overlay.h"
 #include "Kismet/GameplayStatics.h"
 
-UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{
-	HostWidgetBPClassRef = UUIManager::Get()->HostWidgetBPClassRef;
-	JoinGameWidgetBPClassRef = UUIManager::Get()->JoinGameWidgetBPClassRef;
-}
-
 void UMenuWidget::AddServerToList(UUserWidget* ServerEntry)
 {
 	JoinGameWidgetRef->AddServerToList(ServerEntry);
@@ -122,9 +116,9 @@ void UMenuWidget::FillPlayMenuWidgetSwitcher()
 {
 	PlayGameMenuSwitcher->ClearChildren();
 
-	WidgetUtils::AddWidgetToWidgetSwitcher<UHostWidget>(this, PlayGameMenuSwitcher, HostWidgetBPClassRef);
+	WidgetUtils::AddWidgetToWidgetSwitcher<UHostWidget>(this, PlayGameMenuSwitcher, UUIManager::Get()->HostWidgetBPClassRef);
 
-	JoinGameWidgetRef = WidgetUtils::CreateAndValidateWidget<UJoinGameWidget>(this, JoinGameWidgetBPClassRef);
+	JoinGameWidgetRef = WidgetUtils::CreateAndValidateWidget<UJoinGameWidget>(this, UUIManager::Get()->JoinGameWidgetBPClassRef);
 	PlayGameMenuSwitcher->AddChild(JoinGameWidgetRef);
 	
 }
