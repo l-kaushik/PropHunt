@@ -11,7 +11,7 @@
 #include "Components/VerticalBox.h"
 #include "Components/HorizontalBox.h"
 #include "Components/ScaleBox.h"
-#include "Components/MultiLineEditableTextBox.h"
+#include "Components/TextBlock.h"
 
 void UUIErrorBox::SetMessage(const FString& InMessage)
 {

@@ -15,7 +15,7 @@ class UVerticalBox;
 class UHorizontalBox;
 class UScaleBox;
 class UMasterButton;
-class UMultiLineEditableTextBox;
+class UTextBlock;
 
 UCLASS()
 class PROPHUNT_API UUIErrorBox : public UUserWidget
@@ -56,7 +56,7 @@ private:
 	UScaleBox* ErrorMessageScaleBox;
 
 	UPROPERTY(meta = (BindWidget))
-	UMultiLineEditableTextBox* ErrorMessageTextBox;
+	UTextBlock* ErrorMessageTextBox;
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* OkButton;
