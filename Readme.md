@@ -1,12 +1,6 @@
 
 # TODOs
 
-1. Implement a UIManger class that enforce singleton pattern and store reference to all widget blueprint class so other classes can use it instead of creating references in each widget classes.
-
-2. Move LoadWidgetBlueprint function from "GlobalUtils" to "WidgetUtils".
-
-3. Create a show error function in widget utils that handlw widget creation then display error and also log the error.
-
 # Issues And Fixes
 1. Join session try to join on port 0 and connection timed out, only when I package the game and test, works fine in PIE.
 
@@ -19,3 +13,9 @@
 	**Fix:** Implemented `RegisterPlayer()` and `UnregisterPlayer()`. From `AMenuGameMode::PostLogin()` calling the `RegisterPlayer()` that in turn call the one from `Subsystem` class which internally updates the `NumOpenPublicConnections`.
 
 3. Session disappear from SearchResult when `NumOpenPublicConnections` become 0.
+
+# Logs
+
+1. 17-02-2025 
+- Implemented UIManagerr class to load widget blueprint classes. Using singleton pattern to prevent multiple initialization.
+- Implemented `ShowError` in `WidgetUtils` class. This will create the ErrorBox UI and also log the error.
