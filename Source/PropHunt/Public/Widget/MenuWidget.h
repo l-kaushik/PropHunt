@@ -31,6 +31,7 @@ class PROPHUNT_API UMenuWidget : public UUserWidget
 public:
 
 	void AddServerToList(UUserWidget* ServerEntry);
+	void ClearServerList();
 
 private:
 	virtual void NativeConstruct() override;

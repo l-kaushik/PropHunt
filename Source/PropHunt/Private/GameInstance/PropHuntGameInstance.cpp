@@ -89,9 +89,24 @@ void UPropHuntGameInstance::OnCreateSessionCompleted(bool Successful)
 
 void UPropHuntGameInstance::FindSessions(int32 MaxSearchResults, bool IsLANQuery)
 {
+	FindSessionSettings.MaxSearchResults = MaxSearchResults;
+	FindSessionSettings.bIsLanQuery = IsLANQuery;
+
+	StartFindSessionLoop();
+}
+
+void UPropHuntGameInstance::StartFindSessions()
+{
+	if (FindSessionSettings.bIsFindingSession) {
+		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("In StartFindSessions bIsFindingSession is true"));
+		return;
+	}
+	FindSessionSettings.bIsFindingSession = true;
+	UE_LOG(LogPropHuntGameInstance, Warning, TEXT("In StartFindSessions sent a search request"));
+
 	PropHuntSubsystem->OnFindSessionsCompleteEvent.Clear();
 	PropHuntSubsystem->OnFindSessionsCompleteEvent.AddUObject(this, &ThisClass::OnFindSessionsCompleted);
-	PropHuntSubsystem->FindSessions(MaxSearchResults, IsLANQuery);
+	PropHuntSubsystem->FindSessions(FindSessionSettings.MaxSearchResults, FindSessionSettings.bIsLanQuery);
 }
 
 void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionSearchResult>& SearchResults, bool Successful)
@@ -109,12 +124,18 @@ void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionS
 		auto* PlayerController = Cast<AMenuController>(GetWorld()->GetFirstPlayerController());
 
 		PlayerController->LoadSessionsInList(SearchResults);
-		return;
 	}
+
+	// keep fetching udpated session informations
+	// TODO: stop searching if player closes the widget
+	FindSessionSettings.bIsFindingSession = false;
 }
 
 void UPropHuntGameInstance::JoinGameSession(const FName& SessionName, const FOnlineSessionSearchResult& SessionResult)
 {
+	// stop fetching new session information
+	StopFindSessionLoop();
+
 	CurrentSessionName = SessionName;
 	PropHuntSubsystem->OnJoinSessionCompleteEvent.Clear();
 	PropHuntSubsystem->OnJoinSessionCompleteEvent.AddUObject(this, &ThisClass::OnJoinSessionCompleted);
@@ -202,4 +223,15 @@ void UPropHuntGameInstance::OnUnregisterPlayerCompleted(bool Successful)
 {
 	// TODO: display proper error
 	UE_LOG(LogPropHuntGameInstance, Error, TEXT("Failed to unregister player"));
+}
+
+void UPropHuntGameInstance::StartFindSessionLoop()
+{
+	StopFindSessionLoop();
+	GetWorld()->GetTimerManager().SetTimer(FindSessionTimerHandle, this, &ThisClass::StartFindSessions, 3.0f, true);
+}
+
+void UPropHuntGameInstance::StopFindSessionLoop()
+{
+	GetWorld()->GetTimerManager().ClearTimer(FindSessionTimerHandle);
 }

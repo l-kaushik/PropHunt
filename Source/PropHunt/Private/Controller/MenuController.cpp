@@ -123,6 +123,9 @@ void AMenuController::LoadSessionsInList(const TArray<FOnlineSessionSearchResult
 
 void AMenuController::AddServersToList()
 {
+	// clear server list
+	MenuWidgetRef->ClearServerList();
+
 	for (int32 i = 0; i < SearchResults.Num(); i++)
 	{
 		// Check if the search result is valid

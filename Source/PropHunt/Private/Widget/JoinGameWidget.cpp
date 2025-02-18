@@ -12,6 +12,11 @@ void UJoinGameWidget::AddServerToList(UUserWidget* ServerEntry)
 	ServerListVBox->AddChild(ServerEntry);
 }
 
+void UJoinGameWidget::ClearServerList()
+{
+	ServerListVBox->ClearChildren();
+}
+
 void UJoinGameWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

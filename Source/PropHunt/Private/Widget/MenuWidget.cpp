@@ -29,6 +29,11 @@ void UMenuWidget::AddServerToList(UUserWidget* ServerEntry)
 	JoinGameWidgetRef->AddServerToList(ServerEntry);
 }
 
+void UMenuWidget::ClearServerList()
+{
+	JoinGameWidgetRef->ClearServerList();
+}
+
 void UMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

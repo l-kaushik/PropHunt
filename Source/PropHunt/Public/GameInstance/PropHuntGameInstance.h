@@ -29,6 +29,7 @@ public:
 	void HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
 	void StartSession();
 	void FindSessions(int32 MaxSearchResults, bool IsLANQuery = true);
+	void StartFindSessions();
 	void JoinGameSession(const FName& SessionName, const FOnlineSessionSearchResult& SessionResult);
 	void RegisterPlayer(const FUniqueNetId& PlayerId);
 	void UnregisterPlayer(const FUniqueNetId& PlayerId);
@@ -47,10 +48,27 @@ private:
 	bool IsCurrentSessionName(const FString& CalleInfo);
 
 private:
+	struct FFindSessionSettings
+	{
+		int32 MaxSearchResults;
+		bool bIsLanQuery;
+		bool bIsFindingSession;
+
+		FFindSessionSettings()
+			: MaxSearchResults(10), bIsLanQuery(true), bIsFindingSession(false) {
+		}
+	};
+
+private:
 	UPropHuntSubsystem* PropHuntSubsystem;
 
 	bool bIsMultiplayer;
 	bool bIsHost;
 	FName CurrentSessionName;
 	int32 PlayerNum;
+	FFindSessionSettings FindSessionSettings;
+
+	FTimerHandle FindSessionTimerHandle;
+	void StartFindSessionLoop();
+	void StopFindSessionLoop();
 };

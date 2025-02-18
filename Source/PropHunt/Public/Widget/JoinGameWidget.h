@@ -16,6 +16,7 @@ class PROPHUNT_API UJoinGameWidget : public UUserWidget
 
 public:
 	void AddServerToList(UUserWidget* ServerEntry);
+	void ClearServerList();
 	
 private:
 
