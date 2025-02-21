@@ -1,5 +1,7 @@
 
 # TODOs
+1. Implement a way to have unique server name or a way to client know that which server is created by whom?
+1. Prevent player joining if player try to join a session with max players.
 
 # Issues And Fixes
 1. Join session try to join on port 0 and connection timed out, only when I package the game and test, works fine in PIE.
