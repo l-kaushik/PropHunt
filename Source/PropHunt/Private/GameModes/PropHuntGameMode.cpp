@@ -96,19 +96,19 @@ void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 		5.0f,
 		false
 	);
-	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("EndTheGame called"));
+	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("EndTheGame called"));
 }
 
 void APropHuntGameMode::StartNextGame()
 {
-	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("StartNextGame called"));
+	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("StartNextGame called"));
 
 	GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/ThirdPersonMap"));
 }
 
 void APropHuntGameMode::CheckGameStarted()
 {
-	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("CheckGameStarted called"));
+	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("CheckGameStarted called"));
 	// Start game if we have at least MinPlayerNum in game
 	if (!MyGameState->GetHasGameStarted()) {
 		int32 ArrayLength = MyGameState->GetPlayerControllerList().Num();
@@ -124,7 +124,7 @@ void APropHuntGameMode::CheckGameStarted()
 
 void APropHuntGameMode::StartGameTimer()
 {
-	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("StartGameTimer called"));
+	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("StartGameTimer called"));
 	float CountdownSeconds = 5.0f;
 	FTimerHandle StartGameCountdownHandler;
 
@@ -138,7 +138,7 @@ void APropHuntGameMode::StartGameTimer()
 
 void APropHuntGameMode::ChooseHunterCharacter()
 {
-	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("ChooseHunterCharacter called"));
+	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("ChooseHunterCharacter called"));
 	MyGameState->SetHasGameStarted(true);
 
 	int32 Length = MyGameState->GetPlayerControllerList().Num() - 1;
@@ -157,7 +157,7 @@ void APropHuntGameMode::ChooseHunterCharacter()
 
 void APropHuntGameMode::SpawnHunter()
 {
-	UE_LOG_BUILD(LogPropHuntGameMode, Display, TEXT("SpawnHunter called"));
+	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("SpawnHunter called"));
 	UWorld* World = GetWorld();
 
 	FTransform SpawnTransform;

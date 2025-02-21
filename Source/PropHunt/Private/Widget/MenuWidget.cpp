@@ -185,7 +185,7 @@ void UMenuWidget::SwitchSessionButtonsProperty(bool HostButtonClicked)
 
 void UMenuWidget::OnPlayGameButtonClicked()
 {
-	UE_LOG_BUILD(LogPropHuntWidget, Display, TEXT("Play game button clicked!"));
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Play game button clicked!"));
 
 	MenuState = EMenuState::PlayGameMenu;
 	ChangeBackgroundTintToDark();
@@ -196,12 +196,12 @@ void UMenuWidget::OnPlayGameButtonClicked()
 
 void UMenuWidget::OnOptionsButtonClicked()
 {
-	UE_LOG_BUILD(LogPropHuntWidget, Display, TEXT("Options button clicked!"));
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Options button clicked!"));
 }
 
 void UMenuWidget::OnQuitGameButtonClicked()
 {
-	UE_LOG_BUILD(LogPropHuntWidget, Display, TEXT("Quit game button clicked!"));
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Quit game button clicked!"));
 }
 
 void UMenuWidget::OnHostGameButonClicked()
@@ -217,7 +217,7 @@ void UMenuWidget::OnJoinGameButtonClicked()
 
 void UMenuWidget::OnBackButtonClicked()
 {
-	UE_LOG_BUILD(LogPropHuntWidget, Display, TEXT("Back button clicked!"));
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Back button clicked!"));
 
 	if (MenuState == EMenuState::PlayGameMenu)
 	{

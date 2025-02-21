@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#define UE_LOG_BUILD(CategoryName, Verbosity, Format, ...) \
+#define UE_LOG_NON_SHIP(CategoryName, Verbosity, Format, ...) \
 	if(!UE_BUILD_SHIPPING) \
 	{ \
 		UE_LOG(CategoryName, Verbosity, Format, ##__VA_ARGS__); \
