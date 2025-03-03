@@ -36,6 +36,7 @@ private:
 
 	void InitializeComponents();
 	void InitializeReadyOrStartButtonText();
+	void InitializePlayersListHeader();
 
 private:
 	// Reference to parent widget
@@ -43,13 +44,10 @@ private:
 	class UUserWidget* ParentWidget;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* ReadyOrStartButton;
+	class UMasterButton* ReadyOrStartButton;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* ReadyOrStartButtonText;
-
-	UPROPERTY(meta = (BindWidget))
-	class UButton* BackButton;
+	class UMasterButton* BackButton;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* MapNameBlock;
@@ -59,6 +57,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* PlayersListVBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UPlayerEntryWidget* PlayersListHeader;
 
 	bool IsHost;
 };

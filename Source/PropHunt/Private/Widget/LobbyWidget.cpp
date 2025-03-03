@@ -2,8 +2,11 @@
 
 
 #include "Widget/LobbyWidget.h"
+#include "Widget/Components/Button/MasterButton.h"
+#include "Widget/PlayerEntryWidget.h"
 #include "Controller/MenuController.h"
 #include "Utils/PropHuntLog.h"
+#include "Macros/WidgetMacros.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -52,15 +55,8 @@ void ULobbyWidget::NativePreConstruct()
 
 void ULobbyWidget::BindEvents()
 {
-	if (ReadyOrStartButton)
-	{
-		ReadyOrStartButton->OnClicked.AddDynamic(this, &ThisClass::OnReadyOrStartButtonClicked);
-	}
-
-	if (BackButton)
-	{
-		BackButton->OnClicked.AddDynamic(this, &ThisClass::OnBackButtonClicked);
-	}
+	BIND_BUTTON_CLICK(ReadyOrStartButton, &ThisClass::OnReadyOrStartButtonClicked);
+	BIND_BUTTON_CLICK(BackButton, &ThisClass::OnBackButtonClicked);
 }
 
 void ULobbyWidget::OnReadyOrStartButtonClicked()
@@ -89,17 +85,31 @@ void ULobbyWidget::OnBackButtonClicked()
 
 void ULobbyWidget::InitializeComponents()
 {
+	if (BackButton)
+	{
+		BackButton->SetLabel("X");
+	}
+
 	InitializeReadyOrStartButtonText();
+	InitializePlayersListHeader();
 }
 
 void ULobbyWidget::InitializeReadyOrStartButtonText()
 {
 	if (IsHost)
 	{
-		ReadyOrStartButtonText->SetText(FText::FromString("Start Game"));
+		ReadyOrStartButton->SetLabel(FString("Start Game"));
 	}
 	else
 	{
-		ReadyOrStartButtonText->SetText(FText::FromString("Ready"));
+		ReadyOrStartButton->SetLabel(FString("Ready"));
 	}
+
+}
+
+void ULobbyWidget::InitializePlayersListHeader()
+{
+	PlayersListHeader->SetPlayerNameText(FString("Name"));
+	PlayersListHeader->SetPingText(FString("Pings"));
+	PlayersListHeader->SetReadyStatusText(FString("Status"));
 }
