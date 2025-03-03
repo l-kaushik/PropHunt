@@ -187,6 +187,9 @@ void UPropHuntGameInstance::OnStartSessionCompleted(bool Successful)
 		return;
 	}
 
+	auto* PlayerController = Cast<AMenuController>(GetWorld()->GetFirstPlayerController());
+	PlayerController->HostWantsToStopPlayerListUpdateTimer();
+
 	auto* GameMode = GetWorld()->GetAuthGameMode<AMenuGameMode>();
 	if (GameMode)
 	{

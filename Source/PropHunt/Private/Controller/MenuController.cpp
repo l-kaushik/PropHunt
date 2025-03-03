@@ -29,6 +29,9 @@ AMenuController::AMenuController()
 	LobbyWidgetBPClassRef = UUIManager::Get()->LobbyWidgetBPClassRef;
 	PlayerEntryWidgetBPClassRef = UUIManager::Get()->PlayerEntryWidgetBPClassRef;
 	ServerEntryWidgetBPClassRef = UUIManager::Get()->ServerEntryWidgetBPClassRef;
+
+	// initialize variables
+	IsPlayerListUpdateTimerOn = false;
 }
 
 void AMenuController::BeginPlay()
@@ -68,6 +71,41 @@ void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &P
 		if(EachPlayerState)
 			AddNewPlayerToList(EachPlayerState->GetPlayerName(), FString::FromInt(EachPlayerState->GetPingInMilliseconds()));
 	}
+
+	StartPlayerListUpdateTimer();
+}
+
+void AMenuController::RefreshPlayerList()
+{
+	OnPlayerListUpdated(PropHuntGameState->GetPlayerStates());
+}
+
+void AMenuController::StartPlayerListUpdateTimer()
+{
+	// TODO: make sure to destroy when game starts
+	if (IsPlayerListUpdateTimerOn) return;
+
+	StopPlayerListUpdateTimer();
+	IsPlayerListUpdateTimerOn = true;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		PlayerListUpdateTImer,
+		this,
+		&AMenuController::RefreshPlayerList,
+		2.0f,
+		true
+	);
+}
+
+void AMenuController::StopPlayerListUpdateTimer()
+{
+	IsPlayerListUpdateTimerOn = false;
+	GetWorld()->GetTimerManager().ClearTimer(PlayerListUpdateTImer);
+}
+
+void AMenuController::HostWantsToStopPlayerListUpdateTimer_Implementation()
+{
+	StopPlayerListUpdateTimer();
 }
 
 void AMenuController::SetupWidgetForMuliplayer()

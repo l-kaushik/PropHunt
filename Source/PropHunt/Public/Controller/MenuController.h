@@ -43,6 +43,10 @@ public:
 	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);;
 	void OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates);
 
+public:
+	UFUNCTION(NetMulticast, Reliable)
+	void HostWantsToStopPlayerListUpdateTimer();
+
 protected:
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToHostOnServer(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatc);
@@ -60,6 +64,9 @@ private:
 	void SetupWidgetForMuliplayer();
 	void AddNewPlayerToList(const FString& PlayerName, const FString& PingInms);
 	void AddServersToList();
+	void StartPlayerListUpdateTimer();
+	void StopPlayerListUpdateTimer();
+	void RefreshPlayerList();
 
 private:
 	UMenuWidget* MenuWidgetRef;
@@ -76,4 +83,7 @@ private:
 	UPropHuntGameInstance* PropHuntGameInstance;
 	APropHuntGameState* PropHuntGameState;
 	TArray<FOnlineSessionSearchResult> SearchResults;
+
+	bool IsPlayerListUpdateTimerOn;
+	FTimerHandle PlayerListUpdateTImer;
 };
