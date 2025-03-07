@@ -116,6 +116,8 @@ void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionS
 	if (SearchResults.IsEmpty())
 	{
 		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("OnFindSessionsCompleted: Find session result is empty."));
+
+		StopFindSessionLoop();
 	}
 
 	if (Successful)

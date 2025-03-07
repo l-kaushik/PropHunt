@@ -165,7 +165,11 @@ void AMenuController::AddServersToList()
 	MenuWidgetRef->ClearServerList();
 	MenuWidgetRef->HideSessionLoadingThrobber();
 
-	// handle case where search result is 0
+	// when search results are 0
+	if (SearchResults.IsEmpty())
+	{
+		MenuWidgetRef->DisplayNoSessionFoundMessage();
+	}
 
 	for (int32 i = 0; i < SearchResults.Num(); i++)
 	{

@@ -19,6 +19,8 @@ public:
 	void ClearServerList();
 	void DisplaySessionLoadingThrobber();
 	void HideSessionLoadingThrobber();
+	void DisplayNoSessionFoundMessage();
+	void HideNoSessionFoundMessage();
 	
 private:
 
@@ -26,6 +28,9 @@ private:
 	virtual void NativePreConstruct() override;
 
 	void BindEvents();
+
+	UFUNCTION()
+	void OnRefreshButtonClicked();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -43,4 +48,14 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* SessionLoadingText;
+
+	// Session Not Found Error
+	UPROPERTY(meta = (BindWidget))
+	class UHorizontalBox* SessionNotFoundBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class USizeBox* SessionLoadingSizeBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* RefreshButton;
 };

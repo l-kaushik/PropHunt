@@ -44,6 +44,16 @@ void UMenuWidget::HideSessionLoadingThrobber()
 	JoinGameWidgetRef->HideSessionLoadingThrobber();
 }
 
+void UMenuWidget::DisplayNoSessionFoundMessage()
+{
+	JoinGameWidgetRef->DisplayNoSessionFoundMessage();
+}
+
+void UMenuWidget::HideNoSessionFoundMessage()
+{
+	JoinGameWidgetRef->HideNoSessionFoundMessage();
+}
+
 void UMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

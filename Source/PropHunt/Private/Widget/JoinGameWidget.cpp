@@ -3,6 +3,7 @@
 
 #include "Widget/JoinGameWidget.h"
 #include "Widget/MenuWidget.h"
+#include "Controller/MenuController.h"
 
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
@@ -31,10 +32,23 @@ void UJoinGameWidget::HideSessionLoadingThrobber()
 	SearchSessionLoadingBox->SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UJoinGameWidget::DisplayNoSessionFoundMessage()
+{
+	SessionNotFoundBox->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UJoinGameWidget::HideNoSessionFoundMessage()
+{
+	SessionNotFoundBox->SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UJoinGameWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	BindEvents();
+
+	// hide by default
+	HideNoSessionFoundMessage();
 }
 
 void UJoinGameWidget::NativePreConstruct()
@@ -44,5 +58,20 @@ void UJoinGameWidget::NativePreConstruct()
 
 void UJoinGameWidget::BindEvents()
 {
+	if (RefreshButton)
+	{
+		RefreshButton->OnClicked.AddDynamic(this, &ThisClass::OnRefreshButtonClicked);
+	}
+}
 
+void UJoinGameWidget::OnRefreshButtonClicked()
+{
+	static auto* MenuController = Cast<AMenuController>(GetOwningPlayer());
+
+	if (MenuController)
+	{
+		HideNoSessionFoundMessage();
+		DisplaySessionLoadingThrobber();
+		MenuController->SearchSessions();
+	}
 }

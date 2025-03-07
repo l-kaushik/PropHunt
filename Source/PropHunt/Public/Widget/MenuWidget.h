@@ -34,6 +34,8 @@ public:
 	void ClearServerList();
 	void DisplaySessionLoadingThrobber();
 	void HideSessionLoadingThrobber();
+	void DisplayNoSessionFoundMessage();
+	void HideNoSessionFoundMessage();
 
 private:
 	virtual void NativeConstruct() override;
