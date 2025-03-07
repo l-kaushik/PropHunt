@@ -33,3 +33,4 @@
 2. 07-03-2025
 - Implemented data asset, that store static mesh and capsule related data.
 - Upgraded trace fuction to fixed changing to floor mesh.
+- Implemented throbber on session search and also added refresh capability.
