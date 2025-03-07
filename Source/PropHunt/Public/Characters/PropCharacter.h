@@ -13,6 +13,7 @@ class UInputAction;
 struct FInputActionValue;
 class UStaticMeshComponent;
 class ASpawnedProp;
+class UPropMeshDataAsset;
 
 UCLASS()
 class PROPHUNT_API APropCharacter : public ACharacter
@@ -93,7 +94,7 @@ public:
 	UStaticMesh* GetTracedObjectMesh(AActor* HitActor);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void UpdateMeshMulticast(UStaticMesh* StaticMesh);
+	void UpdateMeshMulticast(const FPropData& PropData);
 
 	/* Spawn duplicate prop */
 	UFUNCTION(Server, Reliable)
@@ -102,4 +103,8 @@ public:
 private:
 	float Health;
 	static const float MAX_HEALTH;
+
+	/* Data for prop changes */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataAsset", meta = (AllowPrivateAccess = "true"))
+	UPropMeshDataAsset* PropMeshDataAsset;
 };

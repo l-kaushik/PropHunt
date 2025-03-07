@@ -5,6 +5,7 @@
 #include "Controller/PropHuntPlayerController.h"
 #include "Interfaces/PropHuntGameModeInterface.h"
 #include "GameModes/PropHuntGameMode.h"
+#include "DataAssets/PropMeshDataAsset.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -208,18 +209,26 @@ void APropCharacter::PerformSphereTrace() {
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(this);
 	EDrawDebugTrace::Type DrawDebugType = EDrawDebugTrace::ForDuration;
-	FHitResult OutHit;
+	TArray<FHitResult> OutHits;
 	bool bIgnoreSelf = true;
 	FLinearColor TraceColor = FLinearColor::Red;
 	FLinearColor TraceHitColor = FLinearColor::Green;
 	float DrawTime = 1.0f;
 
-	bool bHit = UKismetSystemLibrary::SphereTraceSingle(World, Start, End, Radius, TraceChannel, bTraceComplex, ActorsToIgnore, DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
+	bool bHit = UKismetSystemLibrary::SphereTraceMulti(World, Start, End, Radius, TraceChannel, bTraceComplex, ActorsToIgnore, DrawDebugType, OutHits, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
 
 	if (bHit) {
-		AActor* HitActor = OutHit.GetActor();
-		UStaticMesh* StaticMesh = GetTracedObjectMesh(HitActor);
-		UpdateMeshMulticast(StaticMesh);
+		for (const FHitResult& Hit : OutHits)
+		{
+			UStaticMesh* StaticMesh = GetTracedObjectMesh(Hit.GetActor());
+			const FPropData* FoundData = PropMeshDataAsset->PropDataMap.Find(StaticMesh);
+
+			if (FoundData)
+			{
+				UpdateMeshMulticast(*FoundData);
+				break;
+			}
+		}
 	}
 }
 
@@ -250,10 +259,10 @@ UStaticMesh* APropCharacter::GetTracedObjectMesh(AActor* HitActor) {
 	return StaticMesh;
 }
 
-void APropCharacter::UpdateMeshMulticast_Implementation(UStaticMesh* StaticMesh) {
-	if (StaticMesh) {
-		PropMesh->SetStaticMesh(StaticMesh);
-	}
+void APropCharacter::UpdateMeshMulticast_Implementation(const FPropData& PropData) {
+	PropMesh->SetStaticMesh(PropData.StaticMesh);
+	this->GetCapsuleComponent()->SetCapsuleSize(PropData.CapsuleRadius, PropData.CapsuleHalfHeight);
+	PropMesh->SetRelativeLocation(PropData.MeshLocation);
 }
 
 /* Spawn duplicate props */
