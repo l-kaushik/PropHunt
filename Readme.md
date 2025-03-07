@@ -16,8 +16,20 @@
 
 3. Session disappear from SearchResult when `NumOpenPublicConnections` become 0.
 
+4. WHen player changes the mesh, its kinda glitchy now. Happening after adding capsule and mesh location updates.
+
+	**Fix	:** `SpehreTraceSingle()` was tracing the floor mesh and changing to it. Fixed by replacing to `SphereTraceMulti()` and checking if should changed to traced actor or not.
+
 # Logs
 
 1. 17-02-2025 
 - Implemented UIManagerr class to load widget blueprint classes. Using singleton pattern to prevent multiple initialization.
 - Implemented `ShowError` in `WidgetUtils` class. This will create the ErrorBox UI and also log the error.
+
+1. 03-03-2025
+- Added timer for player list in lobby.
+- Implemented data asset, that stores mesh location and collision capsule's height and raidus. Udpating them whenever player changes the mesh.
+
+2. 07-03-2025
+- Implemented data asset, that store static mesh and capsule related data.
+- Upgraded trace fuction to fixed changing to floor mesh.
