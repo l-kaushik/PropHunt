@@ -34,6 +34,16 @@ void UMenuWidget::ClearServerList()
 	JoinGameWidgetRef->ClearServerList();
 }
 
+void UMenuWidget::DisplaySessionLoadingThrobber()
+{
+	JoinGameWidgetRef->DisplaySessionLoadingThrobber();
+}
+
+void UMenuWidget::HideSessionLoadingThrobber()
+{
+	JoinGameWidgetRef->HideSessionLoadingThrobber();
+}
+
 void UMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

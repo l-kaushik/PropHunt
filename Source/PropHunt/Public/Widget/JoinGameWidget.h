@@ -17,6 +17,8 @@ class PROPHUNT_API UJoinGameWidget : public UUserWidget
 public:
 	void AddServerToList(UUserWidget* ServerEntry);
 	void ClearServerList();
+	void DisplaySessionLoadingThrobber();
+	void HideSessionLoadingThrobber();
 	
 private:
 
@@ -28,4 +30,17 @@ private:
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* ServerListVBox;
+
+	// Search Session Loading Box
+	UPROPERTY(meta = (BindWidget))
+	class UHorizontalBox* SearchSessionLoadingBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UCircularThrobber* CircularThrobber;
+
+	UPROPERTY(meta = (BindWidget))
+	class USizeBox* SizeBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* SessionLoadingText;
 };

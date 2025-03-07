@@ -163,6 +163,9 @@ void AMenuController::AddServersToList()
 {
 	// clear server list
 	MenuWidgetRef->ClearServerList();
+	MenuWidgetRef->HideSessionLoadingThrobber();
+
+	// handle case where search result is 0
 
 	for (int32 i = 0; i < SearchResults.Num(); i++)
 	{

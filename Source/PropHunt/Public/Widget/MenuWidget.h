@@ -32,6 +32,8 @@ public:
 
 	void AddServerToList(UUserWidget* ServerEntry);
 	void ClearServerList();
+	void DisplaySessionLoadingThrobber();
+	void HideSessionLoadingThrobber();
 
 private:
 	virtual void NativeConstruct() override;

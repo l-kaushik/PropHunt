@@ -6,6 +6,10 @@
 
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
+#include "Components/SizeBox.h"
+#include "Components/CircularThrobber.h"
+#include "Components/TextBlock.h"
+#include "Components/HorizontalBox.h"
 
 void UJoinGameWidget::AddServerToList(UUserWidget* ServerEntry)
 {
@@ -15,6 +19,16 @@ void UJoinGameWidget::AddServerToList(UUserWidget* ServerEntry)
 void UJoinGameWidget::ClearServerList()
 {
 	ServerListVBox->ClearChildren();
+}
+
+void UJoinGameWidget::DisplaySessionLoadingThrobber()
+{
+	SearchSessionLoadingBox->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UJoinGameWidget::HideSessionLoadingThrobber()
+{
+	SearchSessionLoadingBox->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UJoinGameWidget::NativeConstruct()
