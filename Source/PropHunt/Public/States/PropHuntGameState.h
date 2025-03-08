@@ -25,7 +25,7 @@ public:
 
 	// Getters
 	TArray<APropHuntPlayerController*>& GetPlayerControllerList();
-	TArray<AMenuController*>& GetMenuPlayerControllerList();
+	const TArray<AMenuController*>& GetMenuPlayerControllerList() const;
 	TArray<APropHuntPlayerController*>& GetHunterList();
 	const TArray<APropHuntPlayerState*>& GetPlayerStates() const;
 	bool GetHasGameStarted() const;
@@ -35,6 +35,7 @@ public:
 	// Setters
 	void AddPlayerController(APropHuntPlayerController* NewController);
 	void AddMenuController(AMenuController* NewController);
+	void RemoveMenuController(AMenuController* ExistingController);
 	void AddHunter(APropHuntPlayerController* NewHunter);
 	void SetHasGameStarted(bool InHasGameStarted);
 	void SetIsPropWon(bool InIsPropWon);

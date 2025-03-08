@@ -47,7 +47,7 @@ private:
 	class UMasterButton* ReadyOrStartButton;
 
 	UPROPERTY(meta = (BindWidget))
-	class UMasterButton* BackButton;
+	class UMasterButton* BackButton;	// close icon in game
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* MapNameBlock;

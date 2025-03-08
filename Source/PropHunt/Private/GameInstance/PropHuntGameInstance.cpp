@@ -37,6 +37,12 @@ bool UPropHuntGameInstance::IsCurrentSessionName(const FString& CalleInfo)
 	return false;
 }
 
+AMenuController* UPropHuntGameInstance::GetPlayerController()
+{
+	static auto* PlayerController = Cast<AMenuController>(GetWorld()->GetFirstPlayerController());
+	return PlayerController;
+}
+
 void UPropHuntGameInstance::SetPlayerNum(int32 InPlayerNum)
 {
 	PlayerNum = InPlayerNum;
@@ -227,6 +233,13 @@ void UPropHuntGameInstance::UnregisterPlayer(const FUniqueNetId& PlayerId)
 void UPropHuntGameInstance::OnUnregisterPlayerCompleted(bool Successful)
 {
 	// TODO: display proper error
+
+	if (Successful)
+	{
+		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("Player unregistered success"));
+		return;
+	}
+
 	UE_LOG(LogPropHuntGameInstance, Error, TEXT("Failed to unregister player"));
 }
 
@@ -239,4 +252,25 @@ void UPropHuntGameInstance::StartFindSessionLoop()
 void UPropHuntGameInstance::StopFindSessionLoop()
 {
 	GetWorld()->GetTimerManager().ClearTimer(FindSessionTimerHandle);
+}
+
+void UPropHuntGameInstance::DestroySession()
+{
+	PropHuntSubsystem->OnDestroySessionCompleteEvent.Clear();
+	PropHuntSubsystem->OnDestroySessionCompleteEvent.AddUObject(this, &ThisClass::onDestroySessionCompleted);
+	PropHuntSubsystem->DestroySession(CurrentSessionName);
+}
+
+void UPropHuntGameInstance::onDestroySessionCompleted(bool Successful)
+{
+	if (Successful)
+	{
+		UE_LOG_NON_SHIP(LogPropHuntGameInstance, Warning, TEXT("Destroyed session compelted"));
+	}
+}
+
+void UPropHuntGameInstance::QuitGameCleanup()
+{
+	bIsMultiplayer = false;
+	DestroySession();
 }

@@ -230,8 +230,12 @@ void AMenuController::HostWantsToStartGameOnServer_Implementation()
 
 void AMenuController::ClientWantsToQuit()
 {
-	// TODO: perform a proper quitting
-
 	UE_LOG(LogTemp, Warning, TEXT("One player quit"));
-	ClientTravel("Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
+
+	StopPlayerListUpdateTimer();
+	LobbyWidgetRef->RemoveFromParent();
+	LobbyWidgetRef = nullptr;
+
+	PropHuntGameInstance->QuitGameCleanup();
+	ClientTravel("/Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
 }

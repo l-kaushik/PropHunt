@@ -39,7 +39,7 @@ void AMenuGameMode::Logout(AController* ExistingPlayer)
 	Super::Logout(ExistingPlayer);
 
 	auto* Player = Cast<AMenuController>(ExistingPlayer);
-	PropHuntGameState->GetMenuPlayerControllerList().Remove(Player);
+	PropHuntGameState->RemoveMenuController(Player);
 	PropHuntGameInstance->UnregisterPlayer(GetUniqueIdFromController(Player));
 }
 

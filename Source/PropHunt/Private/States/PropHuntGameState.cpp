@@ -39,7 +39,7 @@ TArray<APropHuntPlayerController*>& APropHuntGameState::GetPlayerControllerList(
 	return PlayerControllerList;
 }
 
-TArray<AMenuController*>& APropHuntGameState::GetMenuPlayerControllerList()
+const TArray<AMenuController*>& APropHuntGameState::GetMenuPlayerControllerList() const
 {
 	return MenuPlayerControllerList;
 }
@@ -86,6 +86,15 @@ void APropHuntGameState::AddMenuController(AMenuController* NewController)
 		MenuPlayerControllerList.AddUnique(NewController);
 		PlayerStates.AddUnique(NewController->GetPlayerState<APropHuntPlayerState>());
 		OnRep_PlayerStates();	// rep notify doesn't work on server side in cpp, so this explicit call make sure server gets the updated list as well.
+	}
+}
+
+void APropHuntGameState::RemoveMenuController(AMenuController* ExistingController)
+{
+	if (ExistingController)
+	{
+		MenuPlayerControllerList.Remove((ExistingController));
+		PlayerStates.Remove(ExistingController->GetPlayerState<APropHuntPlayerState>());
 	}
 }
 

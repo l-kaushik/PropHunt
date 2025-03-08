@@ -33,6 +33,9 @@ public:
 	void JoinGameSession(const FName& SessionName, const FOnlineSessionSearchResult& SessionResult);
 	void RegisterPlayer(const FUniqueNetId& PlayerId);
 	void UnregisterPlayer(const FUniqueNetId& PlayerId);
+	void DestroySession();
+
+	void QuitGameCleanup();
 
 protected:
 	// callback functions for session management
@@ -42,10 +45,12 @@ protected:
 	void OnJoinSessionCompleted(EOnJoinSessionCompleteResult::Type Result);
 	void OnRegisterPlayerCompleted(bool Successful);
 	void OnUnregisterPlayerCompleted(bool Successful);
+	void onDestroySessionCompleted(bool Successful);
 
 private:
 	virtual void Init() override;
 	bool IsCurrentSessionName(const FString& CalleInfo);
+	class AMenuController* GetPlayerController();
 
 private:
 	struct FFindSessionSettings

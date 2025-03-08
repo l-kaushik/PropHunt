@@ -70,7 +70,6 @@ private:
 
 private:
 	UMenuWidget* MenuWidgetRef;
-	UJoinGameWidget* JoinGameWidgetRef;
 	ULobbyWidget* LobbyWidgetRef;
 
 	TSubclassOf<UMenuWidget> MenuWidgetBPClassRef;
