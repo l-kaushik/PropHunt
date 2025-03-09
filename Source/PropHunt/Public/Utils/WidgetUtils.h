@@ -112,4 +112,17 @@ public:
 		auto* WidgetRef = CreateAndAddWidget<class UUIErrorBox>(Owner, UUIManager::Get()->UIErrorBoxBPClassRef);
 		WidgetRef->SetMessage(InMessage);
 	}
+
+	/*
+	* Create UIErroBox widget with a callback, display error and log the same
+	*/
+
+	template<typename OwnerType = UObject>
+	static void ShowError(OwnerType* Owner, const FString& InMessage, TFunction<void()> InCallback)
+	{
+		UE_LOG(LogPropHuntWidget, Warning, TEXT("%s"), *InMessage);
+		auto* WidgetRef = CreateAndAddWidget<class UUIErrorBox>(Owner, UUIManager::Get()->UIErrorBoxBPClassRef);
+		WidgetRef->SetMessage(InMessage);
+		WidgetRef->SetOnOkClicked(InCallback);
+	}
 };

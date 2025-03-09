@@ -25,6 +25,7 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* ExistingPlayer) override;
+	virtual void ReturnToMainMenuHost() override;
 
 	void StartGame();
 

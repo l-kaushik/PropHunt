@@ -8,6 +8,7 @@
 #include "Widget/LobbyWidget.h"
 #include "Widget/PlayerEntryWidget.h"
 #include "Widget/ServerEntryWidget.h"
+#include "Widget/ErrorBox/UIErrorBox.h"
 #include "GameModes/MenuGameMode.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "States/PropHuntPlayerState.h"
@@ -41,6 +42,7 @@ void AMenuController::BeginPlay()
 	// Initialize variables
 	PropHuntGameInstance = Cast<UPropHuntGameInstance>(GetWorld()->GetGameInstance());
 	PropHuntGameState = GetWorld()->GetGameState<APropHuntGameState>();
+	PropHuntMenuGameMode = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	PropHuntGameState->OnPlayerListUpdated.AddUObject(this, &ThisClass::OnPlayerListUpdated);
 
 	if (IsLocalPlayerController()){
@@ -55,7 +57,22 @@ void AMenuController::BeginPlay()
 			SetupWidgetForMuliplayer();
 			OnPlayerListUpdated(PropHuntGameState->GetPlayerStates());	// explicitly calling to update widget for host as well
 		}
+
+		const FString DisconnectReason = PropHuntGameInstance->GetLastDisconnectReason();
+
+		if (!DisconnectReason.IsEmpty())
+		{
+			DisplaySessionError(DisconnectReason);
+			PropHuntGameInstance->SetLastDisconnectReason(FText());
+		}
+
 	}
+}
+
+void AMenuController::ClientReturnToMainMenuWithTextReason_Implementation(const FText& ReturnReason)
+{
+	PropHuntGameInstance->SetLastDisconnectReason(ReturnReason);
+	Super::ClientReturnToMainMenuWithTextReason_Implementation(ReturnReason);
 }
 
 void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates)
@@ -73,6 +90,11 @@ void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &P
 	}
 
 	StartPlayerListUpdateTimer();
+}
+
+void AMenuController::DisplaySessionError(const FString& ErrorMessage)
+{
+	WidgetUtils::ShowError(this, ErrorMessage);
 }
 
 void AMenuController::RefreshPlayerList()
@@ -228,14 +250,16 @@ void AMenuController::HostWantsToStartGameOnServer_Implementation()
 	PropHuntGameInstance->StartSession();
 }
 
+void AMenuController::HostWantsToQuit()
+{
+	PropHuntMenuGameMode->ReturnToMainMenuHost();
+}
+
 void AMenuController::ClientWantsToQuit()
 {
 	UE_LOG(LogTemp, Warning, TEXT("One player quit"));
 
-	StopPlayerListUpdateTimer();
-	LobbyWidgetRef->RemoveFromParent();
-	LobbyWidgetRef = nullptr;
-
-	PropHuntGameInstance->QuitGameCleanup();
 	ClientTravel("/Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
+	PropHuntGameInstance->QuitGameCleanup();
+	PropHuntGameInstance->DestroySession();
 }

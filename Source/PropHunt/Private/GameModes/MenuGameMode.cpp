@@ -8,6 +8,8 @@
 #include "GameInstance/PropHuntGameInstance.h"
 #include "Utils/PropHuntLog.h"
 
+#include "Kismet/GameplayStatics.h"
+
 AMenuGameMode::AMenuGameMode()
 {
 	PlayerControllerClass = AMenuController::StaticClass();
@@ -41,6 +43,23 @@ void AMenuGameMode::Logout(AController* ExistingPlayer)
 	auto* Player = Cast<AMenuController>(ExistingPlayer);
 	PropHuntGameState->RemoveMenuController(Player);
 	PropHuntGameInstance->UnregisterPlayer(GetUniqueIdFromController(Player));
+}
+
+void AMenuGameMode::ReturnToMainMenuHost()
+{
+	FText KickReason = FText::FromString("Host has disconnected.");
+
+	// Notify all clients before returning to main menu
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PlayerController = It->Get();
+		if (PlayerController)
+		{
+			PlayerController->ClientReturnToMainMenuWithTextReason(KickReason);
+		}
+	}
+
+	Super::ReturnToMainMenuHost();
 }
 
 void AMenuGameMode::StartGame()

@@ -19,11 +19,13 @@ class PROPHUNT_API UPropHuntGameInstance : public UGameInstance
 public:
 	// setters
 	void SetPlayerNum(int32 InPlayerNum);
+	void SetLastDisconnectReason(const FText& ReturnReason);
 
 	// getters
 	int32 GetPlayerNum() const;
 	bool GetIsMultiplayer() const;
 	bool GetIsHost() const;
+	FString GetLastDisconnectReason() const;
 
 	// session related functions
 	void HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
@@ -34,6 +36,7 @@ public:
 	void RegisterPlayer(const FUniqueNetId& PlayerId);
 	void UnregisterPlayer(const FUniqueNetId& PlayerId);
 	void DestroySession();
+	virtual void ReturnToMainMenu() override;
 
 	void QuitGameCleanup();
 
@@ -71,6 +74,7 @@ private:
 	bool bIsHost;
 	FName CurrentSessionName;
 	int32 PlayerNum;
+	FString LastDisconnectReason;
 	FFindSessionSettings FindSessionSettings;
 
 	FTimerHandle FindSessionTimerHandle;

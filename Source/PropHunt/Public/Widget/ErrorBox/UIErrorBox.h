@@ -26,6 +26,9 @@ public:
 
 	void SetMessage(const FString& InMessage);
 
+	// callback function to be called when OK is clicked
+	void SetOnOkClicked(TFunction<void()> InCallback);
+
 private:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
@@ -34,6 +37,9 @@ private:
 	void OnOkButtonClicked();
 
 private:
+
+	// Callback function
+	TFunction<void()> OnOkCallback;
 
 	// background overlay
 	UPROPERTY(meta = (BindWidget))

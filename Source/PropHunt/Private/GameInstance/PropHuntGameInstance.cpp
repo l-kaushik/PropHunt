@@ -39,13 +39,18 @@ bool UPropHuntGameInstance::IsCurrentSessionName(const FString& CalleInfo)
 
 AMenuController* UPropHuntGameInstance::GetPlayerController()
 {
-	static auto* PlayerController = Cast<AMenuController>(GetWorld()->GetFirstPlayerController());
+	auto* PlayerController = Cast<AMenuController>(GetWorld()->GetFirstPlayerController());
 	return PlayerController;
 }
 
 void UPropHuntGameInstance::SetPlayerNum(int32 InPlayerNum)
 {
 	PlayerNum = InPlayerNum;
+}
+
+void UPropHuntGameInstance::SetLastDisconnectReason(const FText& ReturnReason)
+{
+	LastDisconnectReason = ReturnReason.ToString();
 }
 
 int32 UPropHuntGameInstance::GetPlayerNum() const
@@ -61,6 +66,11 @@ bool UPropHuntGameInstance::GetIsMultiplayer() const
 bool UPropHuntGameInstance::GetIsHost() const
 {
 	return bIsHost;
+}
+
+FString UPropHuntGameInstance::GetLastDisconnectReason() const
+{
+	return LastDisconnectReason;
 }
 
 void UPropHuntGameInstance::HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch)
@@ -269,8 +279,16 @@ void UPropHuntGameInstance::onDestroySessionCompleted(bool Successful)
 	}
 }
 
+void UPropHuntGameInstance::ReturnToMainMenu()
+{
+	Super::ReturnToMainMenu();
+
+	UE_LOG(LogPropHuntGameInstance, Warning, TEXT("Returning to main menu..."));
+	GetPlayerController()->ClientWantsToQuit();
+}
+
 void UPropHuntGameInstance::QuitGameCleanup()
 {
 	bIsMultiplayer = false;
-	DestroySession();
+	bIsHost = false;
 }

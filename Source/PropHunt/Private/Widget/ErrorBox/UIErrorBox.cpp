@@ -25,6 +25,11 @@ void UUIErrorBox::SetMessage(const FString& InMessage)
 	}
 }
 
+void UUIErrorBox::SetOnOkClicked(TFunction<void()> InCallback)
+{
+	OnOkCallback = InCallback;
+}
+
 void UUIErrorBox::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -49,5 +54,9 @@ void UUIErrorBox::BindClickEvents()
 
 void UUIErrorBox::OnOkButtonClicked()
 {
+	if (OnOkCallback) // Only call if it's set
+	{
+		OnOkCallback();
+	}
 	UWidget::RemoveFromParent();
 }

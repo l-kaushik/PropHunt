@@ -2,6 +2,7 @@
 # TODOs
 1. Implement a way to have unique server name or a way to client know that which server is created by whom?
 1. Prevent player joining if player try to join a session with max players.
+1. Implement TravelError and NetworkError handling in GameInstance class.
 
 # Issues And Fixes
 1. Join session try to join on port 0 and connection timed out, only when I package the game and test, works fine in PIE.
@@ -16,9 +17,11 @@
 
 3. Session disappear from SearchResult when `NumOpenPublicConnections` become 0.
 
-4. WHen player changes the mesh, its kinda glitchy now. Happening after adding capsule and mesh location updates.
+4. When player changes the mesh, its kinda glitchy now. Happening after adding capsule and mesh location updates.
 
-	**Fix	:** `SpehreTraceSingle()` was tracing the floor mesh and changing to it. Fixed by replacing to `SphereTraceMulti()` and checking if should changed to traced actor or not.
+	**Fix	:** `SphereTraceSingle()` was tracing the floor mesh and changing to it. Fixed by replacing to `SphereTraceMulti()` and checking if should changed to traced actor or not.
+
+5. When host quit the game `MenuGameMode::ReturnToMainMenuHost()` send a reason to `PlayerController::ClientReturnToMainMenuWithTextReason_Implementation()`, but the reason is getting overrite by internal function calling it again.
 
 # Logs
 
@@ -26,11 +29,15 @@
 - Implemented UIManagerr class to load widget blueprint classes. Using singleton pattern to prevent multiple initialization.
 - Implemented `ShowError` in `WidgetUtils` class. This will create the ErrorBox UI and also log the error.
 
-1. 03-03-2025
+2. 03-03-2025
 - Added timer for player list in lobby.
 - Implemented data asset, that stores mesh location and collision capsule's height and raidus. Udpating them whenever player changes the mesh.
 
-2. 07-03-2025
+3.  07-03-2025
 - Implemented data asset, that store static mesh and capsule related data.
 - Upgraded trace fuction to fixed changing to floor mesh.
 - Implemented throbber on session search and also added refresh capability.
+
+4. 9-03-2025
+- Implemented handling of client leaving a session and host leaving a sesson.
+- Implemented a variant of `ShowError` that can take a callback function bind to the ok button.

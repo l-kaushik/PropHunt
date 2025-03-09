@@ -79,7 +79,10 @@ void ULobbyWidget::OnBackButtonClicked()
 {
 	if (auto* MenuController = GetOwningPlayer<AMenuController>())
 	{
-		MenuController->ClientWantsToQuit();
+		if(IsHost)
+			MenuController->HostWantsToQuit();
+		else
+			MenuController->ClientWantsToQuit();
 	}
 }
 

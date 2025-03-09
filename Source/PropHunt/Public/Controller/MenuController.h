@@ -21,6 +21,7 @@ class UServerEntryWidget;
 class UPropHuntGameInstance;
 class APropHuntPlayerState;
 class APropHuntGameState;
+class AMenuGameMode;
 class FOnlineSessionSearchResult;
 
 UCLASS()
@@ -32,16 +33,20 @@ public:
 	AMenuController();
 
 	virtual void BeginPlay() override;
+	virtual void ClientReturnToMainMenuWithTextReason_Implementation(const FText& ReturnReason) override;
 
 public:
 	void ClientWantsToHost(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
 	void ClientWantsToJoin(int32 SessionResultIndex);
 	void HostWantsToStartGame();
 	void ClientWantsToQuit();
+	void HostWantsToQuit();
 
 	void SearchSessions();
 	void LoadSessionsInList(const TArray<FOnlineSessionSearchResult>& InSearchResults);;
 	void OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates);
+
+	void DisplaySessionError(const FString& ErrorMessage);
 
 public:
 	UFUNCTION(NetMulticast, Reliable)
@@ -81,6 +86,7 @@ private:
 
 	UPropHuntGameInstance* PropHuntGameInstance;
 	APropHuntGameState* PropHuntGameState;
+	TObjectPtr<AMenuGameMode> PropHuntMenuGameMode;
 	TArray<FOnlineSessionSearchResult> SearchResults;
 
 	bool IsPlayerListUpdateTimerOn;
