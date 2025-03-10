@@ -22,6 +22,48 @@ void UPropHuntGameInstance::Init()
 	PropHuntSubsystem = GetSubsystem<UPropHuntSubsystem>();
 	bIsMultiplayer = false;
 	bIsHost = false;
+
+	GEngine->OnNetworkFailure().AddUObject(this, &ThisClass::HandleNetworkFailure);
+	GEngine->OnTravelFailure().AddUObject(this, &ThisClass::HandleTravelFailure);
+}
+
+void UPropHuntGameInstance::HandleNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
+{
+	UE_LOG(LogPropHuntGameInstance, Warning, TEXT("Network Error: %s\nErrorString: "), ENetworkFailure::ToString(FailureType), *ErrorString);
+
+	// set disconnect reason
+	LastDisconnectReason = ErrorString;
+	
+	HandleFailureCleanups();
+}
+
+void UPropHuntGameInstance::HandleTravelFailure(UWorld* World, ETravelFailure::Type FailureType, const FString& ErrorString)
+{
+	// this one is not tested yet
+	UE_LOG(LogPropHuntGameInstance, Warning, TEXT("Travel Error: %s"), ETravelFailure::ToString(FailureType));
+
+	// set disconnect reason
+	LastDisconnectReason = ErrorString;
+
+	HandleFailureCleanups();
+
+}
+
+void UPropHuntGameInstance::HandleFailureCleanups()
+{
+	QuitGameCleanup();
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("Travelling to Menu level"));
+		PlayerController->ClientTravel("/Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
+		DestroySession();
+	}
+	else
+	{
+		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("Failed to get player controller in network failure handle"));
+	}
 }
 
 bool UPropHuntGameInstance::IsCurrentSessionName(const FString& CalleInfo)

@@ -52,6 +52,13 @@ protected:
 
 private:
 	virtual void Init() override;
+
+	UFUNCTION()
+	void HandleNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
+	UFUNCTION()
+	void HandleTravelFailure(UWorld* World, ETravelFailure::Type FailureType, const FString& ErrorString);
+	void HandleFailureCleanups();
+
 	bool IsCurrentSessionName(const FString& CalleInfo);
 	class AMenuController* GetPlayerController();
 

@@ -252,7 +252,9 @@ void AMenuController::HostWantsToStartGameOnServer_Implementation()
 
 void AMenuController::HostWantsToQuit()
 {
-	PropHuntMenuGameMode->ReturnToMainMenuHost();
+	//PropHuntMenuGameMode->ReturnToMainMenuHost();
+
+	ClientWantsToQuit();
 }
 
 void AMenuController::ClientWantsToQuit()
