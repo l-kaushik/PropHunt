@@ -41,3 +41,8 @@
 4. 9-03-2025
 - Implemented handling of client leaving a session and host leaving a sesson.
 - Implemented a variant of `ShowError` that can take a callback function bind to the ok button.
+
+5. 10-03-2025
+- Implemented better handling of host leaving session or game.
+- Binded functions to GEngine's OnNetworkFailure and OnTravelFailure.
+- Not using previous method now, but code is not removed either.
