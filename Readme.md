@@ -3,6 +3,16 @@
 1. Implement a way to have unique server name or a way to client know that which server is created by whom?
 1. Prevent player joining if player try to join a session with max players.
 1. Implement TravelError and NetworkError handling in GameInstance class.
+1. Improve prop hunt shooting mechanism to detect hit based on mesh not on collision box.
+
+# Testing Data
+
+1. 12/03/2025
+- Map: Test map
+- GPU: Intel GPU 610
+- Settings: 50% screenpercentage, 60 FPS, all quality sets to low/off, baked light, gpu usage 70%
+- Settings: 50% screenpercentage, 30 FPS -- same --, gpu usage 50%
+- Settings: 100% screenpercentage, 60 fps, -- same --, gpu usage 100%
 
 # Issues And Fixes
 1. Join session try to join on port 0 and connection timed out, only when I package the game and test, works fine in PIE.
