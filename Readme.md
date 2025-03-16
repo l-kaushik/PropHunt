@@ -1,3 +1,11 @@
+# notes
+1. Can change texture LOD bias to reduce vram usage
+1. remove lumen and use bakelight for low end system
+1. disable reflections
+1. remove TSR anti aliasing
+1. disable shadows completely
+1. set screen resolution to 50%, ugly graphics but better FPS
+1. use culling, occulsion
 
 # TODOs
 1. Implement a way to have unique server name or a way to client know that which server is created by whom?
