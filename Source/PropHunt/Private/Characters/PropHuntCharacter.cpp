@@ -2,6 +2,7 @@
 
 #include "Characters/PropHuntCharacter.h"
 #include "Controller/PropHuntPlayerController.h"
+#include "Utils/PropHuntLog.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -170,10 +171,12 @@ void APropHuntCharacter::Landed(const FHitResult& Hit)
 */
 
 void APropHuntCharacter::Shoot() {
+	UE_LOG(LogPropHuntCharacter, Display, TEXT("Started Firing"));
 	FireOnServer();
 }
 
 void APropHuntCharacter::StopShooting() {
+	UE_LOG(LogPropHuntCharacter, Display, TEXT("Stopped Firing"));
 	StopFireOnServer();
 }
 

@@ -20,3 +20,4 @@ DECLARE_LOG_CATEGORY_EXTERN(LogPropHuntController, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogPropHuntMenuGameMode, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogPropHuntGameMode, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogPropHuntWidget, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogPropHuntCharacter, Log, All);
