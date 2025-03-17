@@ -118,6 +118,13 @@ public:
 	bool isJumping;
 
 private:
+
+	UPROPERTY(EditDefaultsOnly, Category = "FX")
+	UParticleSystem* HitParticle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "FX")
+	UAnimationAsset* FireAnim;
+
 	FTimerHandle TimerHandle;
 	float BulletDistance;
 };

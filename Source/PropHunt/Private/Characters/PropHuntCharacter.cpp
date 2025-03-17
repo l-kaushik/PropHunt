@@ -69,6 +69,19 @@ APropHuntCharacter::APropHuntCharacter()
 	// private variables initialization
 	BulletDistance = 10000.0f;
 
+	// load hit particle
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/MilitaryWeapSilver/FX/P_Impact_Stone_Large_01.P_Impact_Stone_Large_01"));
+
+	if (ParticleAsset.Succeeded()) {
+		HitParticle = ParticleAsset.Object;
+	}
+
+	// load fire rifle animation
+	static ConstructorHelpers::FObjectFinder<UAnimationAsset> AnimationAsset(TEXT("/Game/MilitaryWeapSilver/Weapons/Animations/Fire_Rifle_W.Fire_Rifle_W"));
+
+	if (AnimationAsset.Succeeded()) {
+		FireAnim = AnimationAsset.Object;
+	}
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -263,8 +276,6 @@ void APropHuntCharacter::ShowHitMarker()
 }
 
 void APropHuntCharacter::FireMulticast_Implementation() {
-	static UAnimationAsset* FireAnim = LoadObject<UAnimationAsset>(nullptr, TEXT("/Game/MilitaryWeapSilver/Weapons/Animations/Fire_Rifle_W.Fire_Rifle_W"));
-
 	if (RifleMesh && FireAnim) {
 		RifleMesh->PlayAnimation(FireAnim, false);
 	}
@@ -275,10 +286,8 @@ void APropHuntCharacter::FireMulticast_Implementation() {
 }
 
 void APropHuntCharacter::HitFxMulticast_Implementation(FVector ImpactPoint) {
-	static UParticleSystem* ParticleSystem = LoadObject<UParticleSystem>(nullptr, TEXT("/Game/MilitaryWeapSilver/FX/P_Impact_Stone_Large_01.P_Impact_Stone_Large_01"));
-
-	if (ParticleSystem) {
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, FTransform(ImpactPoint));
+	if (HitParticle) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, FTransform(ImpactPoint));
 	}
 	else
 	{
