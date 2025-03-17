@@ -197,6 +197,7 @@ void APropHuntCharacter::StopFireOnServer_Implementation() {
 }
 
 void APropHuntCharacter::Fire() {
+	if (isJumping || GetCharacterMovement()->IsFalling()) return;
 	GetClientCameraRotation();
 }
 
