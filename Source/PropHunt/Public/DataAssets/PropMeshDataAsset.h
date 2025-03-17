@@ -13,16 +13,16 @@ struct FPropData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CapsuleHalfHeight;
+	float CapsuleHalfHeight = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CapsuleRadius;
+	float CapsuleRadius = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector MeshLocation;
+	FVector MeshLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UStaticMesh> StaticMesh;
+	TObjectPtr<UStaticMesh> StaticMesh = nullptr;
 };
 
 UCLASS()
