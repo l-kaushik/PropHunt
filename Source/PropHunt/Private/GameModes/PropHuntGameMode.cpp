@@ -68,7 +68,7 @@ void APropHuntGameMode::SpawnPlayer(APropHuntPlayerController* PlayerController)
 	SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
-
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	APropCharacter* PropCharacter = World->SpawnActor<APropCharacter>(PropCharBlueprintRef, SpawnTransform, SpawnParams);
 
 	PlayerController->GetPawn()->Destroy();
