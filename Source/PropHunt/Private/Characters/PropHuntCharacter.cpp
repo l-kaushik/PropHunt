@@ -18,6 +18,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 
+UParticleSystem* APropHuntCharacter::HitParticle = nullptr;
+UAnimationAsset* APropHuntCharacter::FireAnim = nullptr;
+
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////

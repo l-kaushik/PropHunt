@@ -119,11 +119,8 @@ public:
 
 private:
 
-	UPROPERTY(EditDefaultsOnly, Category = "FX")
-	UParticleSystem* HitParticle;
-
-	UPROPERTY(EditDefaultsOnly, Category = "FX")
-	UAnimationAsset* FireAnim;
+	static UParticleSystem* HitParticle;
+	static UAnimationAsset* FireAnim;
 
 	FTimerHandle TimerHandle;
 	float BulletDistance;
