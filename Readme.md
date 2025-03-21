@@ -12,6 +12,8 @@
 1. Prevent player joining if player try to join a session with max players.
 1. Implement TravelError and NetworkError handling in GameInstance class.
 1. Improve prop hunt shooting mechanism to detect hit based on mesh not on collision box.
+1. Add free look with alt button, so prop can look around without disturbing hide position.
+1. Add mouse wheel to camera distance change.
 
 # Testing Data
 
@@ -37,7 +39,7 @@
 
 4. When player changes the mesh, its kinda glitchy now. Happening after adding capsule and mesh location updates.
 
-	**Fix	:** `SphereTraceSingle()` was tracing the floor mesh and changing to it. Fixed by replacing to `SphereTraceMulti()` and checking if should changed to traced actor or not.
+	**Fix:** `SphereTraceSingle()` was tracing the floor mesh and changing to it. Fixed by replacing to `SphereTraceMulti()` and checking if should changed to traced actor or not.
 
 5. When host quit the game `MenuGameMode::ReturnToMainMenuHost()` send a reason to `PlayerController::ClientReturnToMainMenuWithTextReason_Implementation()`, but the reason is getting overrite by internal function calling it again.
 
