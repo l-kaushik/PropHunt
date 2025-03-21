@@ -246,7 +246,7 @@ void APropCharacter::PerformSphereTrace() {
 			* let player switch to any prop, except LODGroup = large prop.
 			*/
 			UStaticMesh* StaticMesh = GetTracedObjectMesh(Hit.GetActor());
-			if (StaticMesh && (StaticMesh->LODGroup != FName("LargeProp")))
+			if (StaticMesh && (StaticMesh->GetName().StartsWith(TEXT("PropSwitch_"))))
 			{
 				UpdateMeshMulticast(StaticMesh);
 				break;
