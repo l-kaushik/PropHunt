@@ -7,6 +7,7 @@
 #include "States/PropHuntPlayerState.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "Utils/PropHuntLog.h"
+#include "Utils/GameConstants.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -64,7 +65,7 @@ void AMenuGameMode::ReturnToMainMenuHost()
 
 void AMenuGameMode::StartGame()
 {
-	GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+	GetWorld()->ServerTravel(GameConstants::GetMapWithListen(GameConstants::Map_Warehouse));
 }
 
 const FUniqueNetId& AMenuGameMode::GetUniqueIdFromController(AMenuController* Player)

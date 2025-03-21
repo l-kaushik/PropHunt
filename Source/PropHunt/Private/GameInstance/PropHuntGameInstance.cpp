@@ -6,6 +6,7 @@
 #include "Subsystem/PropHuntSubsystem.h"
 #include "Controller/MenuController.h"
 #include "Utils/PropHuntLog.h"
+#include "Utils/GameConstants.h"
 
 #include "OnlineSubsystemTypes.h"
 #include "OnlineSubsystemUtils.h"
@@ -57,7 +58,7 @@ void UPropHuntGameInstance::HandleFailureCleanups()
 	if (PlayerController)
 	{
 		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("Travelling to Menu level"));
-		PlayerController->ClientTravel("/Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
+		PlayerController->ClientTravel(GameConstants::Map_Menu, ETravelType::TRAVEL_Absolute);
 		DestroySession();
 	}
 	else
@@ -129,10 +130,7 @@ void UPropHuntGameInstance::OnCreateSessionCompleted(bool Successful)
 	{
 		UE_LOG(LogPropHuntGameInstance, Display, TEXT("OnCreateSessionCompleted: session created successfully"));
 
-		FString LevelPath("/Game/ThirdPerson/Maps/MenuMap");
-		FString CommandString("?listen");
-
-		if (GetWorld()->ServerTravel(LevelPath + CommandString))
+		if (GetWorld()->ServerTravel(GameConstants::GetMapWithListen(GameConstants::Map_Menu)))
 		{
 			UE_LOG(LogPropHuntGameInstance, Display, TEXT("OnCreateSessionCompleted: Seamless travel succeeded"));
 			bIsMultiplayer = true;
