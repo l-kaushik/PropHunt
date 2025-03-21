@@ -124,6 +124,12 @@ void APropCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Decrease camera distance
 		EnhancedInputComponent->BindAction(CameraDistanceDecreaseAction, ETriggerEvent::Triggered, this, &APropCharacter::CameraDistanceDecrease);
+
+		// Rotate left
+		EnhancedInputComponent->BindAction(RotateLeftAction, ETriggerEvent::Triggered, this, &APropCharacter::RotateLeftOnServer);
+
+		// Rotate right
+		EnhancedInputComponent->BindAction(RotateRightAction, ETriggerEvent::Triggered, this, &APropCharacter::RotateRightOnServer);
 	}
 	else
 	{
@@ -145,6 +151,24 @@ void APropCharacter::ChangeCameraDistance(float Offset)
 {
 	CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength + Offset, 0.0f, 3000.0f);
 	UE_LOG_NON_SHIP(LogPropCharacter, Warning, TEXT("ArmLength: %f"), CameraBoom->TargetArmLength);
+}
+
+void APropCharacter::RotateLeftOnServer_Implementation()
+{
+	RotatePropMulticast(5.0f);
+	UE_LOG_NON_SHIP(LogPropCharacter, Warning, TEXT("Rotated left"));
+}
+
+void APropCharacter::RotateRightOnServer_Implementation()
+{
+	RotatePropMulticast(-5.0f);
+	UE_LOG_NON_SHIP(LogPropCharacter, Warning, TEXT("Rotated left"));
+}
+
+void APropCharacter::RotatePropMulticast_Implementation(float Offset)
+{
+	FRotator NewRotation(0.0f, Offset, 0.0f);
+	PropMesh->AddLocalRotation(NewRotation);
 }
 
 float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

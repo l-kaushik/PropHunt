@@ -13,7 +13,6 @@ class UInputAction;
 struct FInputActionValue;
 class UStaticMeshComponent;
 class ASpawnedProp;
-class UPropMeshDataAsset;
 
 UCLASS()
 class PROPHUNT_API APropCharacter : public ACharacter
@@ -59,6 +58,14 @@ class PROPHUNT_API APropCharacter : public ACharacter
 	/* Change camera distance input action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* CameraDistanceDecreaseAction;
+
+	/* Rotate Left */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* RotateLeftAction;
+
+	/* Rotate Right */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* RotateRightAction;
 
 	/** Prop Mesh actual player */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -111,6 +118,15 @@ private:
 	void CameraDistanceIncrease();
 	void CameraDistanceDecrease();
 	void ChangeCameraDistance(float Offset);
+
+	UFUNCTION(Server, Unreliable)
+	void RotateLeftOnServer();
+
+	UFUNCTION(Server, Unreliable)
+	void RotateRightOnServer();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void RotatePropMulticast(float Offset);
 
 private:
 	float Health;
