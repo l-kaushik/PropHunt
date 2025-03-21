@@ -5,6 +5,7 @@
 #include "Controller/PropHuntPlayerController.h"
 #include "Interfaces/PropHuntGameModeInterface.h"
 #include "GameModes/PropHuntGameMode.h"
+#include "Utils/PropHuntLog.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -117,11 +118,33 @@ void APropCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Spawn prop
 		EnhancedInputComponent->BindAction(SpawnPropAction, ETriggerEvent::Triggered, this, &APropCharacter::SpawnPropOnServer);
+
+		// Increase camera distance
+		EnhancedInputComponent->BindAction(CameraDistanceIncreaseAction, ETriggerEvent::Triggered, this, &APropCharacter::CameraDistanceIncrease);
+
+		// Decrease camera distance
+		EnhancedInputComponent->BindAction(CameraDistanceDecreaseAction, ETriggerEvent::Triggered, this, &APropCharacter::CameraDistanceDecrease);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void APropCharacter::CameraDistanceIncrease()
+{
+	ChangeCameraDistance(50.0f);
+}
+
+void APropCharacter::CameraDistanceDecrease()
+{
+	ChangeCameraDistance(-50.0f);
+}
+
+void APropCharacter::ChangeCameraDistance(float Offset)
+{
+	CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength + Offset, 0.0f, 3000.0f);
+	UE_LOG_NON_SHIP(LogPropCharacter, Warning, TEXT("ArmLength: %f"), CameraBoom->TargetArmLength);
 }
 
 float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

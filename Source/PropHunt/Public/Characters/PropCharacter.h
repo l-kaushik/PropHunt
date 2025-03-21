@@ -52,6 +52,14 @@ class PROPHUNT_API APropCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* SpawnPropAction;
 
+	/* Change camera distance input action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* CameraDistanceIncreaseAction;
+
+	/* Change camera distance input action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* CameraDistanceDecreaseAction;
+
 	/** Prop Mesh actual player */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PropMesh;
@@ -86,7 +94,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-public:
+private:
 	/* Change prop */
 	UFUNCTION(Server, Reliable)
 	void ChangePropOnServer();
@@ -99,6 +107,10 @@ public:
 	/* Spawn duplicate prop */
 	UFUNCTION(Server, Reliable)
 	void SpawnPropOnServer();
+
+	void CameraDistanceIncrease();
+	void CameraDistanceDecrease();
+	void ChangeCameraDistance(float Offset);
 
 private:
 	float Health;

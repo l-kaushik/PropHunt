@@ -12,3 +12,4 @@ DEFINE_LOG_CATEGORY(LogPropHuntMenuGameMode);
 DEFINE_LOG_CATEGORY(LogPropHuntGameMode);
 DEFINE_LOG_CATEGORY(LogPropHuntWidget);
 DEFINE_LOG_CATEGORY(LogPropHuntCharacter);
+DEFINE_LOG_CATEGORY(LogPropCharacter);
