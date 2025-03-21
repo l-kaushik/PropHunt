@@ -5,7 +5,6 @@
 #include "Controller/PropHuntPlayerController.h"
 #include "Interfaces/PropHuntGameModeInterface.h"
 #include "GameModes/PropHuntGameMode.h"
-#include "DataAssets/PropMeshDataAsset.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -220,12 +219,13 @@ void APropCharacter::PerformSphereTrace() {
 	if (bHit) {
 		for (const FHitResult& Hit : OutHits)
 		{
+			/*
+			* let player switch to any prop, except LODGroup = large prop.
+			*/
 			UStaticMesh* StaticMesh = GetTracedObjectMesh(Hit.GetActor());
-			const FPropData* FoundData = PropMeshDataAsset->PropDataMap.Find(StaticMesh);
-
-			if (FoundData)
+			if (StaticMesh && (StaticMesh->LODGroup != FName("LargeProp")))
 			{
-				UpdateMeshMulticast(*FoundData);
+				UpdateMeshMulticast(StaticMesh);
 				break;
 			}
 		}
@@ -259,10 +259,8 @@ UStaticMesh* APropCharacter::GetTracedObjectMesh(AActor* HitActor) {
 	return StaticMesh;
 }
 
-void APropCharacter::UpdateMeshMulticast_Implementation(const FPropData& PropData) {
-	PropMesh->SetStaticMesh(PropData.StaticMesh);
-	this->GetCapsuleComponent()->SetCapsuleSize(PropData.CapsuleRadius, PropData.CapsuleHalfHeight);
-	PropMesh->SetRelativeLocation(PropData.MeshLocation);
+void APropCharacter::UpdateMeshMulticast_Implementation(UStaticMesh* PropData) {
+	PropMesh->SetStaticMesh(PropData);
 }
 
 /* Spawn duplicate props */
