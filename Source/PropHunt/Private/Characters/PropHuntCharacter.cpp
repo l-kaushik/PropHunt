@@ -217,10 +217,10 @@ void APropHuntCharacter::StopFireOnServer_Implementation() {
 
 void APropHuntCharacter::Fire() {
 	if (isJumping || GetCharacterMovement()->IsFalling()) return;
-	GetClientCameraRotation();
+	SendCameraRotationForTrace();
 }
 
-void APropHuntCharacter::GetClientCameraRotation_Implementation() {
+void APropHuntCharacter::SendCameraRotationForTrace_Implementation() {
 	FRotator CameraRotation = FollowCamera->GetComponentRotation();
 	LineTraceOnServer(CameraRotation);
 }

@@ -92,7 +92,7 @@ public:
 	void StopFireOnServer();
 
 	UFUNCTION(Client, Reliable)
-	void GetClientCameraRotation();
+	void SendCameraRotationForTrace();
 
 	UFUNCTION(Server, Reliable)
 	void LineTraceOnServer(FRotator CameraRotation);
