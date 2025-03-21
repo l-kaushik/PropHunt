@@ -64,8 +64,11 @@ void APropHuntGameMode::SpawnPlayer(APropHuntPlayerController* PlayerController)
 	if (!PlayerController) return;
 	UWorld* World = GetWorld();
 
+	AActor* SpawnPoint = FindPlayerStart(nullptr);
+	// spawnPoint's location is 0,0,0
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
+	SpawnTransform.SetLocation(FVector(12660.000000,6660.000000,530.000000));
+	//SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
@@ -160,8 +163,11 @@ void APropHuntGameMode::SpawnHunter()
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("SpawnHunter called"));
 	UWorld* World = GetWorld();
 
+	AActor* SpawnPoint = FindPlayerStart(nullptr);
+
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
+	SpawnTransform = SpawnPoint->GetTransform();
+	//SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
