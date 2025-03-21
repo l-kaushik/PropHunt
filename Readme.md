@@ -11,9 +11,7 @@
 1. Implement a way to have unique server name or a way to client know that which server is created by whom?
 1. Prevent player joining if player try to join a session with max players.
 1. Implement TravelError and NetworkError handling in GameInstance class.
-1. Improve prop hunt shooting mechanism to detect hit based on mesh not on collision box.
 1. Add free look with alt button, so prop can look around without disturbing hide position.
-1. Add mouse wheel to camera distance change.
 
 # Testing Data
 
@@ -66,3 +64,9 @@
 - Implemented better handling of host leaving session or game.
 - Binded functions to GEngine's OnNetworkFailure and OnTravelFailure.
 - Not using previous method now, but code is not removed either.
+
+6. 21-03-2025
+- Added prefix for all switchable props, comparing this when player try to switch to a prop.
+- Implemented camera distance change using mouse wheel.
+- Implemented prop rotation feature, using Q and E.
+- Changed prop switch key to R.
