@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameModes/PropHuntGameMode.h"
+#include "Utils/GameConstants.h"
 #include "Characters/PropCharacter.h"
 #include "Characters/PropHuntCharacter.h"
 #include "Controller/PropHuntPlayerController.h"
@@ -106,16 +107,17 @@ void APropHuntGameMode::StartNextGame()
 {
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("StartNextGame called"));
 
-	GetWorld()->ServerTravel(TEXT("/Game/ThirdPerson/Maps/ThirdPersonMap"));
+	GetWorld()->ServerTravel(GameConstants::GetMapWithListen(GameConstants::Map_Warehouse));
 }
 
+/* check if number of players is equal to number of players in hub, start/reset the timer after the last joined player basically fail safe when any 1 or more player disconnect between level transition.*/
 void APropHuntGameMode::CheckGameStarted()
 {
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("CheckGameStarted called"));
 	// Start game if we have at least MinPlayerNum in game
 	if (!MyGameState->GetHasGameStarted()) {
 		int32 ArrayLength = MyGameState->GetPlayerControllerList().Num();
-		if (ArrayLength >= MyGameState->GetMinPlayerNum()) {
+		if (ArrayLength >= MyGameState->GetMinPlayerNum() /*|| 30 seconds of last player joined*/) {
 			StartGameTimer();
 		}
 	}
@@ -142,15 +144,15 @@ void APropHuntGameMode::StartGameTimer()
 void APropHuntGameMode::ChooseHunterCharacter()
 {
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("ChooseHunterCharacter called"));
-	MyGameState->SetHasGameStarted(true);
 
 	int32 Length = MyGameState->GetPlayerControllerList().Num() - 1;
 	int32 RandomIndex = FMath::RandRange(0, Length);
 	APropHuntPlayerController* Hunter = *(MyGameState->GetPlayerControllerList().GetData() + RandomIndex);
 
 	if (Hunter) {
-		MyGameState->AddHunter(Hunter);
-		SpawnHunter();
+		SpawnHunter(Hunter);
+		MyGameState->SetHasGameStarted(true);
+		StartGameLoopTimer();
 	}
 	else {
 		StartGameTimer();	// if hunter not present, reset 
@@ -158,9 +160,8 @@ void APropHuntGameMode::ChooseHunterCharacter()
 
 }
 
-void APropHuntGameMode::SpawnHunter()
+APropHuntCharacter* APropHuntGameMode::SpawnCharacter()
 {
-	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("SpawnHunter called"));
 	UWorld* World = GetWorld();
 
 	AActor* SpawnPoint = FindPlayerStart(nullptr);
@@ -173,10 +174,15 @@ void APropHuntGameMode::SpawnHunter()
 
 	APropHuntCharacter* HunterCharacter = World->SpawnActor<APropHuntCharacter>(CharacterBlueprint, SpawnTransform, SpawnParams);
 
-	/*
-	* taking the 0th indexed hunter controller cuz for now only 2 player exits, but when hunter kills more player, more hunter will join, so I have to maintain a counter or something to note that how many hunters have assigned with their pawns
-	*/
-	APropHuntPlayerController* HunterController = *(MyGameState->GetHunterList().GetData());
+	return HunterCharacter;
+}
+
+void APropHuntGameMode::SpawnHunter(APropHuntPlayerController* HunterController)
+{
+	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("SpawnHunter called"));
+
+	MyGameState->AddHunter(HunterController);
+	APropHuntCharacter* HunterCharacter = SpawnCharacter();
 	HunterController->GetPawn()->Destroy();		// destroy current actor owned by hunter controller
 
 	// posses the hunter with the spawned hunter character
@@ -189,11 +195,11 @@ void APropHuntGameMode::SpawnHunter()
 				if (HasAuthority()) {
 					HunterController->Possess(HunterCharacter);
 					SetupInitialWidget(HunterController);
-					StartGameLoopTimer();
 				}
 			},
 			2,
-			false);
+			false
+		);
 	}
 }
 
@@ -232,3 +238,24 @@ void APropHuntGameMode::SetupInitialWidget(APropHuntPlayerController* HunterCont
 		}
 	}
 }
+
+void APropHuntGameMode::HandlePropDeath(APropHuntPlayerController* PlayerController)
+{
+	int HunterCount = MyGameState->GetHunterList().Num();
+	int TotalPlayerCount = MyGameState->GetPlayerControllerList().Num();
+	int PropCount = TotalPlayerCount - HunterCount - 1; // this 1 is for the current prop who is dead but still not hunter
+
+	UE_LOG_NON_SHIP(LogPropHuntGameMode, Warning, TEXT("HunterCount: %d, PlayerCount: %d, PropCount: %d"), HunterCount, TotalPlayerCount, PropCount);
+
+	if (PropCount > 0)
+	{
+		PlayerController->SetIsProp(false);
+		SpawnHunter(PlayerController);
+	}
+	else
+	{
+		// since all props died
+		EndTheGame(false);
+	}
+}
+

@@ -79,6 +79,11 @@ void APropHuntPlayerController::TrySetupPropWidget(bool bIsProp)
 	}
 }
 
+void APropHuntPlayerController::SetIsProp(bool bIsProp)
+{
+	m_bIsProp = bIsProp;
+}
+
 void APropHuntPlayerController::ShowHitMarkerOnClient_Implementation()
 {
 	MainHudRef->PlayHitMarkerAnimation();

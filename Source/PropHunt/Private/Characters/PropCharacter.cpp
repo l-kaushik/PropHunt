@@ -183,14 +183,9 @@ float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 		if (Health <= 0.0f)
 		{
-			if (auto* GameMode = UGameplayStatics::GetGameMode(GetWorld()))
+			if (auto* GameMode = Cast<APropHuntGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
 			{
-				auto* GameModeInterface = Cast<IPropHuntGameModeInterface>(GameMode);
-				if (GameModeInterface)
-				{
-					GameModeInterface->EndTheGame(false);
-				}
-				
+				GameMode->HandlePropDeath(Cast<APropHuntPlayerController>(GetController()));
 			}
 		}
 	}

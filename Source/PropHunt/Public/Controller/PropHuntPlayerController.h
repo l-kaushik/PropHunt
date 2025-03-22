@@ -37,6 +37,7 @@ public:
 public:
 
 	void TrySetupPropWidget(bool bIsProp);
+	void SetIsProp(bool bIsProp);
 
 protected:
 	UFUNCTION(Client, Reliable)

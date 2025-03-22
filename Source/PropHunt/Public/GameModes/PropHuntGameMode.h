@@ -24,6 +24,7 @@ public:
 	virtual void Logout(AController* ExistingPlayer) override;
 	virtual void InitGameState() override;
 	void SpawnPlayer(APropHuntPlayerController* PlayerController);
+	void HandlePropDeath(APropHuntPlayerController* PlayerController);
 
 public:
 	// interface functions
@@ -34,7 +35,8 @@ protected:
 	void CheckGameStarted();
 	void StartGameTimer();
 	void ChooseHunterCharacter();
-	void SpawnHunter();
+	APropHuntCharacter* SpawnCharacter();
+	void SpawnHunter(APropHuntPlayerController* HunterController);
 	void StartGameLoopTimer();
 	void TimerFinishEndGame();
 	void SetupInitialWidget(APropHuntPlayerController* HunterController);
