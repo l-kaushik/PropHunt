@@ -13,5 +13,11 @@ UCLASS()
 class PROPHUNT_API ULoadingScreenWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+	void SetLoadingMessage(const FString& InMessage = "Loading Map");
+
+private:
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* LoadingMessage;
 };
