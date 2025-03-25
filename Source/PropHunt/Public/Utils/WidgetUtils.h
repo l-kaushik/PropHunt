@@ -26,7 +26,7 @@ public:
 	{
 		if (!WidgetBPClassRef)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Widget blueprint class reference is invalid"));
+			UE_LOG(LogPropHuntWidget, Warning, TEXT("Widget blueprint class reference is invalid"));
 			return nullptr;
 		}
 
@@ -34,7 +34,7 @@ public:
 
 		if (!WidgetRef)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to create widget, check template argument type and widget blueprint class reference"));
+			UE_LOG(LogPropHuntWidget, Warning, TEXT("Failed to create widget, check template argument type and widget blueprint class reference"));
 			return nullptr;
 		}
 
@@ -67,13 +67,13 @@ public:
 	{
 		if (!WidgetSwitcher)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("WidgetSwitcher object is invalid or null."));
+			UE_LOG(LogPropHuntWidget, Warning, TEXT("WidgetSwitcher object is invalid or null."));
 			return;
 		}
 
 		if (!WidgetBPClassRef)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Widget blueprint class reference is invalid"));
+			UE_LOG(LogPropHuntWidget, Warning, TEXT("Widget blueprint class reference is invalid"));
 			return;
 		}
 
