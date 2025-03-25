@@ -40,6 +40,9 @@ public:
 
 	UPROPERTY()
 	TSubclassOf<class UServerEntryWidget> ServerEntryWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class ULoadingScreenWidget> LoadingScreenWidgetBPClassRef;
 private:
 	// Private constructor to enforce singleton
 	UUIManager();

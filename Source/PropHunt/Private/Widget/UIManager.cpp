@@ -10,6 +10,7 @@
 #include "Widget/LobbyWidget.h"
 #include "Widget/PlayerEntryWidget.h"
 #include "Widget/ServerEntryWidget.h"
+#include "Widget/LoadingScreenWidget.h"
 
 UUIManager* UUIManager::Get()
 {
@@ -33,5 +34,6 @@ void UUIManager::InitializeWidgets()
 	LobbyWidgetBPClassRef = GlobalUtils::LoadBlueprint<ULobbyWidget>(BasePath + FString("WB_Lobby"));
 	PlayerEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UPlayerEntryWidget>(BasePath + FString("WB_PlayerEntry"));
 	ServerEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UServerEntryWidget>(BasePath + FString("WB_ServerEntry"));
+	LoadingScreenWidgetBPClassRef = GlobalUtils::LoadBlueprint<ULoadingScreenWidget>(BasePath + FString("WB_LoadingScreen"));
 }
 
