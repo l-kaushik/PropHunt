@@ -16,6 +16,7 @@
 #include "Utils/WidgetUtils.h"
 #include "Widget/UIManager.h"
 #include "Utils/PropHuntLog.h"
+#include "Widget/LoadingScreenWidget.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -30,6 +31,7 @@ AMenuController::AMenuController()
 	LobbyWidgetBPClassRef = UUIManager::Get()->LobbyWidgetBPClassRef;
 	PlayerEntryWidgetBPClassRef = UUIManager::Get()->PlayerEntryWidgetBPClassRef;
 	ServerEntryWidgetBPClassRef = UUIManager::Get()->ServerEntryWidgetBPClassRef;
+	LoadingScreenWidgetBPClassRef = UUIManager::Get()->LoadingScreenWidgetBPClassRef;
 
 	// initialize variables
 	IsPlayerListUpdateTimerOn = false;
@@ -225,6 +227,7 @@ void AMenuController::AddServersToList()
 
 void AMenuController::ClientWantsToJoin(int32 SessionResultIndex)
 {
+	ShowLoadingScreen("Joining lobby");
 	ClientWantsToJoinOnServer(SessionResultIndex);
 }
 
@@ -244,10 +247,33 @@ void AMenuController::HostWantsToStartGame()
 	HostWantsToStartGameOnServer();
 }
 
+void AMenuController::ShowLoadingScreen_Implementation(const FString& InMessage = "Loading Map")
+{
+	UE_LOG(LogTemp, Warning, TEXT("Show loading screen called"));
+
+	LoadingWidget = WidgetUtils::CreateAndAddWidget<ULoadingScreenWidget>(this, LoadingScreenWidgetBPClassRef);
+	LoadingWidget->SetLoadingMessage(InMessage);
+}
+
 void AMenuController::HostWantsToStartGameOnServer_Implementation()
 {
-	PropHuntGameInstance->SetPlayerNum(PropHuntGameState->PlayerArray.Num());
-	PropHuntGameInstance->StartSession();
+	// show loading screen for all connected clients
+	for (const auto& Controller : PropHuntGameState->GetMenuPlayerControllerList())
+	{
+		Controller->ShowLoadingScreen("Travelling to server...");
+	}
+
+	//perform server travel after .5 seconds
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle, 
+		[this]() {
+		PropHuntGameInstance->SetPlayerNum(PropHuntGameState->PlayerArray.Num());
+		PropHuntGameInstance->StartSession();
+		},
+		0.5f,
+		false
+	);
 }
 
 void AMenuController::HostWantsToQuit()

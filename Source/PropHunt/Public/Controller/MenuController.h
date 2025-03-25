@@ -52,6 +52,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void HostWantsToStopPlayerListUpdateTimer();
 
+	UFUNCTION(Client, Reliable)
+	void ShowLoadingScreen(const FString& InMessage);
+
 protected:
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToHostOnServer(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatc);
@@ -91,4 +94,7 @@ private:
 
 	bool IsPlayerListUpdateTimerOn;
 	FTimerHandle PlayerListUpdateTImer;
+
+	TSubclassOf<class ULoadingScreenWidget> LoadingScreenWidgetBPClassRef;
+	class ULoadingScreenWidget* LoadingWidget;
 };
