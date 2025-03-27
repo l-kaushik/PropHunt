@@ -22,6 +22,9 @@ void UMainHud::SetupPropWidget(bool bIsProp)
 	else {
 		GameStatusText = FText::FromString("Find the Prop!");
 		Crosshair->SetVisibility(ESlateVisibility::Visible);
+
+		if(HealthBar->GetVisibility() == ESlateVisibility::Visible)
+			HealthBar->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	GameStatus->SetText(GameStatusText);

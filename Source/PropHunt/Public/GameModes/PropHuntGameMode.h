@@ -39,7 +39,7 @@ protected:
 	void SpawnHunter(APropHuntPlayerController* HunterController);
 	void StartGameLoopTimer();
 	void TimerFinishEndGame();
-	void SetupInitialWidget(APropHuntPlayerController* HunterController);
+	void SetupInitialWidget();
 
 	template <class T>
 	TSubclassOf<T> LoadBlueprint(const FString& BlueprintPath)

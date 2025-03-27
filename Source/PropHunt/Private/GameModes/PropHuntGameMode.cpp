@@ -82,6 +82,11 @@ void APropHuntGameMode::SpawnPlayer(APropHuntPlayerController* PlayerController)
 
 void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 {
+
+	/*
+	* change the current win screen to a leader board kind of system, that shows player kill count, person with most hidden time, and then give the host permission to start the game or quit the game.
+	*/
+
 	GetWorldTimerManager().ClearTimer(GameLoopTimer);
 	MyGameState->SetIsPropWon(bIsPropWon);
 
@@ -152,6 +157,7 @@ void APropHuntGameMode::ChooseHunterCharacter()
 	if (Hunter) {
 		SpawnHunter(Hunter);
 		MyGameState->SetHasGameStarted(true);
+		SetupInitialWidget();
 		StartGameLoopTimer();
 	}
 	else {
@@ -194,7 +200,13 @@ void APropHuntGameMode::SpawnHunter(APropHuntPlayerController* HunterController)
 			[this, HunterController, HunterCharacter]() {
 				if (HasAuthority()) {
 					HunterController->Possess(HunterCharacter);
-					SetupInitialWidget(HunterController);
+
+					/*
+					* make sure here, only the HunterController's UI get updated, and setup initial widget for props somewhere else
+					* it breaks the SRP
+					*/
+
+					HunterController->TrySetupPropWidget(false);
 				}
 			},
 			2,
@@ -218,10 +230,11 @@ void APropHuntGameMode::TimerFinishEndGame()
 	EndTheGame(true);
 }
 
-void APropHuntGameMode::SetupInitialWidget(APropHuntPlayerController* HunterController)
+void APropHuntGameMode::SetupInitialWidget()
 {
-	// setup widget for the first hunter
-	HunterController->TrySetupPropWidget(false);
+	// since running for first time and only 1 hunter will exist that time
+
+	APropHuntPlayerController* HunterController = MyGameState->GetHunterList()[0];
 
 	// setup widget for rest of the props
 	for (auto& PlayerController : MyGameState->GetPlayerControllerList()) {
@@ -233,7 +246,7 @@ void APropHuntGameMode::SetupInitialWidget(APropHuntPlayerController* HunterCont
 		}
 
 		// setup the other start screen widget
-		if (PlayerController && PlayerController != HunterController) {
+		if (PlayerController != HunterController) {
 			PlayerController->TrySetupPropWidget(true);
 		}
 	}
