@@ -21,7 +21,7 @@ public:
 
 	virtual void SetupPropWidget(bool bIsProp) = 0;
 	virtual void UpdateHealthWidget(float NewHealth) = 0;
-	virtual void ShowWinScreenWidget(bool bIsPropWon) = 0;
+	virtual void ShowWinScreenWidget() = 0;
 	virtual void StartCountdownWidget() = 0;
 	virtual void PlayHitMarkerAnim() = 0;
 };

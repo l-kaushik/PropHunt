@@ -93,7 +93,7 @@ void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 	for (auto& PlayerController : MyGameState->GetPlayerControllerList()) {
 		if (PlayerController)
 		{
-			PlayerController->ShowWinScreenWidget(MyGameState->GetIsPropWon());
+			PlayerController->ShowWinScreenWidget();
 		}
 	}
 

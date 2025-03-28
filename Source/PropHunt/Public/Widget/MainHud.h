@@ -9,6 +9,13 @@
 /**
  * 
  */
+
+class UImage;
+class UBorder;
+class UTextBlock;
+class UProgressBar;
+class UBackgroundBlur;
+
 UCLASS()
 class PROPHUNT_API UMainHud : public UUserWidget
 {
@@ -18,7 +25,7 @@ public:
 	void SetupPropWidget(bool bIsProp);
 	void UpdateHealthBar(float NewHealth);
 	void PlayHitMarkerAnimation();
-	void ShowWinScreen(bool bIsPropWon, bool bIsProp);
+	void ShowWinScreen(bool bIsHost);
 	void StartTimer();
 	void EndTimer();
 	void UpdateTimerText();
@@ -30,50 +37,54 @@ protected:
 
 private:
 	void InitializeWidgetComponents();
-	void SetGameStatusText();
+	void SetPlayerObjectiveText();
 	void SetCrosshairImage();
 	void SetHitMarker();
 	void SetHealthBar();
 	void SetWinScreen();
 	void SetWinScreenText();
-	void SetNewGameStartingText();
 	void SetTimerBorder();
 	void SetTimerIcon();
 	void SetTimerText();
 	void HitMarkerAnimFinished(UWidgetAnimation* Animation);
 
+
+	// HUD elements
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* GameStatus;
+	UTextBlock* PlayerObjective;
 
 	UPROPERTY(meta = (BindWidget))
-	class UImage* Crosshair;
+	UImage* Crosshair;
 
 	UPROPERTY(meta = (BindWidget))
-	class UImage* HitMarker;
+	UProgressBar* HealthBar;
+
+	// Hit marker and animation
 
 	UPROPERTY(meta = (BindWidget))
-	class UProgressBar* HealthBar;
+	UImage* HitMarker;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* HitMarkerAnim;
+
+	// Win screen
 
 	UPROPERTY(meta = (BindWidget))
-	class UBackgroundBlur* WinScreen;
+	UBackgroundBlur* WinScreen;
 	
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* WinScreenText;
+	UTextBlock* WinScreenText;
+
+	// Timer
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* NewGameStartingText;
+	UBorder* TimerBorder;
 
 	UPROPERTY(meta = (BindWidget))
-	class UBorder* TimerBorder;
+	UImage* TimerIcon;
 
 	UPROPERTY(meta = (BindWidget))
-	class UImage* TimerIcon;
-
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* TimerText;
+	UTextBlock* TimerText;
 
 	FTimerHandle CountdownTimer;
-
-	UPROPERTY(Transient,meta = (BindWidgetAnim))
-	UWidgetAnimation* HitMarkerAnim;
 };

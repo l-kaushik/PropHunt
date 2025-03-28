@@ -2,6 +2,7 @@
 
 #include "Controller/PropHuntPlayerController.h"
 #include "Widget/MainHud.h"
+#include "GameInstance/PropHuntGameInstance.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -37,6 +38,8 @@ void APropHuntPlayerController::BeginPlay() {
 		SetInputMode(FInputModeGameOnly());
 		SetShowMouseCursor(false);
 	}
+
+	PropHuntGameInstance = GetWorld()->GetGameInstance<UPropHuntGameInstance>();
 }
 
 void APropHuntPlayerController::SetupPropWidget(bool bIsProp)
@@ -50,9 +53,9 @@ void APropHuntPlayerController::UpdateHealthWidget(float NewHealth)
 	UpdateHealthOnClient(NewHealth);
 }
 
-void APropHuntPlayerController::ShowWinScreenWidget(bool bIsPropWon)
+void APropHuntPlayerController::ShowWinScreenWidget()
 {
-	ShowWinScreenOnClient(bIsPropWon, m_bIsProp);
+	ShowWinScreenOnClient();
 }
 
 void APropHuntPlayerController::StartCountdownWidget()
@@ -94,9 +97,9 @@ void APropHuntPlayerController::UpdateHealthOnClient_Implementation(float NewHea
 	MainHudRef->UpdateHealthBar(NewHealth);
 }
 
-void APropHuntPlayerController::ShowWinScreenOnClient_Implementation(bool bIsPropWon, bool bIsProp)
+void APropHuntPlayerController::ShowWinScreenOnClient_Implementation()
 {
-	MainHudRef->ShowWinScreen(bIsPropWon, bIsProp);
+	MainHudRef->ShowWinScreen(PropHuntGameInstance->GetIsHost());
 }
 
 void APropHuntPlayerController::HandleHudWidgetOnClient_Implementation(bool bIsProp)

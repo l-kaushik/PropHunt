@@ -30,7 +30,7 @@ public:
 
 	virtual void SetupPropWidget(bool bIsProp) override;
 	virtual void UpdateHealthWidget(float NewHealth) override;
-	virtual void ShowWinScreenWidget(bool bIsPropWon) override;
+	virtual void ShowWinScreenWidget() override;
 	virtual void StartCountdownWidget() override;
 	virtual void PlayHitMarkerAnim() override;
 
@@ -47,7 +47,7 @@ protected:
 	void UpdateHealthOnClient(float NewHealth);
 
 	UFUNCTION(Client, Reliable)
-	void ShowWinScreenOnClient(bool bIsPropWon, bool bIsProp);
+	void ShowWinScreenOnClient();
 
 	UFUNCTION(Client, Reliable)
 	void StartCountdownOnClient();
@@ -65,5 +65,6 @@ protected:
 
 private:
 	bool m_bIsProp;
+	class UPropHuntGameInstance* PropHuntGameInstance;
 	
 };

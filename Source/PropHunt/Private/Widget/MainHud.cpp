@@ -13,21 +13,21 @@
 
 void UMainHud::SetupPropWidget(bool bIsProp)
 {
-	FText GameStatusText;
+	FText PlayerObjectiveText;
 
 	if (bIsProp) {
-		GameStatusText = FText::FromString("You are the Prop! Hide!");
+		PlayerObjectiveText = FText::FromString("You are the Prop! Hide!");
 		HealthBar->SetVisibility(ESlateVisibility::Visible);
 	}
 	else {
-		GameStatusText = FText::FromString("Find the Prop!");
+		PlayerObjectiveText = FText::FromString("Find the Prop!");
 		Crosshair->SetVisibility(ESlateVisibility::Visible);
 
 		if(HealthBar->GetVisibility() == ESlateVisibility::Visible)
 			HealthBar->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	GameStatus->SetText(GameStatusText);
+	PlayerObjective->SetText(PlayerObjectiveText);
 }
 
 void UMainHud::UpdateHealthBar(float NewHealth)
@@ -50,43 +50,14 @@ void UMainHud::PlayHitMarkerAnimation()
 	}
 }
 
-void UMainHud::ShowWinScreen(bool bIsPropWon, bool bIsProp)
+void UMainHud::ShowWinScreen(bool bIsHost)
 {
 	FString text;
 	FSlateColor textColor;
 
 	WinScreen->SetVisibility(ESlateVisibility::Visible);
-
-	if (bIsPropWon)
-	{
-		if (bIsProp)
-		{
-			text = "You Won! You Survived The Hunters!;";
-			textColor = FLinearColor::Green;
-		}
-		else
-		{
-			text = "You Lost! The Prop Won!";
-			textColor = FLinearColor::Red;
-		}
-
-	}
-	else 
-	{
-		if (bIsProp)
-		{
-			text = "You Lost! Prop Hunters Win!";
-			textColor = FLinearColor::Red;
-		}
-		else
-		{
-			text = "You Won! You Found The Prop!";
-			textColor = FLinearColor::Green;
-		}
-	}
-
-	WinScreenText->SetText(FText::FromString(text));
-	WinScreenText->SetColorAndOpacity(textColor);
+	
+	// show game over and after 5-7 seconds, show leaderboard
 }
 
 void UMainHud::StartTimer()
@@ -129,8 +100,6 @@ void UMainHud::UpdateTimerText()
 void UMainHud::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	InitializeWidgetComponents();
 }
 
 // Set things for the UMG blueprint design preview
@@ -146,22 +115,21 @@ void UMainHud::NativePreConstruct()
 
 void UMainHud::InitializeWidgetComponents()
 {
-	SetGameStatusText();
+	SetPlayerObjectiveText();
 	SetCrosshairImage();
 	SetHealthBar();
 	SetWinScreen();
 	SetWinScreenText();
-	SetNewGameStartingText();
 	SetTimerBorder();
 	SetTimerIcon();
 	SetTimerText();
 	SetHitMarker();
 }
 
-void UMainHud::SetGameStatusText()
+void UMainHud::SetPlayerObjectiveText()
 {
-	if (GameStatus) {
-		GameStatus->SetText(FText::FromString("Waiting for players to join..."));
+	if (PlayerObjective) {
+		PlayerObjective->SetText(FText::FromString("Waiting for players to join..."));
 	}
 }
 
@@ -211,21 +179,11 @@ void UMainHud::SetWinScreenText()
 	{
 		FSlateFontInfo FontInfo = WinScreenText->GetFont();
 		FontInfo.Size = 60;
+		FontInfo.OutlineSettings.OutlineSize = 5;
 		WinScreenText->SetFont(FontInfo);
-		WinScreenText->SetText(FText::FromString("You Win!"));
+		WinScreenText->SetText(FText::FromString("Game Over!"));
+		WinScreenText->SetColorAndOpacity(FLinearColor::Red);
 		WinScreenText->SetJustification(ETextJustify::Center);
-	}
-}
-
-void UMainHud::SetNewGameStartingText()
-{
-	if (NewGameStartingText)
-	{
-		FSlateFontInfo FontInfo = NewGameStartingText->GetFont();
-		FontInfo.Size = 33;
-		NewGameStartingText->SetFont(FontInfo);
-		NewGameStartingText->SetText(FText::FromString("New Game Starting Soon..."));
-		NewGameStartingText->SetJustification(ETextJustify::Center);
 	}
 }
 
