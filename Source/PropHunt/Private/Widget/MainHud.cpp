@@ -1,13 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Widget/MainHud.h"
+#include "Macros/WidgetMacros.h"
 #include "States/PropHuntGameState.h"
+#include "Widget/Components/Button/MasterButton.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/BackgroundBlur.h"
 #include "Components/Border.h"
+#include "Components/Overlay.h"
+#include "Components/WidgetSwitcher.h"
 #include "Animation/WidgetAnimation.h"
 #include "Engine/World.h"
 
@@ -55,9 +59,22 @@ void UMainHud::ShowWinScreen(bool bIsHost)
 	FString text;
 	FSlateColor textColor;
 
+	// hide existing UI and show game over for 3 seconds
+	HideHudComponents();
 	WinScreen->SetVisibility(ESlateVisibility::Visible);
 	
-	// show game over and after 5-7 seconds, show leaderboard
+	// show scoreboard
+	FTimerHandle ScoreboardTimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		ScoreboardTimerHandle,
+		[this]() {
+			WinScreen->SetVisibility(ESlateVisibility::Hidden);
+			ScoreboardOverlay->SetVisibility(ESlateVisibility::Visible);
+		},
+		3.0f,
+		false
+	);
 }
 
 void UMainHud::StartTimer()
@@ -100,6 +117,14 @@ void UMainHud::UpdateTimerText()
 void UMainHud::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	BindButtonClicks();
+}
+
+void UMainHud::BindButtonClicks()
+{
+	BIND_BUTTON_CLICK(GameStatsButton, &UMainHud::OnGameStatsButtonClicked);
+	BIND_BUTTON_CLICK(TopPerformerButton, &UMainHud::OnTopPerformerButtonClicked);
 }
 
 // Set things for the UMG blueprint design preview
@@ -111,6 +136,11 @@ void UMainHud::NativePreConstruct()
 
 	// gameplay only settings
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
+	ScoreboardOverlay->SetVisibility(ESlateVisibility::Visible);
+
+	// components settings
+	InitializeScoreboardButton(GameStatsButton, "Game Stats");
+	InitializeScoreboardButton(TopPerformerButton, "Top Performers");
 }
 
 void UMainHud::InitializeWidgetComponents()
@@ -124,6 +154,14 @@ void UMainHud::InitializeWidgetComponents()
 	SetTimerIcon();
 	SetTimerText();
 	SetHitMarker();
+}
+
+void UMainHud::InitializeScoreboardButton(UMasterButton* Button,const FString& ButtonLabel)
+{
+	if (Button)
+	{
+		Button->SetLabel(ButtonLabel);
+	}
 }
 
 void UMainHud::SetPlayerObjectiveText()
@@ -222,4 +260,31 @@ void UMainHud::HitMarkerAnimFinished(UWidgetAnimation* Animation)
 {
 	if(Animation == HitMarkerAnim)
 		HitMarker->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMainHud::HideHudComponents()
+{
+	PlayerObjective->SetVisibility(ESlateVisibility::Hidden);
+	TimerBorder->SetVisibility(ESlateVisibility::Hidden);
+	HealthBar->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMainHud::OnGameStatsButtonClicked()
+{
+	SwitchScoreboardMenuButtonsProperty(true);
+}
+
+void UMainHud::OnTopPerformerButtonClicked()
+{
+	SwitchScoreboardMenuButtonsProperty(false);
+}
+
+void UMainHud::SwitchScoreboardMenuButtonsProperty(bool GameStatsButtonClicked)
+{
+	static FLinearColor BlueColor = FLinearColor::Blue;
+	static FLinearColor GreyShade = FLinearColor(0.5f, 0.5f, 0.5f, 1.0f);
+
+	GameStatsButton->SetBackgroundColor(GameStatsButtonClicked ? BlueColor : GreyShade);
+	TopPerformerButton->SetBackgroundColor(!GameStatsButtonClicked ? BlueColor : GreyShade);
+	ScoreboardMenuSwitcher->SetActiveWidgetIndex(!GameStatsButtonClicked);
 }

@@ -12,8 +12,11 @@
 
 class UImage;
 class UBorder;
+class UOverlay;
 class UTextBlock;
 class UProgressBar;
+class UMasterButton;
+class UWidgetSwitcher;
 class UBackgroundBlur;
 
 UCLASS()
@@ -36,7 +39,9 @@ protected:
 	virtual void NativePreConstruct() override;
 
 private:
+	void BindButtonClicks();
 	void InitializeWidgetComponents();
+	void InitializeScoreboardButton(UMasterButton* Button,const FString& ButtonLabel);
 	void SetPlayerObjectiveText();
 	void SetCrosshairImage();
 	void SetHitMarker();
@@ -47,7 +52,11 @@ private:
 	void SetTimerIcon();
 	void SetTimerText();
 	void HitMarkerAnimFinished(UWidgetAnimation* Animation);
+	void HideHudComponents();
 
+	void OnGameStatsButtonClicked();
+	void OnTopPerformerButtonClicked();
+	void SwitchScoreboardMenuButtonsProperty(bool GameStatsButtonClicked);
 
 	// HUD elements
 	UPROPERTY(meta = (BindWidget))
@@ -87,4 +96,19 @@ private:
 	UTextBlock* TimerText;
 
 	FTimerHandle CountdownTimer;
+
+	// scoreboard overlay
+	UPROPERTY(meta = (BindWidget))
+	UOverlay* ScoreboardOverlay;
+
+	// scoreboard menu button
+	UPROPERTY(meta = (BindWidget))
+	UMasterButton* GameStatsButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UMasterButton* TopPerformerButton;
+
+	// scoreboard menu switcher
+	UPROPERTY(meta = (BindWidget))
+	UWidgetSwitcher* ScoreboardMenuSwitcher;
 };
