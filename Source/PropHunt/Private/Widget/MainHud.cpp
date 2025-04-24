@@ -3,7 +3,13 @@
 #include "Widget/MainHud.h"
 #include "Macros/WidgetMacros.h"
 #include "States/PropHuntGameState.h"
+#include "Widget/TopPerformersWidget.h"
+#include "Widget/GameStatsEntryWidget.h"
+#include "Widget/GameStatsWidget.h"
 #include "Widget/Components/Button/MasterButton.h"
+#include "Utils/WidgetUtils.h"
+#include "Widget/UIManager.h"
+#include "Controller/PropHuntPlayerController.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -68,9 +74,12 @@ void UMainHud::ShowWinScreen(bool bIsHost)
 
 	GetWorld()->GetTimerManager().SetTimer(
 		ScoreboardTimerHandle,
-		[this]() {
+		[this, bIsHost]() {
 			WinScreen->SetVisibility(ESlateVisibility::Hidden);
 			ScoreboardOverlay->SetVisibility(ESlateVisibility::Visible);
+			if (!bIsHost) {
+				NewGameButton->SetVisibility(ESlateVisibility::Hidden);
+			}
 		},
 		3.0f,
 		false
@@ -125,6 +134,8 @@ void UMainHud::BindButtonClicks()
 {
 	BIND_BUTTON_CLICK(GameStatsButton, &UMainHud::OnGameStatsButtonClicked);
 	BIND_BUTTON_CLICK(TopPerformerButton, &UMainHud::OnTopPerformerButtonClicked);
+	BIND_BUTTON_CLICK(NewGameButton, &UMainHud::OnNewGameButtonClicked);
+	BIND_BUTTON_CLICK(ExitGameButton, &UMainHud::OnExitGameButtonClicked);
 }
 
 // Set things for the UMG blueprint design preview
@@ -136,11 +147,13 @@ void UMainHud::NativePreConstruct()
 
 	// gameplay only settings
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
-	ScoreboardOverlay->SetVisibility(ESlateVisibility::Visible);
+	ScoreboardOverlay->SetVisibility(ESlateVisibility::Hidden);
 
 	// components settings
-	InitializeScoreboardButton(GameStatsButton, "Game Stats");
-	InitializeScoreboardButton(TopPerformerButton, "Top Performers");
+	SetMasterButtonLabel(GameStatsButton, "Game Stats");
+	SetMasterButtonLabel(TopPerformerButton, "Top Performers");
+	SetMasterButtonLabel(NewGameButton, "New Game");
+	SetMasterButtonLabel(ExitGameButton, "Exit Game");
 }
 
 void UMainHud::InitializeWidgetComponents()
@@ -154,9 +167,10 @@ void UMainHud::InitializeWidgetComponents()
 	SetTimerIcon();
 	SetTimerText();
 	SetHitMarker();
+	InitializeScoreboardMenuSwitcher();
 }
 
-void UMainHud::InitializeScoreboardButton(UMasterButton* Button,const FString& ButtonLabel)
+void UMainHud::SetMasterButtonLabel(UMasterButton* Button,const FString& ButtonLabel)
 {
 	if (Button)
 	{
@@ -269,6 +283,12 @@ void UMainHud::HideHudComponents()
 	HealthBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UMainHud::InitializeScoreboardMenuSwitcher()
+{
+	//WidgetUtils::AddWidgetToWidgetSwitcher<UGameStatsWidget>(this, ScoreboardMenuSwitcher, UUIManager::Get()->GameStatsWidgetBPClassRef);
+	//WidgetUtils::AddWidgetToWidgetSwitcher<UTopPerformersWidget>(this, ScoreboardMenuSwitcher, UUIManager::Get()->TopPerformersWidgetBPClassRef);
+}
+
 void UMainHud::OnGameStatsButtonClicked()
 {
 	SwitchScoreboardMenuButtonsProperty(true);
@@ -287,4 +307,32 @@ void UMainHud::SwitchScoreboardMenuButtonsProperty(bool GameStatsButtonClicked)
 	GameStatsButton->SetBackgroundColor(GameStatsButtonClicked ? BlueColor : GreyShade);
 	TopPerformerButton->SetBackgroundColor(!GameStatsButtonClicked ? BlueColor : GreyShade);
 	ScoreboardMenuSwitcher->SetActiveWidgetIndex(!GameStatsButtonClicked);
+}
+
+void UMainHud::OnNewGameButtonClicked()
+{
+	auto* GameController = GetOwningPlayer<APropHuntPlayerController>();
+
+	if (GameController)
+	{
+		GameController->StartNewGame();
+	}
+	else 
+	{
+		UE_LOG_NON_SHIP(LogPropHuntWidget, Warning, TEXT("Failed to get game controller in OnNewGameButtonClicked"));
+	}
+}
+
+void UMainHud::OnExitGameButtonClicked()
+{
+	auto* GameController = GetOwningPlayer<APropHuntPlayerController>();
+
+	if (GameController)
+	{
+		GameController->ExitGame();
+	}
+	else
+	{
+		UE_LOG_NON_SHIP(LogPropHuntWidget, Warning, TEXT("Failed to get game controller in OnExitGameButtonClicked"));
+	}
 }

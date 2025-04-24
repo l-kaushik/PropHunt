@@ -41,7 +41,7 @@ protected:
 private:
 	void BindButtonClicks();
 	void InitializeWidgetComponents();
-	void InitializeScoreboardButton(UMasterButton* Button,const FString& ButtonLabel);
+	void SetMasterButtonLabel(UMasterButton* Button,const FString& ButtonLabel);
 	void SetPlayerObjectiveText();
 	void SetCrosshairImage();
 	void SetHitMarker();
@@ -54,9 +54,14 @@ private:
 	void HitMarkerAnimFinished(UWidgetAnimation* Animation);
 	void HideHudComponents();
 
+
+	void InitializeScoreboardMenuSwitcher();
 	void OnGameStatsButtonClicked();
 	void OnTopPerformerButtonClicked();
 	void SwitchScoreboardMenuButtonsProperty(bool GameStatsButtonClicked);
+	
+	void OnNewGameButtonClicked();
+	void OnExitGameButtonClicked();
 
 	// HUD elements
 	UPROPERTY(meta = (BindWidget))
@@ -111,4 +116,12 @@ private:
 	// scoreboard menu switcher
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* ScoreboardMenuSwitcher;
+
+	// controls HBox buttons
+	UPROPERTY(meta = (BindWidget))
+	UMasterButton* NewGameButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UMasterButton* ExitGameButton;
+	
 };
