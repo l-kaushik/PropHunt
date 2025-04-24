@@ -46,7 +46,7 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 void APropHuntGameMode::Logout(AController* ExistingPlayer)
 {
 	Super::Logout(ExistingPlayer);
-	MyGameState->GetPlayerControllerList().Remove(Cast<APropHuntPlayerController>(ExistingPlayer));
+	MyGameState->RemovePlayerController(Cast<APropHuntPlayerController>(ExistingPlayer));
 }
 
 void APropHuntGameMode::InitGameState()
@@ -96,15 +96,6 @@ void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 			PlayerController->ShowWinScreenWidget();
 		}
 	}
-
-	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(
-		TimerHandle,
-		this,
-		&APropHuntGameMode::StartNextGame,
-		5.0f,
-		false
-	);
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("EndTheGame called"));
 }
 
@@ -272,3 +263,9 @@ void APropHuntGameMode::HandlePropDeath(APropHuntPlayerController* PlayerControl
 	}
 }
 
+void APropHuntGameMode::CleanupPlayerExitFromScoreboard()
+{
+	int32 NewMinPlayerNum = MyGameState->GetMinPlayerNum() - 1;
+	MyGameState->SetMinPlayerNum(NewMinPlayerNum);
+	GetGameInstance<UPropHuntGameInstance>()->SetPlayerNum(NewMinPlayerNum);
+}

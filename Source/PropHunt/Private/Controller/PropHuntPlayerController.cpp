@@ -3,6 +3,7 @@
 #include "Controller/PropHuntPlayerController.h"
 #include "Widget/MainHud.h"
 #include "GameInstance/PropHuntGameInstance.h"
+#include "GameModes/PropHuntGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -87,6 +88,42 @@ void APropHuntPlayerController::SetIsProp(bool bIsProp)
 	m_bIsProp = bIsProp;
 }
 
+void APropHuntPlayerController::StartNewGame()
+{
+	auto* GameMode = Cast<APropHuntGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GameMode)
+	{
+		GameMode->StartNextGame();
+	}
+}
+
+void APropHuntPlayerController::ExitGame()
+{
+	// same calls are present in MenuController so find a way to make it resuable and modular
+
+	// remove player from player list, reduce number of players in game instance and state as well
+
+	ExitClientOnServer();
+
+}
+
+void APropHuntPlayerController::ExitClientOnServer_Implementation()
+{
+	auto* GameMode = Cast<APropHuntGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GameMode)
+	{
+		GameMode->CleanupPlayerExitFromScoreboard();
+	}
+
+	ClientTravel("/Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
+	PropHuntGameInstance->QuitGameCleanup();
+	PropHuntGameInstance->DestroySession();
+
+	UE_LOG(LogTemp, Warning, TEXT("One player quit"));
+}
+
 void APropHuntPlayerController::ShowHitMarkerOnClient_Implementation()
 {
 	MainHudRef->PlayHitMarkerAnimation();
@@ -100,6 +137,11 @@ void APropHuntPlayerController::UpdateHealthOnClient_Implementation(float NewHea
 void APropHuntPlayerController::ShowWinScreenOnClient_Implementation()
 {
 	MainHudRef->ShowWinScreen(PropHuntGameInstance->GetIsHost());
+
+	FInputModeUIOnly InputMode;
+	InputMode.SetWidgetToFocus(MainHudRef->GetCachedWidget());
+	SetInputMode(InputMode);
+	bShowMouseCursor = true;
 }
 
 void APropHuntPlayerController::HandleHudWidgetOnClient_Implementation(bool bIsProp)

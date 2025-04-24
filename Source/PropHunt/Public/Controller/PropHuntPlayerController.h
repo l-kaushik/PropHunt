@@ -39,6 +39,9 @@ public:
 	void TrySetupPropWidget(bool bIsProp);
 	void SetIsProp(bool bIsProp);
 
+	void StartNewGame();
+	void ExitGame();
+
 protected:
 	UFUNCTION(Client, Reliable)
 	void HandleHudWidgetOnClient(bool bIsProp);
@@ -54,6 +57,10 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void ShowHitMarkerOnClient();
+
+	UFUNCTION(Server, Reliable)
+	void ExitClientOnServer();
+
 
 protected:
 	// stores the refernce of blueprint WB_MainHud class

@@ -25,13 +25,14 @@ public:
 	virtual void InitGameState() override;
 	void SpawnPlayer(APropHuntPlayerController* PlayerController);
 	void HandlePropDeath(APropHuntPlayerController* PlayerController);
+	void CleanupPlayerExitFromScoreboard();
 
+	void StartNextGame();
 public:
 	// interface functions
 	virtual void EndTheGame(bool bIsPropWon) override;
 
 protected:
-	void StartNextGame();
 	void CheckGameStarted();
 	void StartGameTimer();
 	void ChooseHunterCharacter();
