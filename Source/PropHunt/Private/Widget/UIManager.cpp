@@ -11,6 +11,9 @@
 #include "Widget/PlayerEntryWidget.h"
 #include "Widget/ServerEntryWidget.h"
 #include "Widget/LoadingScreenWidget.h"
+#include "Widget/GameStatsWidget.h"
+#include "Widget/GameStatsEntryWidget.h"
+#include "Widget/TopPerformersWidget.h"
 
 UUIManager* UUIManager::Get()
 {
@@ -35,5 +38,8 @@ void UUIManager::InitializeWidgets()
 	PlayerEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UPlayerEntryWidget>(BasePath + FString("WB_PlayerEntry"));
 	ServerEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UServerEntryWidget>(BasePath + FString("WB_ServerEntry"));
 	LoadingScreenWidgetBPClassRef = GlobalUtils::LoadBlueprint<ULoadingScreenWidget>(BasePath + FString("WB_LoadingScreen"));
+	GameStatsWidgetBPClassRef = GlobalUtils::LoadBlueprint<UGameStatsWidget>(BasePath + FString("WB_GameStats"));
+	GameStatsEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UGameStatsEntryWidget>(BasePath + FString("WB_GameStatsEntry"));
+	TopPerformersWidgetBPClassRef = GlobalUtils::LoadBlueprint<UTopPerformersWidget>(BasePath + FString("WB_TopPerformers"));
 }
 

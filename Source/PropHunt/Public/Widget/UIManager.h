@@ -43,6 +43,15 @@ public:
 
 	UPROPERTY()
 	TSubclassOf<class ULoadingScreenWidget> LoadingScreenWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UGameStatsWidget> GameStatsWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UGameStatsEntryWidget> GameStatsEntryWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UTopPerformersWidget> TopPerformersWidgetBPClassRef;
 private:
 	// Private constructor to enforce singleton
 	UUIManager();
