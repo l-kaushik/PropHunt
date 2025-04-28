@@ -251,16 +251,23 @@ void APropHuntGameMode::HandlePropDeath(APropHuntPlayerController* PlayerControl
 
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Warning, TEXT("HunterCount: %d, PlayerCount: %d, PropCount: %d"), HunterCount, TotalPlayerCount, PropCount);
 
-	if (PropCount > 0)
+	// delaying the process of showing end screen, so last kill gets registered
+	if (PropCount <= 0)
 	{
-		PlayerController->SetIsProp(false);
-		SpawnHunter(PlayerController);
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(
+			TimerHandle,
+			[this]() {
+				this->EndTheGame(false);
+			},
+			2.0f,
+			false
+		);
 	}
-	else
-	{
-		// since all props died
-		EndTheGame(false);
-	}
+
+	PlayerController->SetIsProp(false);
+	SpawnHunter(PlayerController);
+
 }
 
 void APropHuntGameMode::CleanupPlayerExitFromScoreboard()
