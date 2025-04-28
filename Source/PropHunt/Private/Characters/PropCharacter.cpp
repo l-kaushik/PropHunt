@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Characters/PropCharacter.h"
+#include "Characters/PropHuntCharacter.h"
+#include "States/PropHuntPlayerState.h"
 #include "Actors/SpawnedProp.h"
 #include "Controller/PropHuntPlayerController.h"
 #include "Interfaces/PropHuntGameModeInterface.h"
@@ -181,8 +183,16 @@ float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 			PropHuntInterface->UpdateHealthWidget(Health);
 		}
 
+		// update damage dealt of damage causer and update damage taken of this player
+		AddDamageDealtToCauser(DamageCauser, DamageAmount);
+		AddDamageTaken(DamageAmount);
+		UpdateDamageTracker(DamageCauser, DamageAmount);
+
 		if (Health <= 0.0f)
 		{
+			// add kill and assist
+			AddKillAndAssist();
+
 			if (auto* GameMode = Cast<APropHuntGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
 			{
 				GameMode->HandlePropDeath(Cast<APropHuntPlayerController>(GetController()));
@@ -191,6 +201,70 @@ float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	}
 
 	return DamageAmount;
+}
+
+APropHuntPlayerState* APropCharacter::GetDamageCauserPlayerState(AActor* DamageCauser)
+{
+	auto* DamageCauserCharacter = Cast<APropHuntCharacter>(DamageCauser);
+	if (!DamageCauserCharacter) return nullptr;
+
+	auto* DamageCauserPlayerState = DamageCauserCharacter->GetPlayerState<APropHuntPlayerState>();
+	if (!DamageCauserPlayerState) return nullptr;
+
+	return DamageCauserPlayerState;
+}
+
+void APropCharacter::AddDamageDealtToCauser(AActor* DamageCauser, float DamageAmount)
+{
+	if (auto* DamageCauserPlayerState = GetDamageCauserPlayerState(DamageCauser))
+	{
+		DamageCauserPlayerState->AddDamageDealt(DamageAmount);
+	}
+}
+
+void APropCharacter::AddDamageTaken(float DamageAmount)
+{
+	auto* PropPlayerState = GetPlayerState<APropHuntPlayerState>();
+	if (!PropPlayerState) return;
+
+	PropPlayerState->AddDamageTaken(DamageAmount);
+}
+
+void APropCharacter::UpdateDamageTracker(AActor* DamageCauser, float DamageAmount)
+{
+	auto* PropPlayerState = GetDamageCauserPlayerState(DamageCauser);
+	if (!PropPlayerState) return;
+
+	DamageTracker.FindOrAdd(PropPlayerState) += DamageAmount;
+}
+
+void APropCharacter::AddKillAndAssist()
+{
+	APropHuntPlayerState* TopDamager = nullptr;
+	float MaxDamage = -1.0f;
+
+	// get max damage and the top damager
+	for (const auto& Pair : DamageTracker)
+	{
+		if (Pair.Value > MaxDamage)
+		{
+			MaxDamage = Pair.Value;
+			TopDamager = Pair.Key;
+		}
+	}
+
+	// add kill and assist to players
+	for (const auto& Pair : DamageTracker)
+	{
+		if (Pair.Key == TopDamager)
+		{
+			Pair.Key->AddKill();
+		}
+		else
+		{
+			Pair.Key->AddAssist();
+		}
+	}
 }
 
 void APropCharacter::Move(const FInputActionValue& Value)

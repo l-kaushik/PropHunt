@@ -13,6 +13,7 @@ class UInputAction;
 struct FInputActionValue;
 class UStaticMeshComponent;
 class ASpawnedProp;
+class APropHuntPlayerState;
 
 UCLASS()
 class PROPHUNT_API APropCharacter : public ACharacter
@@ -129,6 +130,14 @@ private:
 	void RotatePropMulticast(float Offset);
 
 private:
+	APropHuntPlayerState* GetDamageCauserPlayerState(AActor* DamageCauser);
+	void AddDamageDealtToCauser(AActor* DamageCauser, float DamageAmount);
+	void AddDamageTaken(float DamageAmount);
+	void UpdateDamageTracker(AActor* DamageCauser, float DamageAmount);
+	void AddKillAndAssist();
+
+private:
 	float Health;
 	static const float MAX_HEALTH;
+	TMap<APropHuntPlayerState*, float> DamageTracker;
 };
