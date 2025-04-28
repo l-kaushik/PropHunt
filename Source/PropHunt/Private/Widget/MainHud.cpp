@@ -3,6 +3,7 @@
 #include "Widget/MainHud.h"
 #include "Macros/WidgetMacros.h"
 #include "States/PropHuntGameState.h"
+#include "States/PropHuntPlayerState.h"
 #include "Widget/TopPerformersWidget.h"
 #include "Widget/GameStatsEntryWidget.h"
 #include "Widget/GameStatsWidget.h"
@@ -62,9 +63,6 @@ void UMainHud::PlayHitMarkerAnimation()
 
 void UMainHud::ShowWinScreen(bool bIsHost)
 {
-	FString text;
-	FSlateColor textColor;
-
 	// hide existing UI and show game over for 3 seconds
 	HideHudComponents();
 	WinScreen->SetVisibility(ESlateVisibility::Visible);
@@ -84,6 +82,8 @@ void UMainHud::ShowWinScreen(bool bIsHost)
 		3.0f,
 		false
 	);
+	
+	FillScoreboardData();
 }
 
 void UMainHud::StartTimer()
@@ -167,7 +167,6 @@ void UMainHud::InitializeWidgetComponents()
 	SetTimerIcon();
 	SetTimerText();
 	SetHitMarker();
-	InitializeScoreboardMenuSwitcher();
 }
 
 void UMainHud::SetMasterButtonLabel(UMasterButton* Button,const FString& ButtonLabel)
@@ -283,11 +282,6 @@ void UMainHud::HideHudComponents()
 	HealthBar->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UMainHud::InitializeScoreboardMenuSwitcher()
-{
-	//WidgetUtils::AddWidgetToWidgetSwitcher<UGameStatsWidget>(this, ScoreboardMenuSwitcher, UUIManager::Get()->GameStatsWidgetBPClassRef);
-	//WidgetUtils::AddWidgetToWidgetSwitcher<UTopPerformersWidget>(this, ScoreboardMenuSwitcher, UUIManager::Get()->TopPerformersWidgetBPClassRef);
-}
 
 void UMainHud::OnGameStatsButtonClicked()
 {
@@ -335,4 +329,36 @@ void UMainHud::OnExitGameButtonClicked()
 	{
 		UE_LOG_NON_SHIP(LogPropHuntWidget, Warning, TEXT("Failed to get game controller in OnExitGameButtonClicked"));
 	}
+}
+
+void UMainHud::FillScoreboardData()
+{
+	auto* GameState = GetWorld()->GetGameState<APropHuntGameState>();
+	LoadDataForGameStatsList(GameState);
+}
+
+void UMainHud::LoadDataForGameStatsList(APropHuntGameState* GameState)
+{
+	// remove all previous entries
+	GameStatsPlayerListWindow->ClearList();
+
+	for (const auto& PlayerState : GameState->GetPlayerStates())
+	{
+		auto* GameStatsEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UGameStatsEntryWidget>(this, UUIManager::Get()->GameStatsEntryWidgetBPClassRef);
+
+		// fill up with new player state data
+		GameStatsEntryWidgetRef->SetPlayerName(PlayerState->GetPlayerName());
+		GameStatsEntryWidgetRef->SetKills(FString::FromInt(PlayerState->GetKills()));
+		GameStatsEntryWidgetRef->SetAssists(FString::FromInt(PlayerState->GetAssists()));
+		GameStatsEntryWidgetRef->SetDamageGiven(FString::FromInt(PlayerState->GetDamageGiven()));
+		GameStatsEntryWidgetRef->SetDamageTaken(FString::FromInt(PlayerState->GetDamageTaken()));
+
+		// add player data to list
+		GameStatsPlayerListWindow->AddPlayerStatsToList(GameStatsEntryWidgetRef);
+	}
+
+}
+
+void UMainHud::LoadDataForTopPerformerWindow()
+{
 }

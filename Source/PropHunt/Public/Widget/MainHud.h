@@ -18,6 +18,11 @@ class UProgressBar;
 class UMasterButton;
 class UWidgetSwitcher;
 class UBackgroundBlur;
+class UGameStatsWidget;
+class UTopPerformersWidget;
+class UGameStatsEntryWidget;
+
+class APropHuntGameState;
 
 UCLASS()
 class PROPHUNT_API UMainHud : public UUserWidget
@@ -55,13 +60,16 @@ private:
 	void HideHudComponents();
 
 
-	void InitializeScoreboardMenuSwitcher();
 	void OnGameStatsButtonClicked();
 	void OnTopPerformerButtonClicked();
 	void SwitchScoreboardMenuButtonsProperty(bool GameStatsButtonClicked);
 	
 	void OnNewGameButtonClicked();
 	void OnExitGameButtonClicked();
+
+	void FillScoreboardData();
+	void LoadDataForGameStatsList(APropHuntGameState* GameState);
+	void LoadDataForTopPerformerWindow();
 
 	// HUD elements
 	UPROPERTY(meta = (BindWidget))
@@ -116,6 +124,12 @@ private:
 	// scoreboard menu switcher
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* ScoreboardMenuSwitcher;
+
+	UPROPERTY(meta = (BindWidget))
+	UGameStatsWidget* GameStatsPlayerListWindow;
+
+	UPROPERTY(meta = (BindWidget))
+	UTopPerformersWidget* TopPerformerWindow;
 
 	// controls HBox buttons
 	UPROPERTY(meta = (BindWidget))
