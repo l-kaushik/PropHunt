@@ -70,3 +70,10 @@
 - Implemented camera distance change using mouse wheel.
 - Implemented prop rotation feature, using Q and E.
 - Changed prop switch key to R.
+
+7. 28-04-2025
+- Added damage tracking, kill, and assist system to APropCharacter and updated death handling order.
+- Implemented stat replication and update functions in APropHuntPlayerState (kills, assists, damage).
+- Built dynamic scoreboard population in UMainHud and UGameStatsWidget with player stats display.
+- Fixed GameStats UI offset by switching from UniformGridPanel to GridPanel with manual sizing.
+- Improved network synchronization, gameplay stat tracking, and UI consistency across the game.
