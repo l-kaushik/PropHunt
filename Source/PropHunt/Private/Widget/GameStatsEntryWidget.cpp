@@ -4,6 +4,9 @@
 #include "Widget/GameStatsEntryWidget.h"
 
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
+
+const FLinearColor UGameStatsEntryWidget::Backgroundcolor = FLinearColor(1.f, 1.f, 1.f, 0.1f);
 
 UGameStatsEntryWidget* UGameStatsEntryWidget::SetPlayerName(const FString& InPlayerName)
 {
@@ -40,4 +43,34 @@ UGameStatsEntryWidget* UGameStatsEntryWidget::SetDamageTaken(const FString& InDa
     DamageTaken->SetText(FText::FromString(InDamageTaken));
     return this;
 }
+
+void UGameStatsEntryWidget::ClearStats()
+{
+    PlayerName->SetText(FText::GetEmpty());
+    Kills->SetText(FText::GetEmpty());
+    Assists->SetText(FText::GetEmpty());
+    DamageGiven->SetText(FText::GetEmpty());
+    DamageTaken->SetText(FText::GetEmpty());
+}
+
+void UGameStatsEntryWidget::NativePreConstruct()
+{
+    if (!Background) return;
+    Background->SetColorAndOpacity(Backgroundcolor);
+}
+
+void UGameStatsEntryWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+    // little lighter shade
+    static const FLinearColor LighterShade = FLinearColor(1.f, 1.f, 1.f, 0.2f);
+    if (!Background) return;
+    Background->SetColorAndOpacity(LighterShade);
+}
+
+void UGameStatsEntryWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+    if (!Background) return;
+    Background->SetColorAndOpacity(Backgroundcolor);
+}
+
 

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GameStatsEntryWidget.generated.h"
 
+class UImage;
 class UTextBlock;
 
 UCLASS()
@@ -19,8 +20,23 @@ public:
 	UGameStatsEntryWidget* SetAssists(const FString& InAssists = "0");
 	UGameStatsEntryWidget* SetDamageGiven(const FString& InDamageGiven = "0");
 	UGameStatsEntryWidget* SetDamageTaken(const FString& InDamageTaken = "0");
+	void ClearStats();
+
+public:
+	virtual void NativePreConstruct() override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
 private:
+
+	// design
+	UPROPERTY(meta = (BindWidget))
+	UImage* Background;
+
+	static const FLinearColor Backgroundcolor;
+
+	// stats
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* PlayerName;
 
