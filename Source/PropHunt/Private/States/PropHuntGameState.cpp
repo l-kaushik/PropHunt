@@ -74,7 +74,8 @@ int32 APropHuntGameState::GetMinPlayerNum() const
 void APropHuntGameState::AddPlayerController(APropHuntPlayerController* NewController)
 {
 	if (NewController) {
-		PlayerControllerList.AddUnique(NewController);
+		PlayerControllerList.AddUnique(NewController);		
+		PlayerStates.AddUnique(NewController->GetPlayerState<APropHuntPlayerState>());
 	}
 }
 
