@@ -77,3 +77,6 @@
 - Built dynamic scoreboard population in UMainHud and UGameStatsWidget with player stats display.
 - Fixed GameStats UI offset by switching from UniformGridPanel to GridPanel with manual sizing.
 - Improved network synchronization, gameplay stat tracking, and UI consistency across the game.
+
+8. 29-04-2025
+- Implemented player ready check before host start game and UI updates for Lobby and PlayerEntry widget.
