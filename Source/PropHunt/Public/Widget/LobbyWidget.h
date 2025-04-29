@@ -22,6 +22,9 @@ public:
 
 	bool GetIsHost();
 
+	void DisableStartButton();
+	void EnableStartButton();
+
 	
 private:
 	virtual void NativeConstruct() override;

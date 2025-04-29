@@ -18,6 +18,15 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	// Player Info
+	void SetIsReady(bool InIsReady);
+	void SetIsHost(bool InIsHost);
+
+	bool GetIsReady() const;
+	bool GetIsHost() const;
+
+
+	// Game Data
 	void AddKill();
 	void AddAssist();
 	void AddDamageDealt(int32 damageDealt);
@@ -32,6 +41,15 @@ public:
 	// track the current hidden time, and when player move compare with longest hidden time and update accordingly
 
 private:
+
+	// Player Info
+	UPROPERTY(Replicated)
+	bool m_IsReady;
+
+	UPROPERTY(Replicated)
+	bool m_IsHost;
+
+	// Game Data
 	UPROPERTY(Replicated)
 	int32 m_Kills;
 

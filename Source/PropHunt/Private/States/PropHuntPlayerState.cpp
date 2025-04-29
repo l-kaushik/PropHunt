@@ -9,11 +9,36 @@ void APropHuntPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	// Player Info
+	DOREPLIFETIME(APropHuntPlayerState, m_IsReady)
+	DOREPLIFETIME(APropHuntPlayerState, m_IsHost)
+
+	// Game Data
 	DOREPLIFETIME(APropHuntPlayerState, m_Kills);
 	DOREPLIFETIME(APropHuntPlayerState, m_Assists);
 	DOREPLIFETIME(APropHuntPlayerState, m_DamageGiven);
 	DOREPLIFETIME(APropHuntPlayerState, m_DamageTaken);
 	DOREPLIFETIME(APropHuntPlayerState, m_LongestHiddenTime);
+}
+
+void APropHuntPlayerState::SetIsReady(bool InIsReady)
+{
+	m_IsReady = InIsReady;
+}
+
+void APropHuntPlayerState::SetIsHost(bool InIsHost)
+{
+	m_IsHost = InIsHost;
+}
+
+bool APropHuntPlayerState::GetIsReady() const
+{
+	return m_IsReady;
+}
+
+bool APropHuntPlayerState::GetIsHost() const
+{
+	return m_IsHost;
 }
 
 void APropHuntPlayerState::AddKill()

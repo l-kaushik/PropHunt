@@ -38,6 +38,7 @@ public:
 public:
 	void ClientWantsToHost(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
 	void ClientWantsToJoin(int32 SessionResultIndex);
+	void UpdateClientReadyStatus(bool IsReady);
 	void HostWantsToStartGame();
 	void ClientWantsToQuit();
 	void HostWantsToQuit();
@@ -68,9 +69,13 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void HostWantsToStartGameOnServer();
 
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateReadyStatus(const bool IsReady);
+
 private:
 	void SetupWidgetForMuliplayer();
-	void AddNewPlayerToList(const FString& PlayerName, const FString& PingInms);
+	void AddNewPlayerToList(const APropHuntPlayerState* PlayerState);
+	void UpdateStartButtonState(bool IsReady);
 	void AddServersToList();
 	void StartPlayerListUpdateTimer();
 	void StopPlayerListUpdateTimer();

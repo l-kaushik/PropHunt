@@ -17,6 +17,7 @@ public:
 	void SetPlayerNameText(const FString& InPlayerName);
 	void SetPingText(const FString& InPing);
 	void SetReadyStatusText(const FString& InReadyStatus);
+	void SetReadyStatus(const bool IsReady);
 
 private:
 	UPROPERTY(meta = (BindWidget))

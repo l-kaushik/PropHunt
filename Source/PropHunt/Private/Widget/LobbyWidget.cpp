@@ -5,6 +5,7 @@
 #include "Widget/Components/Button/MasterButton.h"
 #include "Widget/PlayerEntryWidget.h"
 #include "Controller/MenuController.h"
+#include "States/PropHuntPlayerState.h"
 #include "Utils/PropHuntLog.h"
 #include "Macros/WidgetMacros.h"
 
@@ -21,6 +22,16 @@ void ULobbyWidget::SetIsHost(bool bIsHost)
 bool ULobbyWidget::GetIsHost()
 {
 	return IsHost;
+}
+
+void ULobbyWidget::DisableStartButton()
+{
+	ReadyOrStartButton->SetIsEnabled(false);
+}
+
+void ULobbyWidget::EnableStartButton()
+{
+	ReadyOrStartButton->SetIsEnabled(true);
 }
 
 void ULobbyWidget::SetParentWidget(UUserWidget* InParentWidget)
@@ -72,6 +83,14 @@ void ULobbyWidget::OnReadyOrStartButtonClicked()
 	if (IsHost)
 	{
 		MenuController->HostWantsToStartGame();
+	}
+	else
+	{
+		// toggle ready button stats
+		bool IsReady = !MenuController->GetPlayerState<APropHuntPlayerState>()->GetIsReady();
+		FString readyText = IsReady ? FString("Unready") : FString("Ready");
+		ReadyOrStartButton->SetLabel(readyText);
+		MenuController->UpdateClientReadyStatus(IsReady);
 	}
 }
 

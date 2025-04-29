@@ -56,6 +56,17 @@ void AMenuController::BeginPlay()
 		// create lobby widget on top of menu widget if its multiplayer game
 		if (PropHuntGameInstance->GetIsMultiplayer())
 		{
+			if (PropHuntGameInstance->GetIsHost())
+			{
+				auto* CustomPlayerState = GetPlayerState<APropHuntPlayerState>();
+
+				// if multiplayer game, set host variable to true for host
+				CustomPlayerState->SetIsHost(PropHuntGameInstance->GetIsHost());
+
+				// if this is host and make it always be ready
+				CustomPlayerState->SetIsReady(true);
+			}
+
 			SetupWidgetForMuliplayer();
 			OnPlayerListUpdated(PropHuntGameState->GetPlayerStates());	// explicitly calling to update widget for host as well
 		}
@@ -79,16 +90,30 @@ void AMenuController::ClientReturnToMainMenuWithTextReason_Implementation(const 
 
 void AMenuController::OnPlayerListUpdated(const TArray<APropHuntPlayerState*> &PlayerStates)
 {
-	UE_LOG(LogPropHuntMenuController, Display, TEXT("OnPlayerListUpdated called"));
 	if (!LobbyWidgetRef) return;
 	
 	LobbyWidgetRef->ClearPlayerList();
 
+	bool bAllReady = true;
+
 	for(auto* EachPlayerState : PlayerStates)
 	{
-		UE_LOG(LogPropHuntMenuController, Display, TEXT("Added player to list"));
-		if(EachPlayerState)
-			AddNewPlayerToList(EachPlayerState->GetPlayerName(), FString::FromInt(EachPlayerState->GetPingInMilliseconds()));
+		if (EachPlayerState)
+		{
+			// add player to widget list
+			AddNewPlayerToList(EachPlayerState);
+			
+			// enable/disable start button if this player is host and the current player state shows not ready
+			if (PropHuntGameInstance->GetIsHost() && !EachPlayerState->GetIsReady())
+			{
+				bAllReady = false;
+			}
+		}
+	}
+
+	if (PropHuntGameInstance->GetIsHost())
+	{
+		UpdateStartButtonState(bAllReady);
 	}
 
 	StartPlayerListUpdateTimer();
@@ -116,7 +141,7 @@ void AMenuController::StartPlayerListUpdateTimer()
 		PlayerListUpdateTImer,
 		this,
 		&AMenuController::RefreshPlayerList,
-		2.0f,
+		0.5f,
 		true
 	);
 }
@@ -138,14 +163,33 @@ void AMenuController::SetupWidgetForMuliplayer()
 	LobbyWidgetRef->SetIsHost(PropHuntGameInstance->GetIsHost());
 }
 
-void AMenuController::AddNewPlayerToList(const FString& PlayerName, const FString& PingInms)
+void AMenuController::AddNewPlayerToList(const APropHuntPlayerState* InPlayerState)
 {
 	if (auto* PlayerEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UPlayerEntryWidget>(this, PlayerEntryWidgetBPClassRef))
 	{
-		PlayerEntryWidgetRef->SetPlayerNameText(PlayerName);
-		PlayerEntryWidgetRef->SetPingText(PingInms);
+		PlayerEntryWidgetRef->SetPlayerNameText(InPlayerState->GetPlayerName());
+		PlayerEntryWidgetRef->SetPingText(FString::FromInt(InPlayerState->GetPingInMilliseconds()));
+		PlayerEntryWidgetRef->SetReadyStatus(InPlayerState->GetIsReady());
 
 		LobbyWidgetRef->AddPlayerToList(PlayerEntryWidgetRef);;
+	}
+}
+
+void AMenuController::UpdateStartButtonState(bool IsReady)
+{
+	if (!LobbyWidgetRef)
+	{
+		UE_LOG(LogPropHuntMenuController, Error, TEXT("Lobby widget reference is invalid in UpdateStartButtonState"));
+		return;
+	}
+
+	if (IsReady)
+	{
+		LobbyWidgetRef->EnableStartButton();
+	}
+	else
+	{
+		LobbyWidgetRef->DisableStartButton();
 	}
 }
 
@@ -290,4 +334,16 @@ void AMenuController::ClientWantsToQuit()
 	ClientTravel("/Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
 	PropHuntGameInstance->QuitGameCleanup();
 	PropHuntGameInstance->DestroySession();
+}
+
+void AMenuController::UpdateClientReadyStatus(bool IsReady)
+{
+	ServerUpdateReadyStatus(IsReady);
+}
+
+// for now depends on replication to disable host's ready button
+void AMenuController::ServerUpdateReadyStatus_Implementation(const bool IsReady)
+{
+	auto* CustomPlayerState = GetPlayerState<APropHuntPlayerState>();
+	CustomPlayerState->SetIsReady(IsReady);
 }
