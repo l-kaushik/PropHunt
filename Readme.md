@@ -80,3 +80,6 @@
 
 8. 29-04-2025
 - Implemented player ready check before host start game and UI updates for Lobby and PlayerEntry widget.
+
+9. 30-04-2025
+- UI Updates for LobbyWidget, PlayerEntryWidget and GameStatsEntryWidget.
