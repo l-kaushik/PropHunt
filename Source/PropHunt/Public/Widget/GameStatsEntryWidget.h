@@ -1,5 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+/*
+* TODO: Implement a common parent class for both PlayerEntryWidget and GameStatsEntryWidget
+*/
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -26,6 +30,10 @@ public:
 	virtual void NativePreConstruct() override;
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Settings")
+	bool bBackgroundDisabled;
 
 private:
 

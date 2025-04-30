@@ -4,6 +4,9 @@
 #include "Widget/PlayerEntryWidget.h"
 
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
+
+const FLinearColor UPlayerEntryWidget::Backgroundcolor = FLinearColor(1.f, 1.f, 1.f, 0.1f);
 
 void UPlayerEntryWidget::SetPlayerNameText(const FString& InPlayerName)
 {
@@ -26,4 +29,24 @@ void UPlayerEntryWidget::SetReadyStatus(const bool IsReady)
 	FString ReadyText = IsReady ? FString("Ready") : FString("Unready");
 	ReadyStatusText->SetText(FText::FromString(ReadyText));
 	ReadyStatusText->SetColorAndOpacity(Color);
+}
+
+void UPlayerEntryWidget::NativePreConstruct()
+{
+    if (!Background || bBackgroundDisabled) return;
+    Background->SetColorAndOpacity(Backgroundcolor);
+}
+
+void UPlayerEntryWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+    // little lighter shade
+    static const FLinearColor LighterShade = FLinearColor(1.f, 1.f, 1.f, 0.2f);
+    if (!Background || bBackgroundDisabled) return;
+    Background->SetColorAndOpacity(LighterShade);
+}
+
+void UPlayerEntryWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+    if (!Background || bBackgroundDisabled) return;
+    Background->SetColorAndOpacity(Backgroundcolor);
 }

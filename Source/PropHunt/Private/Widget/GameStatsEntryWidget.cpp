@@ -55,7 +55,7 @@ void UGameStatsEntryWidget::ClearStats()
 
 void UGameStatsEntryWidget::NativePreConstruct()
 {
-    if (!Background) return;
+    if (!Background || bBackgroundDisabled) return;
     Background->SetColorAndOpacity(Backgroundcolor);
 }
 
@@ -63,13 +63,13 @@ void UGameStatsEntryWidget::NativeOnMouseEnter(const FGeometry& InGeometry, cons
 {
     // little lighter shade
     static const FLinearColor LighterShade = FLinearColor(1.f, 1.f, 1.f, 0.2f);
-    if (!Background) return;
+    if (!Background || bBackgroundDisabled) return;
     Background->SetColorAndOpacity(LighterShade);
 }
 
 void UGameStatsEntryWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
-    if (!Background) return;
+    if (!Background || bBackgroundDisabled) return;
     Background->SetColorAndOpacity(Backgroundcolor);
 }
 

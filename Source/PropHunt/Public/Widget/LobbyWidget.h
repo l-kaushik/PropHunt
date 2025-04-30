@@ -53,12 +53,6 @@ private:
 	class UMasterButton* BackButton;	// close icon in game
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* MapNameBlock;
-
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* HostNameBlock;
-
-	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* PlayersListVBox;
 
 	UPROPERTY(meta = (BindWidget))
