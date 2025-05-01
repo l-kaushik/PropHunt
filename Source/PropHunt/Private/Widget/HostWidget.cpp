@@ -3,23 +3,41 @@
 
 #include "Widget/HostWidget.h"
 #include "Widget/MenuWidget.h"
+#include "Widget/UIManager.h"
+#include "Widget/ErrorBox/UIErrorBox.h"
 #include "Controller/MenuController.h"
 #include "Utils/PropHuntLog.h"
-#include "Widget/ErrorBox/UIErrorBox.h"
 #include "Utils/GlobalUtils.h"
 #include "Utils/WidgetUtils.h"
-#include "Widget/UIManager.h"
+#include "Utils/Struct.h"
+#include "Utils/MapManager.h"
 
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 #include "Widget/Components/Button/MasterButton.h"
 #include "Internationalization/Regex.h"
 
+UHostWidget::UHostWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	m_MapSelected = 0;
+
+	// fill up MapInfoArray
+	for (const auto& Pair : MapManager::GetAllMaps())
+	{
+		if (Pair.Key != "MenuMap")
+		{
+			m_MapInfoArray.Push(Pair.Value);
+		}
+	}
+}
+
 void UHostWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	BindEvents();
+	UpdateMapData();
 
 	MenuController = Cast<AMenuController>(GetOwningPlayer());
 }
@@ -29,7 +47,6 @@ void UHostWidget::NativePreConstruct()
 	Super::NativePreConstruct();
 
 	InitializeHostButton();
-
 }
 
 void UHostWidget::BindEvents()
@@ -39,14 +56,9 @@ void UHostWidget::BindEvents()
 		HostButton->OnClicked.RemoveAll(this);
 		HostButton->OnClicked.AddUObject(this, &UHostWidget::OnHostButtonClicked);
 	}
-}
 
-void UHostWidget::InitializeServerInfoVBox()
-{
-	if (ServerInfoVBox)
-	{
-
-	}
+	LeftImageSelector->OnClicked.AddDynamic(this, &UHostWidget::OnLeftImageSelectorClicked);
+	RightImageSelector->OnClicked.AddDynamic(this, &UHostWidget::OnRightImageSelectorClicked);
 }
 
 void UHostWidget::InitializeHostButton()
@@ -66,6 +78,30 @@ void UHostWidget::OnHostButtonClicked()
 	// use controller to host server
 	MenuController->ClientWantsToHost(SessionName, LevelName, PlayerNumbers);
 
+}
+
+void UHostWidget::OnLeftImageSelectorClicked()
+{
+	m_MapSelected = (m_MapSelected - 1 + m_MapInfoArray.Num()) % m_MapInfoArray.Num();
+	UpdateMapData();
+}
+
+void UHostWidget::OnRightImageSelectorClicked()
+{
+	m_MapSelected = ++m_MapSelected % m_MapInfoArray.Num();
+	UpdateMapData();
+}
+
+void UHostWidget::UpdateMapData()
+{
+	FMapInfo MapInfo = m_MapInfoArray[m_MapSelected];
+	FString TrimmedMapName = MapInfo.Name.LeftChop(3);
+	FSlateBrush Brush;
+	Brush.SetResourceObject(MapInfo.Image);
+	Brush.ImageSize = FVector2D(MapInfo.Image->GetSizeX(), MapInfo.Image->GetSizeY());
+
+	MapName->SetText(FText::FromString(TrimmedMapName));
+	MapImage->SetBrush(Brush);
 }
 
 bool UHostWidget::VerifyServerInfo()

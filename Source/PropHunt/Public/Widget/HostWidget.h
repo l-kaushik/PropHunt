@@ -15,11 +15,18 @@ class UEditableText;
 class UMasterButton;
 class AMenuController;
 class UUIErrorBox;
+class UImage;
+class UButton;
+class UTextBlock;
+struct FMapInfo;
 
 UCLASS()
 class PROPHUNT_API UHostWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	UHostWidget(const FObjectInitializer& ObjectInitializer);
 
 private:
 
@@ -28,12 +35,18 @@ private:
 
 	void BindEvents();
 
-	void InitializeServerInfoVBox();
 	void InitializeHostButton();
 
 	UFUNCTION()
 	void OnHostButtonClicked();
 
+	UFUNCTION()
+	void OnLeftImageSelectorClicked();
+
+	UFUNCTION()
+	void OnRightImageSelectorClicked();
+
+	void UpdateMapData();
 	bool VerifyServerInfo();
 	void ShowServerNameError(const FString& InServerName);
 	void ShowPlayerNumberError(const FString& InPlayerNumber);
@@ -53,8 +66,23 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* HostButton;
-	
-	AMenuController* MenuController;
 
+
+	// map selector
+	UPROPERTY(meta = (BindWidget))
+	UImage* MapImage;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* LeftImageSelector;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* RightImageSelector;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MapName;
+
+	int m_MapSelected;
+	TArray<FMapInfo> m_MapInfoArray;
+	AMenuController* MenuController;
 	TSubclassOf<UUIErrorBox> UIErrorBoxBPClassRef;
 };

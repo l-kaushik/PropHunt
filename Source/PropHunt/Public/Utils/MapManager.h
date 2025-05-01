@@ -38,6 +38,8 @@ public:
         return FString();
     }
 
+    static const TMap<FString, FMapInfo>& GetAllMaps();
+
 private:
 	MapManager();
 

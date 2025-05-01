@@ -16,6 +16,11 @@ MapManager& MapManager::Get()
     return s_MapManager;
 }
 
+const TMap<FString, FMapInfo>& MapManager::GetAllMaps()
+{
+    return AllMaps;
+}
+
 MapManager::MapManager()
 {
     LoadAllMaps();
