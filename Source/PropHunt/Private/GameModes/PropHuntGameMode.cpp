@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameModes/PropHuntGameMode.h"
-#include "Utils/GameConstants.h"
+#include "Utils/MapManager.h"
 #include "Characters/PropCharacter.h"
 #include "Characters/PropHuntCharacter.h"
 #include "Controller/PropHuntPlayerController.h"
@@ -103,7 +103,7 @@ void APropHuntGameMode::StartNextGame()
 {
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("StartNextGame called"));
 
-	GetWorld()->ServerTravel(GameConstants::GetMapWithListen(GameConstants::Map_Warehouse));
+	GetWorld()->ServerTravel(MapManager::GetMapWithListen(MapManager::Map_Warehouse));
 }
 
 /* check if number of players is equal to number of players in hub, start/reset the timer after the last joined player basically fail safe when any 1 or more player disconnect between level transition.*/

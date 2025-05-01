@@ -4,6 +4,7 @@
 #include "Widget/MainHud.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "GameModes/PropHuntGameMode.h"
+#include "Utils/MapManager.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -117,7 +118,7 @@ void APropHuntPlayerController::ExitClientOnServer_Implementation()
 		GameMode->CleanupPlayerExitFromScoreboard();
 	}
 
-	ClientTravel("/Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
+	ClientTravel(MapManager::Map_Menu, ETravelType::TRAVEL_Absolute);
 	PropHuntGameInstance->QuitGameCleanup();
 	PropHuntGameInstance->DestroySession();
 

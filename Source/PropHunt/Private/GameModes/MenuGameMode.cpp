@@ -7,7 +7,7 @@
 #include "States/PropHuntPlayerState.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "Utils/PropHuntLog.h"
-#include "Utils/GameConstants.h"
+#include "Utils/MapManager.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -65,7 +65,7 @@ void AMenuGameMode::ReturnToMainMenuHost()
 
 void AMenuGameMode::StartGame()
 {
-	GetWorld()->ServerTravel(GameConstants::GetMapWithListen(GameConstants::Map_Warehouse));
+	GetWorld()->ServerTravel(MapManager::GetMapWithListen(MapManager::Map_Warehouse));
 }
 
 const FUniqueNetId& AMenuGameMode::GetUniqueIdFromController(AMenuController* Player)

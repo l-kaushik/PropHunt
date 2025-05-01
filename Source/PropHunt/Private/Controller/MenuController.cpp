@@ -2,6 +2,7 @@
 
 
 #include "Controller/MenuController.h"
+#include "Widget/UIManager.h"
 #include "Widget/MenuWidget.h"
 #include "Widget/HostWidget.h"
 #include "Widget/JoinGameWidget.h"
@@ -9,14 +10,14 @@
 #include "Widget/PlayerEntryWidget.h"
 #include "Widget/ServerEntryWidget.h"
 #include "Widget/ErrorBox/UIErrorBox.h"
+#include "Widget/LoadingScreenWidget.h"
 #include "GameModes/MenuGameMode.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "States/PropHuntPlayerState.h"
 #include "States/PropHuntGameState.h"
 #include "Utils/WidgetUtils.h"
-#include "Widget/UIManager.h"
 #include "Utils/PropHuntLog.h"
-#include "Widget/LoadingScreenWidget.h"
+#include "Utils/MapManager.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -331,7 +332,7 @@ void AMenuController::ClientWantsToQuit()
 {
 	UE_LOG(LogTemp, Warning, TEXT("One player quit"));
 
-	ClientTravel("/Game/ThirdPerson/Maps/MenuMap", ETravelType::TRAVEL_Absolute);
+	ClientTravel(MapManager::Map_Menu, ETravelType::TRAVEL_Absolute);
 	PropHuntGameInstance->QuitGameCleanup();
 	PropHuntGameInstance->DestroySession();
 }

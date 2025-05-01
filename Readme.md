@@ -83,3 +83,6 @@
 
 9. 30-04-2025
 - UI Updates for LobbyWidget, PlayerEntryWidget and GameStatsEntryWidget.
+
+10. 1-05-2025
+- Scalable MapManager class along with DataAsset and FMapInfo. Replaced GameConstant class to MapManager without chaging any function or variable access (backward compatibility).
