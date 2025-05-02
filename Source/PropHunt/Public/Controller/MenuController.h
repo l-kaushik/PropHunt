@@ -12,6 +12,7 @@
  * 
  */
 
+struct FMapInfo;
 class UMenuWidget;
 class ULobbyWidget;
 class UHostWidget;
@@ -36,7 +37,7 @@ public:
 	virtual void ClientReturnToMainMenuWithTextReason_Implementation(const FText& ReturnReason) override;
 
 public:
-	void ClientWantsToHost(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
+	void ClientWantsToHost(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatch = true);
 	void ClientWantsToJoin(int32 SessionResultIndex);
 	void UpdateClientReadyStatus(bool IsReady);
 	void HostWantsToStartGame();
@@ -58,7 +59,7 @@ public:
 
 protected:
 	UFUNCTION(Server, Reliable)
-	void ClientWantsToHostOnServer(const FName& SessionName,const FString& LevelName, int32 NumPublicConnections, bool IsLANMatc);
+	void ClientWantsToHostOnServer(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatc);
 
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToJoinOnServer(int32 SessionResultIndex);

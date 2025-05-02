@@ -114,17 +114,24 @@ bool UPropHuntGameInstance::GetIsHost() const
 	return bIsHost;
 }
 
+const FMapInfo& UPropHuntGameInstance::GetMapInfo() const
+{
+	return CurrentMapInfo;
+}
+
 FString UPropHuntGameInstance::GetLastDisconnectReason() const
 {
 	return LastDisconnectReason;
 }
 
-void UPropHuntGameInstance::HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch)
+void UPropHuntGameInstance::HostSession(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatch)
 {
 	CurrentSessionName = SessionName;
+	CurrentMapInfo = MapInfo;
+
 	PropHuntSubsystem->OnCreateSessionCompleteEvent.Clear();
 	PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
-	PropHuntSubsystem->CreateSession(SessionName, LevelName, NumPublicConnections, IsLANMatch);	
+	PropHuntSubsystem->CreateSession(SessionName, MapInfo.Name, NumPublicConnections, IsLANMatch);	
 }
 
 void UPropHuntGameInstance::OnCreateSessionCompleted(bool Successful)

@@ -72,11 +72,9 @@ void UHostWidget::OnHostButtonClicked()
 
 	FName SessionName(*ServerNameText->GetText().ToString());
 	int32 PlayerNumbers = FCString::Atoi(*(NumberOfPlayersText->GetText().ToString()));
-	FString LevelName = "ThirdPersonMap";
-	// host server
 	
 	// use controller to host server
-	MenuController->ClientWantsToHost(SessionName, LevelName, PlayerNumbers);
+	MenuController->ClientWantsToHost(SessionName, m_MapInfoArray[m_MapSelected], PlayerNumbers);
 
 }
 

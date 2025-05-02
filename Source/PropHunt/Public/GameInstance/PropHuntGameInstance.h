@@ -3,11 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Utils/Struct.h"
 #include "Engine/GameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "PropHuntGameInstance.generated.h"
 
+struct FMapInfo;
 class UPropHuntSubsystem;
 class FOnlineSessionSearchResult;
 
@@ -25,10 +27,11 @@ public:
 	int32 GetPlayerNum() const;
 	bool GetIsMultiplayer() const;
 	bool GetIsHost() const;
+	const FMapInfo& GetMapInfo() const;
 	FString GetLastDisconnectReason() const;
 
 	// session related functions
-	void HostSession(const FName& SessionName, const FString LevelName, int32 NumPublicConnections, bool IsLANMatch = true);
+	void HostSession(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatch = true);
 	void StartSession();
 	void FindSessions(int32 MaxSearchResults, bool IsLANQuery = true);
 	void StartFindSessions();
@@ -79,6 +82,7 @@ private:
 
 	bool bIsMultiplayer;
 	bool bIsHost;
+	FMapInfo CurrentMapInfo;
 	FName CurrentSessionName;
 	int32 PlayerNum;
 	FString LastDisconnectReason;

@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Utils/Struct.h"
 #include "GameFramework/GameStateBase.h"
 #include "PropHuntGameState.generated.h"
 
+struct FMapInfo;
 class APropHuntPlayerController;
 class AMenuController;
 class APropHuntPlayerState;
@@ -31,6 +33,7 @@ public:
 	bool GetHasGameStarted() const;
 	bool GetIsPropWon() const;
 	int32 GetMinPlayerNum() const;
+	const FMapInfo& GetMapInfo() const;
 
 	// Setters
 	void AddPlayerController(APropHuntPlayerController* NewController);
@@ -41,6 +44,7 @@ public:
 	void SetHasGameStarted(bool InHasGameStarted);
 	void SetIsPropWon(bool InIsPropWon);
 	void SetMinPlayerNum(int32 InMinPlayerNum);
+	void SetMapInfo(const FMapInfo& InMapInfo);
 
 public:
 	FOnPlayerListUpdated OnPlayerListUpdated;
@@ -73,4 +77,7 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bIsPropWon;
+	
+	UPROPERTY(Replicated)
+	FMapInfo MapInfo;
 };

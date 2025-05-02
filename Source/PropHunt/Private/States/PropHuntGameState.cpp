@@ -69,6 +69,11 @@ int32 APropHuntGameState::GetMinPlayerNum() const
 	return MinPlayerNum;
 }
 
+const FMapInfo& APropHuntGameState::GetMapInfo() const
+{
+	return MapInfo;
+}
+
 // Setters
 
 void APropHuntGameState::AddPlayerController(APropHuntPlayerController* NewController)
@@ -126,6 +131,11 @@ void APropHuntGameState::SetIsPropWon(bool InIsPropWon)
 void APropHuntGameState::SetMinPlayerNum(int32 InMinPlayerNum)
 {
 	MinPlayerNum = InMinPlayerNum;
+}
+
+void APropHuntGameState::SetMapInfo(const FMapInfo& InMapInfo)
+{
+	MapInfo = InMapInfo;
 }
 
 // rep notifiers

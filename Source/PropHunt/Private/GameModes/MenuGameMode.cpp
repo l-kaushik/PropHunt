@@ -65,7 +65,7 @@ void AMenuGameMode::ReturnToMainMenuHost()
 
 void AMenuGameMode::StartGame()
 {
-	GetWorld()->ServerTravel(MapManager::GetMapWithListen(MapManager::Map_Warehouse));
+	GetWorld()->ServerTravel(MapManager::GetMapAddressWithListen(PropHuntGameInstance->GetMapInfo().Name));
 }
 
 const FUniqueNetId& AMenuGameMode::GetUniqueIdFromController(AMenuController* Player)

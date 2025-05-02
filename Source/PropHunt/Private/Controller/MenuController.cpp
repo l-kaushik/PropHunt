@@ -18,6 +18,7 @@
 #include "Utils/WidgetUtils.h"
 #include "Utils/PropHuntLog.h"
 #include "Utils/MapManager.h"
+#include "Utils/Struct.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -66,6 +67,9 @@ void AMenuController::BeginPlay()
 
 				// if this is host and make it always be ready
 				CustomPlayerState->SetIsReady(true);
+
+				// set mapinfo in game state so other client can have it
+				PropHuntGameState->SetMapInfo(PropHuntGameInstance->GetMapInfo());
 			}
 
 			SetupWidgetForMuliplayer();
@@ -194,14 +198,14 @@ void AMenuController::UpdateStartButtonState(bool IsReady)
 	}
 }
 
-void AMenuController::ClientWantsToHost(const FName& SessionName, const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch)
+void AMenuController::ClientWantsToHost(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatch)
 {
-	ClientWantsToHostOnServer(SessionName, LevelName, NumPublicConnections, IsLANMatch);
+	ClientWantsToHostOnServer(SessionName, MapInfo, NumPublicConnections, IsLANMatch);
 }
 
-void AMenuController::ClientWantsToHostOnServer_Implementation(const FName& SessionName, const FString& LevelName, int32 NumPublicConnections, bool IsLANMatch)
+void AMenuController::ClientWantsToHostOnServer_Implementation(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatch)
 {
-	PropHuntGameInstance->HostSession(SessionName, LevelName, NumPublicConnections, IsLANMatch);
+	PropHuntGameInstance->HostSession(SessionName, MapInfo, NumPublicConnections, IsLANMatch);
 }
 
 void AMenuController::SearchSessions()
