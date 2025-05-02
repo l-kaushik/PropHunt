@@ -99,6 +99,11 @@ void UPropHuntGameInstance::SetLastDisconnectReason(const FText& ReturnReason)
 	LastDisconnectReason = ReturnReason.ToString();
 }
 
+void UPropHuntGameInstance::SetMapInfo(const FMapInfo& InMapInfo)
+{
+	CurrentMapInfo = InMapInfo;
+}
+
 int32 UPropHuntGameInstance::GetPlayerNum() const
 {
 	return PlayerNum;

@@ -57,6 +57,9 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ShowLoadingScreen(const FString& InMessage);
 
+	UFUNCTION(Client, Reliable)
+	void ClientReceiveMapInfo(const FMapInfo& MapInfo);
+
 protected:
 	UFUNCTION(Server, Reliable)
 	void ClientWantsToHostOnServer(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatc);
@@ -72,6 +75,9 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerUpdateReadyStatus(const bool IsReady);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestMapInfo();
 
 private:
 	void SetupWidgetForMuliplayer();

@@ -71,6 +71,11 @@ void AMenuController::BeginPlay()
 				// set mapinfo in game state so other client can have it
 				PropHuntGameState->SetMapInfo(PropHuntGameInstance->GetMapInfo());
 			}
+			else
+			{
+			// request map info from server to store in game instance (for all clients)
+				ServerRequestMapInfo();
+			}
 
 			SetupWidgetForMuliplayer();
 			OnPlayerListUpdated(PropHuntGameState->GetPlayerStates());	// explicitly calling to update widget for host as well
@@ -351,4 +356,14 @@ void AMenuController::ServerUpdateReadyStatus_Implementation(const bool IsReady)
 {
 	auto* CustomPlayerState = GetPlayerState<APropHuntPlayerState>();
 	CustomPlayerState->SetIsReady(IsReady);
+}
+
+void AMenuController::ServerRequestMapInfo_Implementation()
+{
+	ClientReceiveMapInfo(PropHuntGameState->GetMapInfo());
+}
+
+void AMenuController::ClientReceiveMapInfo_Implementation(const FMapInfo& MapInfo)
+{
+	PropHuntGameInstance->SetMapInfo(MapInfo);
 }

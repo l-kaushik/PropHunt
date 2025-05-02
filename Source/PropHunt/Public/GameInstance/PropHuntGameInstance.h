@@ -22,6 +22,7 @@ public:
 	// setters
 	void SetPlayerNum(int32 InPlayerNum);
 	void SetLastDisconnectReason(const FText& ReturnReason);
+	void SetMapInfo(const FMapInfo& InMapInfo);
 
 	// getters
 	int32 GetPlayerNum() const;
