@@ -66,10 +66,8 @@ void APropHuntGameMode::SpawnPlayer(APropHuntPlayerController* PlayerController)
 	UWorld* World = GetWorld();
 
 	AActor* SpawnPoint = FindPlayerStart(nullptr);
-	// spawnPoint's location is 0,0,0
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(FVector(12660.000000,6660.000000,530.000000));
-	//SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
+	SpawnTransform.SetLocation(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().PropSpawnCoordinate);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
@@ -103,7 +101,7 @@ void APropHuntGameMode::StartNextGame()
 {
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("StartNextGame called"));
 
-	GetWorld()->ServerTravel(MapManager::GetMapWithListen(MapManager::Map_Warehouse));
+	GetWorld()->ServerTravel(MapManager::GetMapAddressWithListen(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().Name));
 }
 
 /* check if number of players is equal to number of players in hub, start/reset the timer after the last joined player basically fail safe when any 1 or more player disconnect between level transition.*/
@@ -148,8 +146,21 @@ void APropHuntGameMode::ChooseHunterCharacter()
 	if (Hunter) {
 		SpawnHunter(Hunter);
 		MyGameState->SetHasGameStarted(true);
-		SetupInitialWidget();
-		StartGameLoopTimer();
+		// after spawning hunter, show message on every prop that hunter will spawn in 10 seconds hide
+
+		// spawn hunter to prop location after x seconds
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(
+			TimerHandle,
+			[this, Hunter]() {
+				Hunter->GetCharacter()->TeleportTo(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().PropSpawnCoordinate, FRotator(), false, false);
+
+				SetupInitialWidget();
+				StartGameLoopTimer();
+			},
+			10,
+			false
+		);
 	}
 	else {
 		StartGameTimer();	// if hunter not present, reset 
@@ -161,11 +172,8 @@ APropHuntCharacter* APropHuntGameMode::SpawnCharacter()
 {
 	UWorld* World = GetWorld();
 
-	AActor* SpawnPoint = FindPlayerStart(nullptr);
-
 	FTransform SpawnTransform;
-	SpawnTransform = SpawnPoint->GetTransform();
-	//SpawnTransform.SetLocation(MyGameState->HunterStartLocation);
+	SpawnTransform.SetLocation(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().HunterSpawnCoordinate);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
