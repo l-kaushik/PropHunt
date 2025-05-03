@@ -44,51 +44,69 @@ void AMenuController::BeginPlay()
 	Super::BeginPlay();
 
 	// Initialize variables
+	InitializeVariable();
+
+	if (IsLocalPlayerController()){
+
+		InitializeMenuWidget();
+
+		// create lobby widget on top of menu widget if its multiplayer game
+		InitializeMultiplayerSettings();
+
+		// setup disconnect settings
+		SetupDisconnectSettings();
+	}
+}
+
+void AMenuController::InitializeVariable()
+{
 	PropHuntGameInstance = Cast<UPropHuntGameInstance>(GetWorld()->GetGameInstance());
 	PropHuntGameState = GetWorld()->GetGameState<APropHuntGameState>();
 	PropHuntMenuGameMode = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	PropHuntGameState->OnPlayerListUpdated.AddUObject(this, &ThisClass::OnPlayerListUpdated);
+}
 
-	if (IsLocalPlayerController()){
+void AMenuController::InitializeMenuWidget()
+{
+	MenuWidgetRef = WidgetUtils::CreateAndAddWidget<UMenuWidget>(this, MenuWidgetBPClassRef);
+	SetInputMode(FInputModeUIOnly());
+	SetShowMouseCursor(true);
+}
 
-		MenuWidgetRef = WidgetUtils::CreateAndAddWidget<UMenuWidget>(this, MenuWidgetBPClassRef);
-		SetInputMode(FInputModeUIOnly());
-		SetShowMouseCursor(true);
+void AMenuController::InitializeMultiplayerSettings()
+{
+	if (!PropHuntGameInstance->GetIsMultiplayer()) return;
+	if (PropHuntGameInstance->GetIsHost())
+	{
+		auto* CustomPlayerState = GetPlayerState<APropHuntPlayerState>();
 
-		// create lobby widget on top of menu widget if its multiplayer game
-		if (PropHuntGameInstance->GetIsMultiplayer())
-		{
-			if (PropHuntGameInstance->GetIsHost())
-			{
-				auto* CustomPlayerState = GetPlayerState<APropHuntPlayerState>();
+		// if multiplayer game, set host variable to true for host
+		CustomPlayerState->SetIsHost(PropHuntGameInstance->GetIsHost());
 
-				// if multiplayer game, set host variable to true for host
-				CustomPlayerState->SetIsHost(PropHuntGameInstance->GetIsHost());
+		// if this is host and make it always be ready
+		CustomPlayerState->SetIsReady(true);
 
-				// if this is host and make it always be ready
-				CustomPlayerState->SetIsReady(true);
+		// set mapinfo in game state so other client can have it
+		PropHuntGameState->SetMapInfo(PropHuntGameInstance->GetMapInfo());
+	}
+	else
+	{
+		// request map info from server to store in game instance (for all clients)
+		ServerRequestMapInfo();
+	}
 
-				// set mapinfo in game state so other client can have it
-				PropHuntGameState->SetMapInfo(PropHuntGameInstance->GetMapInfo());
-			}
-			else
-			{
-			// request map info from server to store in game instance (for all clients)
-				ServerRequestMapInfo();
-			}
+	SetupWidgetForMuliplayer();
+	OnPlayerListUpdated(PropHuntGameState->GetPlayerStates());	// explicitly calling to update widget for host as well
+}
 
-			SetupWidgetForMuliplayer();
-			OnPlayerListUpdated(PropHuntGameState->GetPlayerStates());	// explicitly calling to update widget for host as well
-		}
+void AMenuController::SetupDisconnectSettings()
+{
+	const FString DisconnectReason = PropHuntGameInstance->GetLastDisconnectReason();
 
-		const FString DisconnectReason = PropHuntGameInstance->GetLastDisconnectReason();
-
-		if (!DisconnectReason.IsEmpty())
-		{
-			DisplaySessionError(DisconnectReason);
-			PropHuntGameInstance->SetLastDisconnectReason(FText());
-		}
-
+	if (!DisconnectReason.IsEmpty())
+	{
+		DisplaySessionError(DisconnectReason);
+		PropHuntGameInstance->SetLastDisconnectReason(FText());
 	}
 }
 

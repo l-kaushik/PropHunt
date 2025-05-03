@@ -80,6 +80,11 @@ protected:
 	void ServerRequestMapInfo();
 
 private:
+	void InitializeVariable();
+	void InitializeMenuWidget();
+	void InitializeMultiplayerSettings();
+	void SetupDisconnectSettings();
+
 	void SetupWidgetForMuliplayer();
 	void AddNewPlayerToList(const APropHuntPlayerState* PlayerState);
 	void UpdateStartButtonState(bool IsReady);
