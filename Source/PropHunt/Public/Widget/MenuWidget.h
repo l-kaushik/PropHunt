@@ -36,6 +36,7 @@ public:
 	void HideSessionLoadingThrobber();
 	void DisplayNoSessionFoundMessage();
 	void HideNoSessionFoundMessage();
+	void SetBackgroundImage(UTexture2D* InImageTexture);
 
 private:
 	virtual void NativeConstruct() override;
@@ -81,6 +82,9 @@ private:
 	// Main Menu Components
 	UPROPERTY(meta = (BindWidget))
 	UImage* BackgroundTint;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* BackgroundImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* MainMenuVBox;

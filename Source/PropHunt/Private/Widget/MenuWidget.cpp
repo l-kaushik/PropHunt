@@ -8,6 +8,7 @@
 #include "Controller/MenuController.h"
 #include "Utils/WidgetUtils.h"
 #include "Utils/PropHuntLog.h"
+#include "Utils/MapManager.h"
 #include "Macros/WidgetMacros.h"
 #include "Widget/UIManager.h"
 
@@ -52,6 +53,35 @@ void UMenuWidget::DisplayNoSessionFoundMessage()
 void UMenuWidget::HideNoSessionFoundMessage()
 {
 	JoinGameWidgetRef->HideNoSessionFoundMessage();
+}
+
+void UMenuWidget::SetBackgroundImage(UTexture2D* InImageTexture)
+{
+	FSlateBrush Brush;
+
+	// default image texture (main menu)
+	if (!InImageTexture)
+	{
+		const FMapInfo* MapInfo = MapManager::GetMapInfo("MenuMap");
+		if (MapInfo && MapInfo->Image)
+		{
+			UTexture2D* ImageTexture = MapInfo->Image;
+			Brush.SetResourceObject(ImageTexture);
+			Brush.ImageSize = FVector2D(ImageTexture->GetSizeX(), ImageTexture->GetSizeY());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to get MapInfo"));
+			return;
+		}
+	}
+	else
+	{
+		Brush.SetResourceObject(InImageTexture);
+		Brush.ImageSize = FVector2D(InImageTexture->GetSizeX(), InImageTexture->GetSizeY());
+	}
+
+	BackgroundImage->SetBrush(Brush);
 }
 
 void UMenuWidget::NativeConstruct()
