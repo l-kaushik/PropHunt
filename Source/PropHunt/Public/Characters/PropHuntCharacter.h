@@ -48,6 +48,10 @@ class APropHuntCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ShootAction;
 
+	/** Reload Weapon Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ReloadAction;
+
 	/** Weapon Mesh Component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Gun", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* RifleMesh;
@@ -64,6 +68,7 @@ protected:
 
 	void Shoot();
 	void StopShooting();
+	void ReloadWeapon();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -103,6 +108,12 @@ public:
 	UFUNCTION(NetMulticast, Unreliable)
 	void HitFxMulticast(FVector ImpactPoint);
 
+	UFUNCTION(Server, Reliable)
+	void RequestReloadAnimation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastReloadAnimation();
+
 protected:
 	UFUNCTION()
 	void Fire();
@@ -110,6 +121,9 @@ protected:
 	void ShowHitMarker();
 
 	void PerformLineTrace(FRotator CameraRotation);
+
+	UFUNCTION()
+	void OnReloadMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
 
 
 public:
@@ -121,8 +135,13 @@ private:
 
 	static UParticleSystem* HitParticle;
 	static UAnimationAsset* FireAnim;
+	static UAnimSequence* WeaponReloadAnim;
+	static UAnimMontage* PlayerReloadMontage;
 
 	FTimerHandle TimerHandle;
 	float BulletDistance;
+
+	bool IsShooting;
+	bool IsReloading;
 };
 

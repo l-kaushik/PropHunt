@@ -20,6 +20,8 @@
 
 UParticleSystem* APropHuntCharacter::HitParticle = nullptr;
 UAnimationAsset* APropHuntCharacter::FireAnim = nullptr;
+UAnimSequence* APropHuntCharacter::WeaponReloadAnim = nullptr;
+UAnimMontage* APropHuntCharacter::PlayerReloadMontage = nullptr;
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -86,6 +88,24 @@ APropHuntCharacter::APropHuntCharacter()
 		FireAnim = AnimationAsset.Object;
 	}
 
+	// load weapon reload animation sequence
+	static ConstructorHelpers::FObjectFinder<UAnimSequence> WeaponReloadAnimationSequence(TEXT("/Game/MilitaryWeapSilver/Weapons/Animations/Reload_Rifle_Hip_W.Reload_Rifle_Hip_W"));
+
+	if (WeaponReloadAnimationSequence.Succeeded()) {
+		WeaponReloadAnim = WeaponReloadAnimationSequence.Object;
+	}
+
+	// load player reload animation montage
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> PlayerReloadAnimationMontage(TEXT("/Game/MilitaryCharSilver/Animations/Rifle/AM_MM_Rifle_Reload.AM_MM_Rifle_Reload"));
+
+	if (PlayerReloadAnimationMontage.Succeeded()) {
+		PlayerReloadMontage = PlayerReloadAnimationMontage.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to get anim montage for player reload"))
+	}
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -126,6 +146,8 @@ void APropHuntCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &APropHuntCharacter::Shoot);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &APropHuntCharacter::StopShooting);
 
+		// Reloading
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &APropHuntCharacter::ReloadWeapon);
 	}
 	else
 	{
@@ -181,18 +203,71 @@ void APropHuntCharacter::Landed(const FHitResult& Hit)
 }
 
 /*
+* Weapon reloading
+*/
+
+void APropHuntCharacter::ReloadWeapon()
+{
+	if (IsReloading) return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Reloading"));
+
+	// stop shooting if shooting
+	if (IsShooting) StopShooting();
+
+	IsReloading = true;
+
+	// play montage/sequence
+	RequestReloadAnimation();
+}
+
+void APropHuntCharacter::RequestReloadAnimation_Implementation()
+{
+	MulticastReloadAnimation();
+}
+
+void APropHuntCharacter::MulticastReloadAnimation_Implementation()
+{
+	// play weapon sequence
+	// animation playing but not in sync
+	//RifleMesh->PlayAnimation(WeaponReloadAnim, false);
+
+	// play player montage
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->OnMontageBlendingOut.AddUniqueDynamic(this, &APropHuntCharacter::OnReloadMontageBlendingOut);
+		float seconds = AnimInstance->Montage_Play(PlayerReloadMontage);
+		UE_LOG(LogTemp, Warning, TEXT("Montage time: %f"), seconds);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to get anim instance"));
+	}
+}
+
+void APropHuntCharacter::OnReloadMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsReloading = false;
+}
+
+/*
 	Shoot and StopShooting will get called after the "ShootAction" triggers a valid event.
 
 	!HasAuthority make sure only client calls the RPCs.
 */
 
 void APropHuntCharacter::Shoot() {
-	UE_LOG(LogPropHuntCharacter, Display, TEXT("Started Firing"));
+	if (IsReloading) return;
+
+	UE_LOG_NON_SHIP(LogPropHuntCharacter, Display, TEXT("Started Firing"));
+	IsShooting = true;
 	FireOnServer();
 }
 
 void APropHuntCharacter::StopShooting() {
-	UE_LOG(LogPropHuntCharacter, Display, TEXT("Stopped Firing"));
+	UE_LOG_NON_SHIP(LogPropHuntCharacter, Display, TEXT("Stopped Firing"));
+	IsShooting = false;
 	StopFireOnServer();
 }
 
