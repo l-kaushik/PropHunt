@@ -252,6 +252,8 @@ void UMenuWidget::OnOptionsButtonClicked()
 void UMenuWidget::OnQuitGameButtonClicked()
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Quit game button clicked!"));
+
+	UKismetSystemLibrary::QuitGame(GetWorld(), GetOwningPlayer(), EQuitPreference::Quit, true);
 }
 
 void UMenuWidget::OnHostGameButonClicked()

@@ -38,6 +38,7 @@ public:
 
 	void TrySetupPropWidget(bool bIsProp);
 	void SetIsProp(bool bIsProp);
+	void UpdateWeaponUI(int32 InCurrentAmmoInMagazine, int32 InCurrentReserverAmmo);
 
 	void StartNewGame();
 	void ExitGame();

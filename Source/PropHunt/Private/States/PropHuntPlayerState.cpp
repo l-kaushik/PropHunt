@@ -5,6 +5,15 @@
 
 #include "Net/UnrealNetwork.h"
 
+const int32 APropHuntPlayerState::m_MaxAmmoInMagazine = 30;
+const int32 APropHuntPlayerState::m_MaxReserveAmmo = 180;
+
+APropHuntPlayerState::APropHuntPlayerState()
+{
+	m_CurrentAmmoInMagazine = m_MaxAmmoInMagazine;
+	m_CurrentReserveAmmo = m_MaxReserveAmmo;
+}
+
 void APropHuntPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -19,6 +28,10 @@ void APropHuntPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(APropHuntPlayerState, m_DamageGiven);
 	DOREPLIFETIME(APropHuntPlayerState, m_DamageTaken);
 	DOREPLIFETIME(APropHuntPlayerState, m_LongestHiddenTime);
+
+	// Weapon Data
+	DOREPLIFETIME(APropHuntPlayerState, m_CurrentAmmoInMagazine)
+	DOREPLIFETIME(APropHuntPlayerState, m_CurrentReserveAmmo)
 }
 
 void APropHuntPlayerState::SetIsReady(bool InIsReady)
@@ -79,5 +92,40 @@ int32 APropHuntPlayerState::GetDamageGiven() const
 int32 APropHuntPlayerState::GetDamageTaken() const
 {
 	return m_DamageTaken;
+}
+
+void APropHuntPlayerState::ReduceAmmo()
+{
+	m_CurrentAmmoInMagazine--;
+}
+
+void APropHuntPlayerState::SetCurrentAmmoInMagazine(int32 InAmmo)
+{
+	m_CurrentAmmoInMagazine = InAmmo;
+}
+
+void APropHuntPlayerState::SetCurrentReserveAmmo(int32 InAmmo)
+{
+	m_CurrentReserveAmmo = InAmmo;
+}
+
+int32 APropHuntPlayerState::GetCurrentAmmoInMagazine() const
+{
+	return m_CurrentAmmoInMagazine;
+}
+
+int32 APropHuntPlayerState::GetCurrentReserveAmmo() const
+{
+	return m_CurrentReserveAmmo;
+}
+
+int32 APropHuntPlayerState::GetMaxAmmoInMagazine() const
+{
+	return m_MaxAmmoInMagazine;
+}
+
+int32 APropHuntPlayerState::GetMaxReserveAmmo() const
+{
+	return m_MaxReserveAmmo;
 }
 

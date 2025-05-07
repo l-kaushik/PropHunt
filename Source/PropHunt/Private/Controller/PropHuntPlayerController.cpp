@@ -89,6 +89,11 @@ void APropHuntPlayerController::SetIsProp(bool bIsProp)
 	m_bIsProp = bIsProp;
 }
 
+void APropHuntPlayerController::UpdateWeaponUI(int32 InCurrentAmmoInMagazine, int32 InCurrentReserverAmmo)
+{
+	MainHudRef->UpdateWeaponUI(InCurrentAmmoInMagazine, InCurrentReserverAmmo);
+}
+
 void APropHuntPlayerController::StartNewGame()
 {
 	auto* GameMode = Cast<APropHuntGameMode>(UGameplayStatics::GetGameMode(GetWorld()));

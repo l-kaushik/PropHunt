@@ -16,6 +16,7 @@
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/BackgroundBlur.h"
+#include "Components/HorizontalBox.h"
 #include "Components/Border.h"
 #include "Components/Overlay.h"
 #include "Components/WidgetSwitcher.h"
@@ -33,7 +34,8 @@ void UMainHud::SetupPropWidget(bool bIsProp)
 	else {
 		PlayerObjectiveText = FText::FromString("Find the Prop!");
 		Crosshair->SetVisibility(ESlateVisibility::Visible);
-
+		HideWeaponUIComponents(ESlateVisibility::Visible);
+		
 		if(HealthBar->GetVisibility() == ESlateVisibility::Visible)
 			HealthBar->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -120,6 +122,12 @@ void UMainHud::UpdateTimerText()
 	int32 Seconds = RemainingTime.GetSeconds();
 	FString TimerString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
 	TimerText->SetText(FText::FromString(TimerString));;
+}
+
+void UMainHud::UpdateWeaponUI(int32 InCurrentAmmoInMagazine, int32 InCurrentReserverAmmo)
+{
+	CurrentAmmoCount->SetText(FText::FromString(FString::FromInt(InCurrentAmmoInMagazine)));
+	ReserveAmmoCount->SetText(FText::FromString(FString::FromInt(InCurrentReserverAmmo)));
 }
 
 // Set things for the gameplay time
@@ -269,6 +277,14 @@ void UMainHud::SetTimerText()
 	}
 }
 
+void UMainHud::SetWeaponUIElement()
+{
+	BulletCountBorder->AddChild(BulletCountHBox);
+	BulletCountHBox->AddChild(CurrentAmmoCount);
+	BulletCountHBox->AddChild(Divider);
+	BulletCountHBox->AddChild(ReserveAmmoCount);
+}
+
 void UMainHud::HitMarkerAnimFinished(UWidgetAnimation* Animation)
 {
 	if(Animation == HitMarkerAnim)
@@ -280,6 +296,13 @@ void UMainHud::HideHudComponents()
 	PlayerObjective->SetVisibility(ESlateVisibility::Hidden);
 	TimerBorder->SetVisibility(ESlateVisibility::Hidden);
 	HealthBar->SetVisibility(ESlateVisibility::Hidden);
+	HideWeaponUIComponents(ESlateVisibility::Hidden);
+}
+
+void UMainHud::HideWeaponUIComponents(ESlateVisibility InVisibility)
+{
+	BulletCountHBox->SetVisibility(InVisibility);
+	BulletCountBorder->SetVisibility(InVisibility);
 }
 
 

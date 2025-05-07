@@ -16,6 +16,7 @@ class UOverlay;
 class UTextBlock;
 class UProgressBar;
 class UMasterButton;
+class UHorizontalBox;
 class UWidgetSwitcher;
 class UBackgroundBlur;
 class UGameStatsWidget;
@@ -37,6 +38,7 @@ public:
 	void StartTimer();
 	void EndTimer();
 	void UpdateTimerText();
+	void UpdateWeaponUI(int32 InCurrentAmmoInMagazine, int32 InCurrentReserverAmmo);
 
 protected:
 
@@ -56,8 +58,10 @@ private:
 	void SetTimerBorder();
 	void SetTimerIcon();
 	void SetTimerText();
+	void SetWeaponUIElement();
 	void HitMarkerAnimFinished(UWidgetAnimation* Animation);
 	void HideHudComponents();
+	void HideWeaponUIComponents(ESlateVisibility InVisibility);
 
 
 	void OnGameStatsButtonClicked();
@@ -80,6 +84,23 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HealthBar;
+
+	// weapon UI
+
+	UPROPERTY(meta = (BindWidget))
+	UBorder* BulletCountBorder;
+
+	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* BulletCountHBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CurrentAmmoCount;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Divider;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ReserveAmmoCount;
 
 	// Hit marker and animation
 

@@ -15,6 +15,7 @@ class PROPHUNT_API APropHuntPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
+	APropHuntPlayerState();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -40,6 +41,17 @@ public:
 
 	// track the current hidden time, and when player move compare with longest hidden time and update accordingly
 
+
+	// Weapon Data
+	void ReduceAmmo();
+	void SetCurrentAmmoInMagazine(int32 InAmmo);
+	void SetCurrentReserveAmmo(int32 InAmmo);
+
+	int32 GetCurrentAmmoInMagazine() const;
+	int32 GetCurrentReserveAmmo() const;
+	int32 GetMaxAmmoInMagazine() const;
+	int32 GetMaxReserveAmmo() const;
+
 private:
 
 	// Player Info
@@ -64,4 +76,15 @@ private:
 
 	UPROPERTY(Replicated)
 	double m_LongestHiddenTime;
+
+	// Weapon Data
+
+	UPROPERTY(Replicated)
+	int32 m_CurrentAmmoInMagazine;
+
+	UPROPERTY(Replicated)
+	int32 m_CurrentReserveAmmo;
+	
+	static const int32 m_MaxAmmoInMagazine;
+	static const int32 m_MaxReserveAmmo;
 };

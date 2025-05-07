@@ -68,7 +68,9 @@ protected:
 
 	void Shoot();
 	void StopShooting();
+	bool CanReload();
 	void ReloadWeapon();
+	void SyncAmmoUI();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -113,6 +115,12 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastReloadAnimation();
+
+	UFUNCTION(Server, Reliable)
+	void RequestUpdateBulletCount();
+
+	UFUNCTION(Client, Reliable)
+	void ReceivedUpdateWeaponUI(int32 InCurrentAmmoInMagazine, int32 InCurrentReserverAmmo);
 
 protected:
 	UFUNCTION()

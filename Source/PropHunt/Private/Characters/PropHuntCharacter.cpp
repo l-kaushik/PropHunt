@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Characters/PropHuntCharacter.h"
+#include "States/PropHuntPlayerState.h"
 #include "Controller/PropHuntPlayerController.h"
 #include "Utils/PropHuntLog.h"
 
@@ -206,19 +207,63 @@ void APropHuntCharacter::Landed(const FHitResult& Hit)
 * Weapon reloading
 */
 
+bool APropHuntCharacter::CanReload()
+{
+	auto* PS = GetPlayerState<APropHuntPlayerState>();
+
+	int32 Current = PS->GetCurrentAmmoInMagazine();
+	int32 Max = PS->GetMaxAmmoInMagazine();
+	int32 Reserve = PS->GetCurrentReserveAmmo();
+
+	// Reload only if magazine not full and there's reserve ammo
+	return (Current < Max && Reserve > 0);
+}
+
 void APropHuntCharacter::ReloadWeapon()
 {
-	if (IsReloading) return;
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Reloading"));
+	if (IsReloading || !CanReload()) return;
 
 	// stop shooting if shooting
 	if (IsShooting) StopShooting();
 
 	IsReloading = true;
 
+	RequestUpdateBulletCount();
+
 	// play montage/sequence
 	RequestReloadAnimation();
+}
+
+void APropHuntCharacter::RequestUpdateBulletCount_Implementation()
+{
+	auto* CustomPlayerState = GetPlayerState<APropHuntPlayerState>();
+
+	int32 CurrentAmmoInMagazine = CustomPlayerState->GetCurrentAmmoInMagazine();
+	int32 CurrentReserverAmmo = CustomPlayerState->GetCurrentReserveAmmo();
+
+	int32 AmmoNeeded = CustomPlayerState->GetMaxAmmoInMagazine() - CurrentAmmoInMagazine;
+
+	// update weapon count
+
+	if (CurrentReserverAmmo == 0) return;
+	
+	if (CurrentReserverAmmo >= AmmoNeeded)
+	{
+		CurrentReserverAmmo -= AmmoNeeded;
+		CurrentAmmoInMagazine += AmmoNeeded;
+	}
+	else
+	{
+		CurrentAmmoInMagazine += CurrentReserverAmmo;
+		CurrentReserverAmmo = 0;
+	}
+	
+	// update player state
+	CustomPlayerState->SetCurrentAmmoInMagazine(CurrentAmmoInMagazine);
+	CustomPlayerState->SetCurrentReserveAmmo(CurrentReserverAmmo);
+
+	// update UI
+	SyncAmmoUI();
 }
 
 void APropHuntCharacter::RequestReloadAnimation_Implementation()
@@ -249,6 +294,21 @@ void APropHuntCharacter::MulticastReloadAnimation_Implementation()
 void APropHuntCharacter::OnReloadMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsReloading = false;
+}
+
+void APropHuntCharacter::SyncAmmoUI()
+{
+	auto* PS = GetPlayerState<APropHuntPlayerState>();
+
+	int32 Magazine = PS->GetCurrentAmmoInMagazine();
+	int32 Reserve = PS->GetCurrentReserveAmmo();
+	ReceivedUpdateWeaponUI(Magazine, Reserve);
+}
+
+void APropHuntCharacter::ReceivedUpdateWeaponUI_Implementation(int32 InCurrentAmmoInMagazine, int32 InCurrentReserverAmmo)
+{
+	auto* PlayerController = Cast<APropHuntPlayerController>(GetController());
+	PlayerController->UpdateWeaponUI(InCurrentAmmoInMagazine, InCurrentReserverAmmo);
 }
 
 /*
@@ -291,8 +351,22 @@ void APropHuntCharacter::StopFireOnServer_Implementation() {
 }
 
 void APropHuntCharacter::Fire() {
-	if (isJumping || GetCharacterMovement()->IsFalling()) return;
+	if (isJumping || GetCharacterMovement()->IsFalling() || IsReloading) return;
+
+	// reload automatically if no ammo
+	if (GetPlayerState<APropHuntPlayerState>()->GetCurrentAmmoInMagazine() == 0)
+	{
+		ReloadWeapon();
+		return;
+	}
+
 	SendCameraRotationForTrace();
+
+	// reduce ammo
+	GetPlayerState<APropHuntPlayerState>()->ReduceAmmo();
+
+	// update UI
+	SyncAmmoUI();
 }
 
 void APropHuntCharacter::SendCameraRotationForTrace_Implementation() {
@@ -302,7 +376,7 @@ void APropHuntCharacter::SendCameraRotationForTrace_Implementation() {
 
 void APropHuntCharacter::LineTraceOnServer_Implementation(FRotator CameraRotation){
 	PerformLineTrace(CameraRotation);
-	FireMulticast();
+	FireMulticast();	
 }
 
 void APropHuntCharacter::PerformLineTrace(FRotator CameraRotation) {
