@@ -82,7 +82,10 @@ private:
 	UTextBlock* MapName;
 
 	int m_MapSelected;
+
+	UPROPERTY()
 	TArray<FMapInfo> m_MapInfoArray;
+
 	AMenuController* MenuController;
 	TSubclassOf<UUIErrorBox> UIErrorBoxBPClassRef;
 };

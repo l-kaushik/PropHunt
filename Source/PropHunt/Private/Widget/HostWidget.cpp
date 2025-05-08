@@ -11,6 +11,7 @@
 #include "Utils/WidgetUtils.h"
 #include "Utils/Struct.h"
 #include "Utils/MapManager.h"
+#include "Utils/MapDataAsset.h"
 
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -23,8 +24,23 @@ UHostWidget::UHostWidget(const FObjectInitializer& ObjectInitializer) : Super(Ob
 {
 	m_MapSelected = 0;
 
+	//UMapDataAsset* MapDataAsset = LoadObject<UMapDataAsset>(nullptr, TEXT("/Game/DataAsset/DA_MapDataAsset.DA_MapDataAsset"));
+
+	if (!MapManager::IsInitialized())
+	{
+		MapManager::Get();
+	}
+
+	const auto& AllMaps = MapManager::GetAllMaps();
+
+	if (AllMaps.IsEmpty())
+	{
+		UE_LOG(LogPropHuntWidget, Error, TEXT("Received 0 maps while initializing HostWidget"));
+		return;
+	}
+
 	// fill up MapInfoArray
-	for (const auto& Pair : MapManager::GetAllMaps())
+	for (const auto& Pair : AllMaps)
 	{
 		if (Pair.Key != "MenuMap")
 		{
@@ -95,11 +111,15 @@ void UHostWidget::UpdateMapData()
 	FMapInfo MapInfo = m_MapInfoArray[m_MapSelected];
 	FString TrimmedMapName = MapInfo.Name.LeftChop(3);
 	FSlateBrush Brush;
-	Brush.SetResourceObject(MapInfo.Image);
-	Brush.ImageSize = FVector2D(MapInfo.Image->GetSizeX(), MapInfo.Image->GetSizeY());
+
+	if (IsValid(MapInfo.Image))
+	{
+		Brush.SetResourceObject(MapInfo.Image);
+		Brush.ImageSize = FVector2D(MapInfo.Image->GetSizeX(), MapInfo.Image->GetSizeY());
+		MapImage->SetBrush(Brush);
+	}
 
 	MapName->SetText(FText::FromString(TrimmedMapName));
-	MapImage->SetBrush(Brush);
 }
 
 bool UHostWidget::VerifyServerInfo()
