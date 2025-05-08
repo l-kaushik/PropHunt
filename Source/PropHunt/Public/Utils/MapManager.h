@@ -14,36 +14,14 @@ public:
 
 	static MapManager& Get();
 
-	static FString GetMapWithListen(const TCHAR* MapName) {
-		return FString::Printf(TEXT("%s?listen"), MapName);
-	}
-
-    static const FMapInfo* GetMapInfo(const FString& MapName)
-    {
-        if (const FMapInfo* MapInfo = AllMaps.Find(MapName))
-        {
-            return MapInfo;
-        }
-
-        return nullptr;
-    }
-
-    static const FString GetMapAddressWithListen(const FString& MapName)
-    {
-        if (const FMapInfo* MapInfo = GetMapInfo(MapName))
-        {
-            return FString::Printf(TEXT("%s?listen"), *MapInfo->MapPath);
-        }
-
-        return FString();
-    }
-
+    static FString GetMapWithListen(const TCHAR* MapName);
+    static const FMapInfo* GetMapInfo(const FString& MapName);
+    static const FString GetMapAddressWithListen(const FString& MapName);
     static const TMap<FString, FMapInfo>& GetAllMaps();
+    static const bool IsInitialized();
 
 private:
 	MapManager();
-
-	void LoadAllMaps();
     void LoadMapVariables();
 
 public:
@@ -51,5 +29,8 @@ public:
     static const TCHAR* Map_Warehouse;
 
 private:
-    static TMap<FString, FMapInfo> AllMaps;
+    static bool m_IsInitialized;
+    
+    UPROPERTY()
+    static UMapDataAsset* MapDataAsset;
 };
