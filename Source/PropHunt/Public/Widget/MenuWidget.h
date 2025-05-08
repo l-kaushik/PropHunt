@@ -36,7 +36,7 @@ public:
 	void HideSessionLoadingThrobber();
 	void DisplayNoSessionFoundMessage();
 	void HideNoSessionFoundMessage();
-	void SetBackgroundImage(UTexture2D* InImageTexture);
+	void SetBackgroundImage();
 
 private:
 	virtual void NativeConstruct() override;

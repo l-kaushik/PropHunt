@@ -11,6 +11,8 @@
 #include "Utils/MapManager.h"
 #include "Macros/WidgetMacros.h"
 #include "Widget/UIManager.h"
+//#include "GameInstance/PropHuntGameInstance.h"
+//#include "Utils/MapManager.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -55,33 +57,14 @@ void UMenuWidget::HideNoSessionFoundMessage()
 	JoinGameWidgetRef->HideNoSessionFoundMessage();
 }
 
-void UMenuWidget::SetBackgroundImage(UTexture2D* InImageTexture)
+void UMenuWidget::SetBackgroundImage()
 {
-	FSlateBrush Brush;
+	//FMapInfo MapInfo = MapManager::GetAllMaps()[*(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().Name)];
 
-	// default image texture (main menu)
-	if (!InImageTexture)
-	{
-		const FMapInfo* MapInfo = MapManager::GetMapInfo("MenuMap");
-		if (MapInfo && MapInfo->Image)
-		{
-			UTexture2D* ImageTexture = MapInfo->Image;
-			Brush.SetResourceObject(ImageTexture);
-			Brush.ImageSize = FVector2D(ImageTexture->GetSizeX(), ImageTexture->GetSizeY());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to get MapInfo"));
-			return;
-		}
-	}
-	else
-	{
-		Brush.SetResourceObject(InImageTexture);
-		Brush.ImageSize = FVector2D(InImageTexture->GetSizeX(), InImageTexture->GetSizeY());
-	}
-
-	BackgroundImage->SetBrush(Brush);
+	//FSlateBrush Brush;
+	//Brush.SetResourceObject(MapInfo.Image);
+	//Brush.ImageSize = FVector2D(MapInfo.Image->GetSizeX(), MapInfo.Image->GetSizeY());
+	//BackgroundImage->SetBrush(Brush);
 }
 
 void UMenuWidget::NativeConstruct()
@@ -90,6 +73,8 @@ void UMenuWidget::NativeConstruct()
 
 	MenuController = Cast<AMenuController>(GetOwningPlayer());
 	BindClickEvents();
+
+	SetBackgroundImage();
 }
 
 void UMenuWidget::NativePreConstruct()

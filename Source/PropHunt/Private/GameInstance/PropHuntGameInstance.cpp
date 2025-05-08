@@ -23,6 +23,8 @@ void UPropHuntGameInstance::Init()
 	// initialize MapManager singleton instance
 	MapManager::Get();
 
+	SetMapInfo(MapManager::GetAllMaps()["MenuMap"]);
+
 	PropHuntSubsystem = GetSubsystem<UPropHuntSubsystem>();
 	bIsMultiplayer = false;
 	bIsHost = false;
@@ -132,7 +134,7 @@ FString UPropHuntGameInstance::GetLastDisconnectReason() const
 void UPropHuntGameInstance::HostSession(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatch)
 {
 	CurrentSessionName = SessionName;
-	CurrentMapInfo = MapInfo;
+	SetMapInfo(MapManager::GetAllMaps()[*MapInfo.Name]);
 
 	PropHuntSubsystem->OnCreateSessionCompleteEvent.Clear();
 	PropHuntSubsystem->OnCreateSessionCompleteEvent.AddUObject(this, &ThisClass::OnCreateSessionCompleted);
