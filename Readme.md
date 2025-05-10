@@ -1,3 +1,7 @@
+# credits
+
+1. Profile photo from @pikisuperstar at freepik.com
+
 # notes
 1. Can change texture LOD bias to reduce vram usage
 1. remove lumen and use bakelight for low end system
