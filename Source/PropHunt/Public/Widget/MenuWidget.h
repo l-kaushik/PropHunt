@@ -53,6 +53,8 @@ private:
 	void ChangeBackgroundTintToDark();
 	void ChangeBackgroundTintToLight();
 	void SwitchSessionButtonsProperty(bool HostButtonClicked = true);
+	void OnBackButtonInPlayGameMenuClicked();
+	void OnBackButtonInProfileMenuClicked();
 
 	// OnClicked event functions
 	UFUNCTION()

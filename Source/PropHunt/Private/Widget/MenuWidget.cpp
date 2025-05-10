@@ -219,6 +219,27 @@ void UMenuWidget::SwitchSessionButtonsProperty(bool HostButtonClicked)
 	PlayGameMenuSwitcher->SetActiveWidgetIndex(!HostButtonClicked);
 }
 
+void UMenuWidget::OnBackButtonInPlayGameMenuClicked()
+{
+	ChangeBackgroundTintToLight();
+
+	PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
+	BackButton->SetVisibility(ESlateVisibility::Hidden);
+
+	MainMenuVBox->SetVisibility(ESlateVisibility::Visible);
+	ProfileButton->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMenuWidget::OnBackButtonInProfileMenuClicked()
+{
+	ProfileSectionOverlay->SetVisibility(ESlateVisibility::Hidden);
+	BackButton->SetVisibility(ESlateVisibility::Hidden);
+	MainMenuVBox->SetVisibility(ESlateVisibility::Visible);
+	ProfileButton->SetVisibility(ESlateVisibility::Visible);
+
+	// can show pop for confirming settings | directly save settings on change
+}
+
 // Delegate methods, bind with button click
 
 void UMenuWidget::OnPlayGameButtonClicked()
@@ -260,15 +281,23 @@ void UMenuWidget::OnBackButtonClicked()
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Back button clicked!"));
 
-	if (MenuState == EMenuState::PlayGameMenu)
+	switch (MenuState)
 	{
-		MenuState = EMenuState::MainMenu;
-		ChangeBackgroundTintToLight();
-		PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
-		// do all kind of cleanups
-		MainMenuVBox->SetVisibility(ESlateVisibility::Visible);
-		BackButton->SetVisibility(ESlateVisibility::Hidden);
+	case EMenuState::MainMenu:
+		break;
+	case EMenuState::PlayGameMenu:
+		OnBackButtonInPlayGameMenuClicked();
+		break;
+	case EMenuState::OptionMenu:
+		break;
+	case EMenuState::ProfileMenu:
+		OnBackButtonInProfileMenuClicked();
+		break;
+	default:
+		break;
 	}
+
+	MenuState = EMenuState::MainMenu;
 }
 
 void UMenuWidget::OnProfileButtonClicked()
