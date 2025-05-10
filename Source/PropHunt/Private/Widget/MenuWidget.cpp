@@ -95,6 +95,8 @@ void UMenuWidget::BindClickEvents()
 	BIND_BUTTON_CLICK(JoinGameButton, &UMenuWidget::OnJoinGameButtonClicked);
 
 	BIND_BUTTON_CLICK(BackButton, &UMenuWidget::OnBackButtonClicked);
+
+	ProfileButton->OnClicked.AddDynamic(this, &UMenuWidget::OnProfileButtonClicked);
 }
 
 // Initialize every component of the widget, by calling relevant function
@@ -135,6 +137,7 @@ void UMenuWidget::InitializeComponents()
 void UMenuWidget::SetupInitialProperties()
 {
 	PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
+	ProfileSectionOverlay->SetVisibility(ESlateVisibility::Visible);
 
 	FLinearColor BroderBoxColor(0.5f, 0.5f, 0.5f, 0.1f);	// light grey
 
@@ -225,6 +228,7 @@ void UMenuWidget::OnPlayGameButtonClicked()
 	MenuState = EMenuState::PlayGameMenu;
 	ChangeBackgroundTintToDark();
 	MainMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+	ProfileButton->SetVisibility(ESlateVisibility::Hidden);
 	PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Visible);
 	BackButton->SetVisibility(ESlateVisibility::Visible);
 }
@@ -265,4 +269,17 @@ void UMenuWidget::OnBackButtonClicked()
 		MainMenuVBox->SetVisibility(ESlateVisibility::Visible);
 		BackButton->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UMenuWidget::OnProfileButtonClicked()
+{
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("profile button clicked!"));
+
+	MenuState = EMenuState::ProfileMenu;
+
+	ProfileSectionOverlay->SetVisibility(ESlateVisibility::Visible);
+	BackButton->SetVisibility(ESlateVisibility::Visible);
+
+	MainMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+	ProfileButton->SetVisibility(ESlateVisibility::Hidden);
 }

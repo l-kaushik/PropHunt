@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "../Enumerator/PropHuntEnums.h"
-
+#include "Enumerator/PropHuntEnums.h"
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "MenuWidget.generated.h"
@@ -23,6 +22,7 @@ class UJoinGameWidget;
 class UBorder;
 class UImage;
 class UOverlay;
+class UButton;
 
 UCLASS()
 class PROPHUNT_API UMenuWidget : public UUserWidget
@@ -72,6 +72,9 @@ private:
 
 	UFUNCTION()
 	void OnBackButtonClicked();
+
+	UFUNCTION()
+	void OnProfileButtonClicked();
 
 private:
 	// instance variables
@@ -125,6 +128,13 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	USpacer* SessionButtonSpacer;
+
+	// profile section
+	UPROPERTY(meta = (BindWidget))
+	UButton* ProfileButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UOverlay* ProfileSectionOverlay;
 
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
