@@ -320,7 +320,14 @@ void UMainHud::OnExitGameButtonClicked()
 
 	if (GameController)
 	{
-		GameController->ExitGame();
+		if (GameController->GetIsHost())
+		{
+			GameController->ExitGame();
+		}
+		else
+		{
+			GameController->ExitClient();
+		}
 	}
 	else
 	{

@@ -100,6 +100,11 @@ void APropHuntPlayerController::UpdateWeaponUI(int32 InCurrentAmmoInMagazine, in
 	MainHudRef->UpdateWeaponUI(InCurrentAmmoInMagazine, InCurrentReserverAmmo);
 }
 
+bool APropHuntPlayerController::GetIsHost()
+{
+	return PropHuntGameInstance->GetIsHost();
+}
+
 void APropHuntPlayerController::StartNewGame()
 {
 	auto* GameMode = Cast<APropHuntGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -118,7 +123,13 @@ void APropHuntPlayerController::ExitGame()
 	// remove player from player list, reduce number of players in game instance and state as well
 
 	ExitClientOnServer();
+}
 
+void APropHuntPlayerController::ExitClient()
+{
+	ClientTravel(MapManager::Map_Menu, ETravelType::TRAVEL_Absolute);
+	PropHuntGameInstance->QuitGameCleanup();
+	PropHuntGameInstance->DestroySession();
 }
 
 void APropHuntPlayerController::ExitClientOnServer_Implementation()
@@ -131,11 +142,7 @@ void APropHuntPlayerController::ExitClientOnServer_Implementation()
 	}
 
 	ShowLoadingScreen("Returning to main menu");
-	
-	ClientTravel(MapManager::Map_Menu, ETravelType::TRAVEL_Absolute);
-	PropHuntGameInstance->QuitGameCleanup();
-	PropHuntGameInstance->DestroySession();
-
+	ExitClient();
 	UE_LOG(LogTemp, Warning, TEXT("One player quit"));
 }
 
