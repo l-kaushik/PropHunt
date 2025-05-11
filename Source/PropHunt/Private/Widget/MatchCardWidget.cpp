@@ -52,7 +52,7 @@ void UMatchCardWidget::OnMatchDetailClicked()
 void UMatchCardWidget::UpdateScoreboardToggleState()
 {
 	MatchDetailLabel->SetText(FText::FromString(
-		IsScoreboardMenuVisible ? TEXT("▼") : TEXT("▲")));
+		IsScoreboardMenuVisible ?  TEXT("▲") : TEXT("▼")));
 	ScoreboardMenu->SetVisibility(
 		IsScoreboardMenuVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
