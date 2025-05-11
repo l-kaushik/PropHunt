@@ -43,6 +43,10 @@ public:
 	void StartNewGame();
 	void ExitGame();
 
+public:
+	UFUNCTION(Client, Reliable)
+	void ShowLoadingScreen(const FString& InMessage);
+
 protected:
 	UFUNCTION(Client, Reliable)
 	void HandleHudWidgetOnClient(bool bIsProp);
@@ -62,6 +66,9 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ExitClientOnServer();
 
+	UFUNCTION(Server, Reliable)
+	void ServerInitiateLoadingScreen();
+
 
 protected:
 	// stores the refernce of blueprint WB_MainHud class
@@ -74,5 +81,7 @@ protected:
 private:
 	bool m_bIsProp;
 	class UPropHuntGameInstance* PropHuntGameInstance;
-	
+
+	TSubclassOf<class ULoadingScreenWidget> LoadingScreenWidgetBPClassRef;
+	class ULoadingScreenWidget* LoadingWidget;
 };

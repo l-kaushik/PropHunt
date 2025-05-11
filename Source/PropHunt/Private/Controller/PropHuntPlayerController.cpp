@@ -2,9 +2,13 @@
 
 #include "Controller/PropHuntPlayerController.h"
 #include "Widget/MainHud.h"
+#include "Widget/UIManager.h"
+#include "Widget/LoadingScreenWidget.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "GameModes/PropHuntGameMode.h"
+#include "States/PropHuntGameState.h"
 #include "Utils/MapManager.h"
+#include "Utils/WidgetUtils.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -15,6 +19,8 @@ APropHuntPlayerController::APropHuntPlayerController() {
 	if (MainHudBPClass.Succeeded()) {
 		MainHudBPClassRef = MainHudBPClass.Class;
 	}
+
+	LoadingScreenWidgetBPClassRef = UUIManager::Get()->LoadingScreenWidgetBPClassRef;
 
 	// intitial values
 	m_bIsProp = false;
@@ -100,6 +106,7 @@ void APropHuntPlayerController::StartNewGame()
 
 	if (GameMode)
 	{
+		ServerInitiateLoadingScreen();
 		GameMode->StartNextGame();
 	}
 }
@@ -123,6 +130,8 @@ void APropHuntPlayerController::ExitClientOnServer_Implementation()
 		GameMode->CleanupPlayerExitFromScoreboard();
 	}
 
+	ShowLoadingScreen("Returning to main menu");
+	
 	ClientTravel(MapManager::Map_Menu, ETravelType::TRAVEL_Absolute);
 	PropHuntGameInstance->QuitGameCleanup();
 	PropHuntGameInstance->DestroySession();
@@ -153,4 +162,23 @@ void APropHuntPlayerController::ShowWinScreenOnClient_Implementation()
 void APropHuntPlayerController::HandleHudWidgetOnClient_Implementation(bool bIsProp)
 {
 	MainHudRef->SetupPropWidget(bIsProp);
+}
+
+void APropHuntPlayerController::ShowLoadingScreen_Implementation(const FString& InMessage = "Loading Map")
+{
+	UE_LOG(LogTemp, Warning, TEXT("Show loading screen called"));
+
+	LoadingWidget = WidgetUtils::CreateAndAddWidget<ULoadingScreenWidget>(this, LoadingScreenWidgetBPClassRef);
+	LoadingWidget->SetLoadingMessage(InMessage);
+}
+
+void APropHuntPlayerController::ServerInitiateLoadingScreen_Implementation()
+{	// show loading screen for all connected clients
+
+	auto* GameState = GetWorld()->GetGameState<APropHuntGameState>();
+
+	for (const auto& Controller : GameState->GetPlayerControllerList())
+	{
+		Controller->ShowLoadingScreen("Travelling to server...");
+	}
 }
