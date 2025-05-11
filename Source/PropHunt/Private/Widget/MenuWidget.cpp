@@ -137,7 +137,7 @@ void UMenuWidget::InitializeComponents()
 void UMenuWidget::SetupInitialProperties()
 {
 	PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
-	ProfileSectionOverlay->SetVisibility(ESlateVisibility::Visible);
+	ProfileSectionOverlay->SetVisibility(ESlateVisibility::Hidden);
 
 	FLinearColor BroderBoxColor(0.5f, 0.5f, 0.5f, 0.1f);	// light grey
 

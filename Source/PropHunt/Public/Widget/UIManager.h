@@ -52,6 +52,12 @@ public:
 
 	UPROPERTY()
 	TSubclassOf<class UTopPerformersWidget> TopPerformersWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UScoreboardMenuWidget> ScoreboardMenuWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UMatchCardWidget> MatchCardWidgetBPClassRef;
 private:
 	// Private constructor to enforce singleton
 	UUIManager();

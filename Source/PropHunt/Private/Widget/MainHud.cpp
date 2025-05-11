@@ -4,9 +4,8 @@
 #include "Macros/WidgetMacros.h"
 #include "States/PropHuntGameState.h"
 #include "States/PropHuntPlayerState.h"
-#include "Widget/TopPerformersWidget.h"
 #include "Widget/GameStatsEntryWidget.h"
-#include "Widget/GameStatsWidget.h"
+#include "Widget/ScoreboardMenuWidget.h"
 #include "Widget/Components/Button/MasterButton.h"
 #include "Utils/WidgetUtils.h"
 #include "Widget/UIManager.h"
@@ -140,8 +139,6 @@ void UMainHud::NativeConstruct()
 
 void UMainHud::BindButtonClicks()
 {
-	BIND_BUTTON_CLICK(GameStatsButton, &UMainHud::OnGameStatsButtonClicked);
-	BIND_BUTTON_CLICK(TopPerformerButton, &UMainHud::OnTopPerformerButtonClicked);
 	BIND_BUTTON_CLICK(NewGameButton, &UMainHud::OnNewGameButtonClicked);
 	BIND_BUTTON_CLICK(ExitGameButton, &UMainHud::OnExitGameButtonClicked);
 }
@@ -158,8 +155,6 @@ void UMainHud::NativePreConstruct()
 	ScoreboardOverlay->SetVisibility(ESlateVisibility::Hidden);
 
 	// components settings
-	SetMasterButtonLabel(GameStatsButton, "Game Stats");
-	SetMasterButtonLabel(TopPerformerButton, "Top Performers");
 	SetMasterButtonLabel(NewGameButton, "New Game");
 	SetMasterButtonLabel(ExitGameButton, "Exit Game");
 }
@@ -305,27 +300,6 @@ void UMainHud::HideWeaponUIComponents(ESlateVisibility InVisibility)
 	BulletCountBorder->SetVisibility(InVisibility);
 }
 
-
-void UMainHud::OnGameStatsButtonClicked()
-{
-	SwitchScoreboardMenuButtonsProperty(true);
-}
-
-void UMainHud::OnTopPerformerButtonClicked()
-{
-	SwitchScoreboardMenuButtonsProperty(false);
-}
-
-void UMainHud::SwitchScoreboardMenuButtonsProperty(bool GameStatsButtonClicked)
-{
-	static FLinearColor BlueColor = FLinearColor::Blue;
-	static FLinearColor GreyShade = FLinearColor(0.5f, 0.5f, 0.5f, 1.0f);
-
-	GameStatsButton->SetBackgroundColor(GameStatsButtonClicked ? BlueColor : GreyShade);
-	TopPerformerButton->SetBackgroundColor(!GameStatsButtonClicked ? BlueColor : GreyShade);
-	ScoreboardMenuSwitcher->SetActiveWidgetIndex(!GameStatsButtonClicked);
-}
-
 void UMainHud::OnNewGameButtonClicked()
 {
 	auto* GameController = GetOwningPlayer<APropHuntPlayerController>();
@@ -363,7 +337,7 @@ void UMainHud::FillScoreboardData()
 void UMainHud::LoadDataForGameStatsList(APropHuntGameState* GameState)
 {
 	// remove all previous entries
-	GameStatsPlayerListWindow->ClearList();
+	ScoreboardMenu->ClearPlayerStatsList();
 
 	for (const auto& PlayerState : GameState->GetPlayerStates())
 	{
@@ -377,9 +351,8 @@ void UMainHud::LoadDataForGameStatsList(APropHuntGameState* GameState)
 		GameStatsEntryWidgetRef->SetDamageTaken(FString::FromInt(PlayerState->GetDamageTaken()));
 
 		// add player data to list
-		GameStatsPlayerListWindow->AddPlayerStatsToList(GameStatsEntryWidgetRef);
+		ScoreboardMenu->AddPlayerStatsToList(GameStatsEntryWidgetRef);
 	}
-
 }
 
 void UMainHud::LoadDataForTopPerformerWindow()

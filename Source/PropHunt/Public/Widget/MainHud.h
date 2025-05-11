@@ -19,9 +19,7 @@ class UMasterButton;
 class UHorizontalBox;
 class UWidgetSwitcher;
 class UBackgroundBlur;
-class UGameStatsWidget;
-class UTopPerformersWidget;
-class UGameStatsEntryWidget;
+class UScoreboardMenuWidget;
 
 class APropHuntGameState;
 
@@ -62,11 +60,6 @@ private:
 	void HitMarkerAnimFinished(UWidgetAnimation* Animation);
 	void HideHudComponents();
 	void HideWeaponUIComponents(ESlateVisibility InVisibility);
-
-
-	void OnGameStatsButtonClicked();
-	void OnTopPerformerButtonClicked();
-	void SwitchScoreboardMenuButtonsProperty(bool GameStatsButtonClicked);
 	
 	void OnNewGameButtonClicked();
 	void OnExitGameButtonClicked();
@@ -135,22 +128,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UOverlay* ScoreboardOverlay;
 
-	// scoreboard menu button
+	// scoreboard menu 
 	UPROPERTY(meta = (BindWidget))
-	UMasterButton* GameStatsButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UMasterButton* TopPerformerButton;
-
-	// scoreboard menu switcher
-	UPROPERTY(meta = (BindWidget))
-	UWidgetSwitcher* ScoreboardMenuSwitcher;
-
-	UPROPERTY(meta = (BindWidget))
-	UGameStatsWidget* GameStatsPlayerListWindow;
-
-	UPROPERTY(meta = (BindWidget))
-	UTopPerformersWidget* TopPerformerWindow;
+	UScoreboardMenuWidget* ScoreboardMenu;
 
 	// controls HBox buttons
 	UPROPERTY(meta = (BindWidget))

@@ -14,6 +14,8 @@
 #include "Widget/GameStatsWidget.h"
 #include "Widget/GameStatsEntryWidget.h"
 #include "Widget/TopPerformersWidget.h"
+#include "Widget/ScoreboardMenuWidget.h"
+#include "Widget/MatchCardWidget.h"
 
 UUIManager* UUIManager::Get()
 {
@@ -41,5 +43,7 @@ void UUIManager::InitializeWidgets()
 	GameStatsWidgetBPClassRef = GlobalUtils::LoadBlueprint<UGameStatsWidget>(BasePath + FString("WB_GameStats"));
 	GameStatsEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UGameStatsEntryWidget>(BasePath + FString("WB_GameStatsEntry"));
 	TopPerformersWidgetBPClassRef = GlobalUtils::LoadBlueprint<UTopPerformersWidget>(BasePath + FString("WB_TopPerformers"));
+	ScoreboardMenuWidgetBPClassRef = GlobalUtils::LoadBlueprint<UScoreboardMenuWidget>(BasePath + FString("WB_ScoreboardMenu"));
+	MatchCardWidgetBPClassRef = GlobalUtils::LoadBlueprint<UMatchCardWidget>(BasePath + FString("WB_MatchCard"));
 }
 

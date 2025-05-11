@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MatchCardWidget.h"
+#include "Widget/MatchCardWidget.h"
 #include "Utils/PropHuntLog.h"
 
 #include "Components/Border.h"
