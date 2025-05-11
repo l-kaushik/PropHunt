@@ -1,7 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Widget/MatchCardWidget.h"
+#include "Widget/ScoreboardMenuWidget.h"
 #include "Utils/PropHuntLog.h"
 
 #include "Components/Border.h"
@@ -22,6 +23,8 @@ void UMatchCardWidget::NativePreConstruct()
 	Super::NativePreConstruct();
 
 	Border->SetBrushColor(BorderTint);
+	IsScoreboardMenuVisible = false;
+	UpdateScoreboardToggleState();
 }
 
 void UMatchCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -42,5 +45,14 @@ void UMatchCardWidget::OnMatchDetailClicked()
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Match detail button clicked!"));
 
-	// show scoreboard menu overlay
+	IsScoreboardMenuVisible = !IsScoreboardMenuVisible;
+	UpdateScoreboardToggleState();
+}
+
+void UMatchCardWidget::UpdateScoreboardToggleState()
+{
+	MatchDetailLabel->SetText(FText::FromString(
+		IsScoreboardMenuVisible ? TEXT("▼") : TEXT("▲")));
+	ScoreboardMenu->SetVisibility(
+		IsScoreboardMenuVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }

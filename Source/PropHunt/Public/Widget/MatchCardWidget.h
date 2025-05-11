@@ -9,6 +9,7 @@
 class UBorder;
 class UButton;
 class UTextBlock;
+class UScoreboardMenuWidget;
 
 UCLASS()
 class PROPHUNT_API UMatchCardWidget : public UUserWidget
@@ -24,6 +25,7 @@ public:
 private:
 	UFUNCTION()
 	void OnMatchDetailClicked();
+	void UpdateScoreboardToggleState();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -41,5 +43,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* MatchDetail;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MatchDetailLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	UScoreboardMenuWidget* ScoreboardMenu;
+
 	static const FLinearColor BorderTint;
+	bool IsScoreboardMenuVisible;
 };
