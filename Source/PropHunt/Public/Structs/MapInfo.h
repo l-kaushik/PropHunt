@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Struct.generated.h"
+#include "MapInfo.generated.h"
 
 USTRUCT(BlueprintType)
 struct FMapInfo

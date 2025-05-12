@@ -18,7 +18,7 @@
 #include "Utils/WidgetUtils.h"
 #include "Utils/PropHuntLog.h"
 #include "Utils/MapManager.h"
-#include "Utils/Struct.h"
+#include "Structs/MapInfo.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"

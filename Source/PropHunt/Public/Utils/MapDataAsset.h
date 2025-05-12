@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Struct.h"
+#include "Structs/MapInfo.h"
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "MapDataAsset.generated.h"

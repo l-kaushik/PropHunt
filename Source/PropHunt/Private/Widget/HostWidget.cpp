@@ -9,7 +9,7 @@
 #include "Utils/PropHuntLog.h"
 #include "Utils/GlobalUtils.h"
 #include "Utils/WidgetUtils.h"
-#include "Utils/Struct.h"
+#include "Structs/MapInfo.h"
 #include "Utils/MapManager.h"
 #include "Utils/MapDataAsset.h"
 

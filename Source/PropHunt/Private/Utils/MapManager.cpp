@@ -3,7 +3,7 @@
 
 #include "Utils/MapManager.h"
 #include "Utils/PropHuntLog.h"
-#include "Utils/Struct.h"
+#include "Structs/MapInfo.h"
 
 // define static variables
 const TCHAR* MapManager::Map_Menu = nullptr;

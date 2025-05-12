@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Utils/Struct.h"
+#include "Structs/MapInfo.h"
 #include "Engine/GameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
