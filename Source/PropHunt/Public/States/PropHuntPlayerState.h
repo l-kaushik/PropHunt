@@ -22,9 +22,11 @@ public:
 	// Player Info
 	void SetIsReady(bool InIsReady);
 	void SetIsHost(bool InIsHost);
+	void SetUsername(const FString& InUsername);
 
 	bool GetIsReady() const;
 	bool GetIsHost() const;
+	FString GetUsername() const;
 
 
 	// Game Data
@@ -60,6 +62,9 @@ private:
 
 	UPROPERTY(Replicated)
 	bool m_IsHost;
+
+	UPROPERTY(Replicated)
+	FString m_Username;
 
 	// Game Data
 	UPROPERTY(Replicated)

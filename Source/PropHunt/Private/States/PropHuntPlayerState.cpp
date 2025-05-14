@@ -44,6 +44,11 @@ void APropHuntPlayerState::SetIsHost(bool InIsHost)
 	m_IsHost = InIsHost;
 }
 
+void APropHuntPlayerState::SetUsername(const FString& InUsername)
+{
+	m_Username = InUsername;
+}
+
 bool APropHuntPlayerState::GetIsReady() const
 {
 	return m_IsReady;
@@ -52,6 +57,11 @@ bool APropHuntPlayerState::GetIsReady() const
 bool APropHuntPlayerState::GetIsHost() const
 {
 	return m_IsHost;
+}
+
+FString APropHuntPlayerState::GetUsername() const
+{
+	return m_Username;
 }
 
 void APropHuntPlayerState::AddKill()
