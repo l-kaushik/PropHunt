@@ -50,4 +50,9 @@ FString& SaveGameManager::GetLastSaveGameSlotName()
 SaveGameManager::SaveGameManager()
 {
     MetaSaveGameInstance = LoadGame(TEXT("LastUsedSlot"));
+
+    if (MetaSaveGameInstance)
+    {
+        MetaSaveGameInstance->AddToRoot();
+    }
 }
