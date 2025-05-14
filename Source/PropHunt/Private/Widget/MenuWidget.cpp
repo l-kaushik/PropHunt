@@ -11,6 +11,11 @@
 #include "Utils/MapManager.h"
 #include "Macros/WidgetMacros.h"
 #include "Widget/UIManager.h"
+#include "Structs/PlayerData.h"
+#include "Structs/ImageData.h"
+#include "SaveGame/SaveGameManager.h"
+#include "SaveGame/PropHuntSaveGame.h"
+#include "States/PropHuntPlayerState.h"
 //#include "GameInstance/PropHuntGameInstance.h"
 //#include "Utils/MapManager.h"
 
@@ -25,6 +30,8 @@
 #include "Components/Border.h"
 #include "Components/Image.h"
 #include "Components/Overlay.h"
+#include "Components/EditableText.h"
+#include "Components/ScrollBox.h"
 #include "Kismet/GameplayStatics.h"
 
 void UMenuWidget::AddServerToList(UUserWidget* ServerEntry)
@@ -67,6 +74,19 @@ void UMenuWidget::SetBackgroundImage()
 	//BackgroundImage->SetBrush(Brush);
 }
 
+void UMenuWidget::SetProfileData(FPlayerData InPlayerData)
+{
+	auto* Image = WidgetUtils::CreateTextureFromRawData(InPlayerData.ProfileImage);
+
+	if (Image)
+	{
+		WidgetUtils::SetImageToButton(ChangeProfileImage, Image);
+		WidgetUtils::SetImageToButton(ProfileButton, Image);
+	}
+	Username->SetText(FText::FromString(InPlayerData.Username));
+	LastUsername = InPlayerData.Username;
+}
+
 void UMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -97,6 +117,8 @@ void UMenuWidget::BindClickEvents()
 	BIND_BUTTON_CLICK(BackButton, &UMenuWidget::OnBackButtonClicked);
 
 	ProfileButton->OnClicked.AddDynamic(this, &UMenuWidget::OnProfileButtonClicked);
+	ChangeProfileImage->OnClicked.AddDynamic(this, &UMenuWidget::OnChangeProfileImageClicked);
+	Username->OnTextCommitted.AddDynamic(this, &UMenuWidget::OnUsernameCommitted);
 }
 
 // Initialize every component of the widget, by calling relevant function
@@ -311,4 +333,43 @@ void UMenuWidget::OnProfileButtonClicked()
 
 	MainMenuVBox->SetVisibility(ESlateVisibility::Hidden);
 	ProfileButton->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMenuWidget::OnChangeProfileImageClicked()
+{
+	// get image from dialog box and load on button
+
+	auto* Image = WidgetUtils::OpenFileDialogueAndLoadImage();
+
+	if (!Image) return;
+
+	WidgetUtils::SetImageToButton(ChangeProfileImage, Image);
+	WidgetUtils::SetImageToButton(ProfileButton, Image);
+
+	// save to save game slot
+	SaveProfileData();
+}
+
+void UMenuWidget::OnUsernameCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	APropHuntPlayerState* PlayerState = MenuController->GetPlayerState<APropHuntPlayerState>();
+	if (!PlayerState) return;
+
+	if (Text.EqualTo(FText::FromString(LastUsername))) return;
+
+	SaveProfileData();
+	LastUsername = Text.ToString();
+	PlayerState->SetUsername(LastUsername);
+}
+
+void UMenuWidget::SaveProfileData()
+{
+	auto* Image = Cast<UTexture2D>(ChangeProfileImage->GetStyle().Normal.GetResourceObject());
+	FImageData ImageData;
+	if (!WidgetUtils::ExtractRawDataFromTexture(Image, ImageData)) return;
+
+	FString username = Username->GetText().ToString();
+	auto* SaveGameInstance = SaveGameManager::Get().LoadGame(username);
+	SaveGameInstance->PlayerData.ProfileImage = ImageData;
+	SaveGameManager::Get().SaveGame(SaveGameInstance, username);
 }

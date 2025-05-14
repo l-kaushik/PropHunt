@@ -19,6 +19,8 @@
 #include "Utils/PropHuntLog.h"
 #include "Utils/MapManager.h"
 #include "Structs/MapInfo.h"
+#include "SaveGame/SaveGameManager.h"
+#include "SaveGame/PropHuntSaveGame.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -55,6 +57,9 @@ void AMenuController::BeginPlay()
 
 		// setup disconnect settings
 		SetupDisconnectSettings();
+		
+		// load save game data after one tick
+		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &AMenuController::LoadSaveGameData);
 	}
 }
 
@@ -108,6 +113,30 @@ void AMenuController::SetupDisconnectSettings()
 		DisplaySessionError(DisconnectReason);
 		PropHuntGameInstance->SetLastDisconnectReason(FText());
 	}
+}
+
+void AMenuController::LoadSaveGameData()
+{
+	auto& SGMInstance = SaveGameManager::Get();
+	UPropHuntSaveGame* SaveGameInstance = nullptr;
+	FString LastSlotName = SGMInstance.GetLastSaveGameSlotName();
+
+	if (LastSlotName.IsEmpty())
+	{
+		FString Username = GetPlayerState<APropHuntPlayerState>()->GetPlayerName();
+		// create new save game object using player name
+		SaveGameInstance = SGMInstance.LoadGame(Username);
+		SaveGameInstance->PlayerData.Username = Username;
+		SGMInstance.SaveGame(SaveGameInstance, Username);
+	}
+	else
+	{
+		// load LastSlotName
+		SaveGameInstance = SGMInstance.LoadGame(LastSlotName);
+	}
+
+	// load profile data
+	MenuWidgetRef->SetProfileData(SaveGameInstance->PlayerData);
 }
 
 void AMenuController::ClientReturnToMainMenuWithTextReason_Implementation(const FText& ReturnReason)

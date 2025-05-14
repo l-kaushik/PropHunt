@@ -93,6 +93,8 @@ private:
 	void StopPlayerListUpdateTimer();
 	void RefreshPlayerList();
 
+	void LoadSaveGameData();
+
 private:
 	UMenuWidget* MenuWidgetRef;
 	ULobbyWidget* LobbyWidgetRef;

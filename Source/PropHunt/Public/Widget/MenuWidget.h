@@ -23,6 +23,10 @@ class UBorder;
 class UImage;
 class UOverlay;
 class UButton;
+class UEditableText;
+class UScrollBox;
+
+struct FPlayerData;
 
 UCLASS()
 class PROPHUNT_API UMenuWidget : public UUserWidget
@@ -37,6 +41,8 @@ public:
 	void DisplayNoSessionFoundMessage();
 	void HideNoSessionFoundMessage();
 	void SetBackgroundImage();
+
+	void SetProfileData(FPlayerData InPlayerData);
 
 private:
 	virtual void NativeConstruct() override;
@@ -55,6 +61,8 @@ private:
 	void SwitchSessionButtonsProperty(bool HostButtonClicked = true);
 	void OnBackButtonInPlayGameMenuClicked();
 	void OnBackButtonInProfileMenuClicked();
+
+	void SaveProfileData();
 
 	// OnClicked event functions
 	UFUNCTION()
@@ -77,6 +85,12 @@ private:
 
 	UFUNCTION()
 	void OnProfileButtonClicked();
+
+	UFUNCTION()
+	void OnChangeProfileImageClicked();
+
+	UFUNCTION()
+	void OnUsernameCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
 private:
 	// instance variables
@@ -138,7 +152,18 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UOverlay* ProfileSectionOverlay;
 
+	UPROPERTY(meta = (BindWidget))
+	UButton* ChangeProfileImage;
+
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Username;
+
+	UPROPERTY(meta = (BindWidget))
+	UScrollBox* MatchHistoryScrollBox;
+
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* BackButton;	// represented as close icon in game
+
+	FString LastUsername;
 };
