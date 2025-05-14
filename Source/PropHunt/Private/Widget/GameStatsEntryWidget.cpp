@@ -2,6 +2,7 @@
 
 
 #include "Widget/GameStatsEntryWidget.h"
+#include "Structs/PlayerScoreboardData.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -51,6 +52,15 @@ void UGameStatsEntryWidget::ClearStats()
     Assists->SetText(FText::GetEmpty());
     DamageGiven->SetText(FText::GetEmpty());
     DamageTaken->SetText(FText::GetEmpty());
+}
+
+void UGameStatsEntryWidget::SetData(FPlayerScoreboardData InPlayerScoreboardData)
+{
+    SetPlayerName(InPlayerScoreboardData.PlayerData.Username);
+    SetKills(FString::FromInt(InPlayerScoreboardData.kills));
+    SetAssists(FString::FromInt(InPlayerScoreboardData.Assists));
+    SetDamageGiven(FString::FromInt(InPlayerScoreboardData.DamageGiven));
+    SetDamageTaken(FString::FromInt(InPlayerScoreboardData.DamageTaken));
 }
 
 void UGameStatsEntryWidget::NativePreConstruct()

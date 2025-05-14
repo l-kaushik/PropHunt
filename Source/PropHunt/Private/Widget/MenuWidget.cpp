@@ -5,6 +5,7 @@
 #include "Widget/HostWidget.h"
 #include "Widget/JoinGameWidget.h"
 #include "Widget/Components/Button/MasterButton.h"
+#include "Widget/MatchCardWidget.h"
 #include "Controller/MenuController.h"
 #include "Utils/WidgetUtils.h"
 #include "Utils/PropHuntLog.h"
@@ -13,6 +14,7 @@
 #include "Widget/UIManager.h"
 #include "Structs/PlayerData.h"
 #include "Structs/ImageData.h"
+#include "Structs/MatchHistoryMap.h"
 #include "SaveGame/SaveGameManager.h"
 #include "SaveGame/PropHuntSaveGame.h"
 #include "States/PropHuntPlayerState.h"
@@ -85,6 +87,30 @@ void UMenuWidget::SetProfileData(FPlayerData InPlayerData)
 	}
 	Username->SetText(FText::FromString(InPlayerData.Username));
 	LastUsername = InPlayerData.Username;
+}
+
+void UMenuWidget::SetMatchHistoryData(FMatchHistoryMap InMatchHistoryData)
+{
+	MatchHistoryScrollBox->ClearChildren();
+
+	if (InMatchHistoryData.IsEmpty())
+	{
+		MatchHistoryLabel->SetVisibility(ESlateVisibility::Visible);
+		return;
+	}
+
+	MatchHistoryLabel->SetVisibility(ESlateVisibility::Hidden);
+
+	// TODO: Consider using UListView with item pooling if match history grows significantly.
+
+	// load data in scrollbox
+	for (const auto& Match : InMatchHistoryData.GetOrderedValues())
+	{
+		auto* MatchCardWidgetRef = WidgetUtils::CreateAndValidateWidget<UMatchCardWidget>(this, UUIManager::Get()->MatchCardWidgetBPClassRef);
+
+		MatchCardWidgetRef->SetData(Match);
+		MatchHistoryScrollBox->AddChild(MatchCardWidgetRef);
+	}
 }
 
 void UMenuWidget::NativeConstruct()

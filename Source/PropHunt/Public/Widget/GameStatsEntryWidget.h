@@ -13,6 +13,8 @@
 class UImage;
 class UTextBlock;
 
+struct FPlayerScoreboardData;
+
 UCLASS()
 class PROPHUNT_API UGameStatsEntryWidget : public UUserWidget
 {
@@ -25,6 +27,7 @@ public:
 	UGameStatsEntryWidget* SetDamageGiven(const FString& InDamageGiven = "0");
 	UGameStatsEntryWidget* SetDamageTaken(const FString& InDamageTaken = "0");
 	void ClearStats();
+	void SetData(FPlayerScoreboardData InPlayerScoreboardData);
 
 public:
 	virtual void NativePreConstruct() override;

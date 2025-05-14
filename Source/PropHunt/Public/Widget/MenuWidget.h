@@ -25,8 +25,10 @@ class UOverlay;
 class UButton;
 class UEditableText;
 class UScrollBox;
+class UTextBlock;
 
 struct FPlayerData;
+struct FMatchHistoryMap;
 
 UCLASS()
 class PROPHUNT_API UMenuWidget : public UUserWidget
@@ -43,6 +45,7 @@ public:
 	void SetBackgroundImage();
 
 	void SetProfileData(FPlayerData InPlayerData);
+	void SetMatchHistoryData(FMatchHistoryMap InMatchHistoryData);
 
 private:
 	virtual void NativeConstruct() override;
@@ -160,6 +163,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UScrollBox* MatchHistoryScrollBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MatchHistoryLabel;
 
 	// Utility components
 	UPROPERTY(meta = (BindWidget))

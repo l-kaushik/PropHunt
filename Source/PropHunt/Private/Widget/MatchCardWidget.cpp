@@ -4,6 +4,7 @@
 #include "Widget/MatchCardWidget.h"
 #include "Widget/ScoreboardMenuWidget.h"
 #include "Utils/PropHuntLog.h"
+#include "Structs/MatchData.h"
 
 #include "Components/Border.h"
 #include "Components/Button.h"
@@ -41,6 +42,17 @@ void UMatchCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	Border->SetBrushColor(BorderTint);
 }
 
+void UMatchCardWidget::SetData(FMatchData InMatchData)
+{
+	FString FormattedTime = InMatchData.MatchStartTimeStamp.ToString(TEXT("%d-%m-%Y | %H:%M"));
+	MatchTime->SetText(FText::FromString(FormattedTime));
+
+	MapName->SetText(FText::FromString(InMatchData.MapName));
+	HostName->SetText(FText::FromString(InMatchData.HostName));
+
+	ScoreboardData = InMatchData.ScoreboardData;
+}
+
 void UMatchCardWidget::OnMatchDetailClicked()
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Match detail button clicked!"));
@@ -55,4 +67,9 @@ void UMatchCardWidget::UpdateScoreboardToggleState()
 		IsScoreboardMenuVisible ?  TEXT("▲") : TEXT("▼")));
 	ScoreboardMenu->SetVisibility(
 		IsScoreboardMenuVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+}
+
+void UMatchCardWidget::SetDataInScoreboard()
+{
+	ScoreboardMenu->SetData(ScoreboardData);
 }

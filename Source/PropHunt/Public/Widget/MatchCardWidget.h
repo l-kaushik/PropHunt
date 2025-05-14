@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
+#include "Structs/ScoreboardData.h"
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
@@ -10,6 +11,8 @@ class UBorder;
 class UButton;
 class UTextBlock;
 class UScoreboardMenuWidget;
+
+struct FMatchData;
 
 UCLASS()
 class PROPHUNT_API UMatchCardWidget : public UUserWidget
@@ -22,10 +25,13 @@ public:
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
+	void SetData(FMatchData InMatchData);
+
 private:
 	UFUNCTION()
 	void OnMatchDetailClicked();
 	void UpdateScoreboardToggleState();
+	void SetDataInScoreboard();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -51,4 +57,5 @@ private:
 
 	static const FLinearColor BorderTint;
 	bool IsScoreboardMenuVisible;
+	FScoreboardData ScoreboardData;
 };

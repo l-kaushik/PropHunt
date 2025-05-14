@@ -6,7 +6,11 @@
 #include "Widget/GameStatsWidget.h"
 #include "Widget/TopPerformersWidget.h"
 #include "Widget/Components/Button/MasterButton.h"
+#include "Widget/UIManager.h"
 #include "Macros/WidgetMacros.h"
+#include "Structs/ScoreboardData.h"
+#include "Structs/PlayerScoreboardData.h"
+#include "Utils/WidgetUtils.h"
 
 #include "Components/WidgetSwitcher.h"
 
@@ -38,6 +42,24 @@ void UScoreboardMenuWidget::NativePreConstruct()
 
 	// set initiali color
 	GameStatsButton->SetBackgroundColor(FLinearColor::Blue);
+}
+
+void UScoreboardMenuWidget::SetData(FScoreboardData InScoreboardData)
+{
+	// remove all previous entries
+	GameStatsPlayerListWindow->ClearList();
+
+	for (const auto& PlayerStats : InScoreboardData.PlayerStats)
+	{
+		auto* GameStatsEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UGameStatsEntryWidget>(this, UUIManager::Get()->GameStatsEntryWidgetBPClassRef);
+
+		GameStatsEntryWidgetRef->SetData(PlayerStats);
+
+		// add player data to list
+		GameStatsPlayerListWindow->AddPlayerStatsToList(GameStatsEntryWidgetRef);
+	}
+
+	// load top performers data
 }
 
 void UScoreboardMenuWidget::OnGameStatsButtonClicked()

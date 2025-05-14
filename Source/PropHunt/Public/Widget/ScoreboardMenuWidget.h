@@ -12,6 +12,8 @@ class UGameStatsWidget;
 class UTopPerformersWidget;
 class UGameStatsEntryWidget;
 
+struct FScoreboardData;
+
 UCLASS()
 class PROPHUNT_API UScoreboardMenuWidget : public UUserWidget
 {
@@ -23,6 +25,8 @@ public:
 
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
+
+	void SetData(FScoreboardData InScoreboardData);
 
 private:
 	void OnGameStatsButtonClicked();
