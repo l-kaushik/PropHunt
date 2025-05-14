@@ -9,16 +9,19 @@
 USTRUCT()
 struct FPlayerScoreboardData
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(SaveGame)
 	FPlayerData PlayerData;
 
 	UPROPERTY(SaveGame)
-	int32 kills;
+	int32 kills;	
+	
+	UPROPERTY(SaveGame)
+	int32 Assists;
 
 	UPROPERTY(SaveGame)
-	int32 DamageGive;
+	int32 DamageGiven;
 
 	UPROPERTY(SaveGame)
 	int32 DamageTaken;

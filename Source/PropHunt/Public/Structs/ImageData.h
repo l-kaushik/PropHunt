@@ -8,7 +8,7 @@
 USTRUCT()
 struct FImageData
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(SaveGame)
 	int32 Width;

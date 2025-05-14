@@ -9,7 +9,7 @@
 USTRUCT()
 struct FPlayerData
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(SaveGame)
 	FString Username;

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Structs/MatchData.h"
+#include "Algo/Reverse.h"
 
 #include "CoreMinimal.h"
 #include "MatchHistoryMap.generated.h"
@@ -47,19 +48,26 @@ struct FMatchHistoryMap
 		return Map.Find(Key);
 	}
 
-	const TArray<FString>& GetOrderedKeys() const
+	const TArray<FString> GetOrderedKeys() const
 	{
-		return Keys;
+		TArray<FString> NewKeys = Keys;
+		Algo::Reverse(NewKeys);
+		return NewKeys;
 	}
 
 	const TArray<FMatchData> GetOrderedValues() const
 	{
 		TArray<FMatchData> OrderedValues;
-		for (const FString& Key : Keys)
+		for (const FString& Key : GetOrderedKeys())
 		{
 			OrderedValues.Add(Map[Key]);
 		}
 		return OrderedValues;
+	}
+
+	bool IsEmpty() const
+	{
+		return Keys.IsEmpty();
 	}
 
 	UPROPERTY(SaveGame)

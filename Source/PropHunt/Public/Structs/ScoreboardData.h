@@ -9,7 +9,7 @@
 USTRUCT()
 struct FScoreboardData
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 
 	UPROPERTY(SaveGame)
