@@ -371,5 +371,6 @@ void UMenuWidget::SaveProfileData()
 	FString username = Username->GetText().ToString();
 	auto* SaveGameInstance = SaveGameManager::Get().LoadGame(username);
 	SaveGameInstance->PlayerData.ProfileImage = ImageData;
+	SaveGameInstance->PlayerData.Username = username;
 	SaveGameManager::Get().SaveGame(SaveGameInstance, username);
 }
