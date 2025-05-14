@@ -2,21 +2,20 @@
 
 #pragma once
 
-#include "Structs/ImageData.h"
 #include "CoreMinimal.h"
-#include "PlayerData.generated.h"
+#include "ImageData.generated.h"
 
 USTRUCT()
-struct FPlayerData
+struct FImageData
 {
 	GENERATED_BODY();
 
 	UPROPERTY(SaveGame)
-	FString Username;
+	int32 Width;
 
 	UPROPERTY(SaveGame)
-	FString UserID;
+	int32 Height;
 
 	UPROPERTY(SaveGame)
-	FImageData ProfileImage;
+	TArray<uint8> RawBytes;
 };
