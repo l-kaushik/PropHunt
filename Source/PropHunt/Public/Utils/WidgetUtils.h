@@ -125,4 +125,11 @@ public:
 		WidgetRef->SetMessage(InMessage);
 		WidgetRef->SetOnOkClicked(InCallback);
 	}
+
+	// image handling
+
+	static void SetImageToButton(class UButton* InButton, UTexture2D* InImage);
+	static bool ExtractRawDataFromTexture(UTexture2D* Texture, struct FImageData& OutImageData);
+	static UTexture2D* CreateTextureFromRawData(const struct FImageData& ImageData);
+	static UTexture2D* OpenFileDialogueAndLoadImage();
 };
