@@ -137,6 +137,7 @@ void AMenuController::LoadSaveGameData()
 
 	// load profile data
 	MenuWidgetRef->SetProfileData(SaveGameInstance->PlayerData);
+	MenuWidgetRef->SetMatchHistoryData(SaveGameInstance->MatchData);
 }
 
 void AMenuController::ClientReturnToMainMenuWithTextReason_Implementation(const FText& ReturnReason)

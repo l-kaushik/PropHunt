@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Enumerator/PropHuntEnums.h"
+#include "Structs/MatchHistoryMap.h"
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "MenuWidget.generated.h"
@@ -65,7 +66,9 @@ private:
 	void OnBackButtonInPlayGameMenuClicked();
 	void OnBackButtonInProfileMenuClicked();
 
-	void SaveProfileData();
+	void SaveImageData(UTexture2D* Image);
+	void UpdateOrLoadUsername();
+	void LoadMatchHistoryData();
 
 	// OnClicked event functions
 	UFUNCTION()
@@ -94,6 +97,9 @@ private:
 
 	UFUNCTION()
 	void OnUsernameCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnUserMatchHistoryScrolled(float CurrentOffset);
 
 private:
 	// instance variables
@@ -172,4 +178,6 @@ private:
 	UMasterButton* BackButton;	// represented as close icon in game
 
 	FString LastUsername;
+	FMatchHistoryMap MatchHistoryMap;
+	int32 LastMatchIndex;
 };

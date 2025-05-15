@@ -44,7 +44,7 @@ void UMatchCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 
 void UMatchCardWidget::SetData(FMatchData InMatchData)
 {
-	FString FormattedTime = InMatchData.MatchStartTimeStamp.ToString(TEXT("%d-%m-%Y | %H:%M"));
+	FString FormattedTime = InMatchData.MatchStartTimeStamp.ToString(TEXT("%d-%m-%Y | %H:%M:%S"));
 	MatchTime->SetText(FText::FromString(FormattedTime));
 
 	MapName->SetText(FText::FromString(InMatchData.MapName));
@@ -59,6 +59,7 @@ void UMatchCardWidget::OnMatchDetailClicked()
 
 	IsScoreboardMenuVisible = !IsScoreboardMenuVisible;
 	UpdateScoreboardToggleState();
+	SetDataInScoreboard();
 }
 
 void UMatchCardWidget::UpdateScoreboardToggleState()

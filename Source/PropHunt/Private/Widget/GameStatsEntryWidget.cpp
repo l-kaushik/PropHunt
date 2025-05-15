@@ -11,7 +11,7 @@ const FLinearColor UGameStatsEntryWidget::Backgroundcolor = FLinearColor(1.f, 1.
 
 UGameStatsEntryWidget* UGameStatsEntryWidget::SetPlayerName(const FString& InPlayerName)
 {
-    FString newName;
+    FString newName = InPlayerName;
     if (InPlayerName.Len() > 15)
     {
         newName = InPlayerName.Left(15 - 3) + TEXT("...");

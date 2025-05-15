@@ -14,7 +14,6 @@
 #include "Widget/UIManager.h"
 #include "Structs/PlayerData.h"
 #include "Structs/ImageData.h"
-#include "Structs/MatchHistoryMap.h"
 #include "SaveGame/SaveGameManager.h"
 #include "SaveGame/PropHuntSaveGame.h"
 #include "States/PropHuntPlayerState.h"
@@ -34,6 +33,7 @@
 #include "Components/Overlay.h"
 #include "Components/EditableText.h"
 #include "Components/ScrollBox.h"
+#include "Components/ScrollBoxSlot.h"
 #include "Kismet/GameplayStatics.h"
 
 void UMenuWidget::AddServerToList(UUserWidget* ServerEntry)
@@ -103,14 +103,10 @@ void UMenuWidget::SetMatchHistoryData(FMatchHistoryMap InMatchHistoryData)
 
 	// TODO: Consider using UListView with item pooling if match history grows significantly.
 
+	MatchHistoryMap = InMatchHistoryData;
+	LastMatchIndex = InMatchHistoryData.Keys.Num();
 	// load data in scrollbox
-	for (const auto& Match : InMatchHistoryData.GetOrderedValues())
-	{
-		auto* MatchCardWidgetRef = WidgetUtils::CreateAndValidateWidget<UMatchCardWidget>(this, UUIManager::Get()->MatchCardWidgetBPClassRef);
-
-		MatchCardWidgetRef->SetData(Match);
-		MatchHistoryScrollBox->AddChild(MatchCardWidgetRef);
-	}
+	LoadMatchHistoryData();
 }
 
 void UMenuWidget::NativeConstruct()
@@ -145,6 +141,7 @@ void UMenuWidget::BindClickEvents()
 	ProfileButton->OnClicked.AddDynamic(this, &UMenuWidget::OnProfileButtonClicked);
 	ChangeProfileImage->OnClicked.AddDynamic(this, &UMenuWidget::OnChangeProfileImageClicked);
 	Username->OnTextCommitted.AddDynamic(this, &UMenuWidget::OnUsernameCommitted);
+	MatchHistoryScrollBox->OnUserScrolled.AddDynamic(this, &UMenuWidget::OnUserMatchHistoryScrolled);
 }
 
 // Initialize every component of the widget, by calling relevant function
@@ -373,7 +370,7 @@ void UMenuWidget::OnChangeProfileImageClicked()
 	WidgetUtils::SetImageToButton(ProfileButton, Image);
 
 	// save to save game slot
-	SaveProfileData();
+	SaveImageData(Image);
 }
 
 void UMenuWidget::OnUsernameCommitted(const FText& Text, ETextCommit::Type CommitMethod)
@@ -383,20 +380,57 @@ void UMenuWidget::OnUsernameCommitted(const FText& Text, ETextCommit::Type Commi
 
 	if (Text.EqualTo(FText::FromString(LastUsername))) return;
 
-	SaveProfileData();
+	UpdateOrLoadUsername();
 	LastUsername = Text.ToString();
 	PlayerState->SetUsername(LastUsername);
 }
 
-void UMenuWidget::SaveProfileData()
+void UMenuWidget::OnUserMatchHistoryScrolled(float CurrentOffset)
 {
-	auto* Image = Cast<UTexture2D>(ChangeProfileImage->GetStyle().Normal.GetResourceObject());
-	FImageData ImageData;
-	if (!WidgetUtils::ExtractRawDataFromTexture(Image, ImageData)) return;
+	float MaxOffset = MatchHistoryScrollBox->GetScrollOffsetOfEnd();
 
+	if ((MaxOffset - CurrentOffset) < 100.0f && (LastMatchIndex > 0))
+	{
+		LoadMatchHistoryData();
+	}
+}
+
+void UMenuWidget::SaveImageData(UTexture2D* Image)
+{
 	FString username = Username->GetText().ToString();
+	FImageData ImageData;
+	WidgetUtils::ExtractRawDataFromTexture(Image, ImageData);
 	auto* SaveGameInstance = SaveGameManager::Get().LoadGame(username);
 	SaveGameInstance->PlayerData.ProfileImage = ImageData;
-	SaveGameInstance->PlayerData.Username = username;
 	SaveGameManager::Get().SaveGame(SaveGameInstance, username);
+}
+
+void UMenuWidget::UpdateOrLoadUsername()
+{
+	FString username = Username->GetText().ToString();
+	auto* SaveGameInstance = SaveGameManager::Get().LoadGame(username);
+	SaveGameInstance->PlayerData.Username = username;
+	SetProfileData(SaveGameInstance->PlayerData);
+	SetMatchHistoryData(SaveGameInstance->MatchData);
+	SaveGameManager::Get().SaveGame(SaveGameInstance, username);
+}
+
+void UMenuWidget::LoadMatchHistoryData()
+{
+	int count = 0;
+	while ((count != 10) && (LastMatchIndex > 0))
+	{
+		LastMatchIndex--;
+
+		auto* Match = MatchHistoryMap.GetByIndex(LastMatchIndex);
+		if (!Match) continue;
+
+		auto* MatchCardWidgetRef = WidgetUtils::CreateAndValidateWidget<UMatchCardWidget>(this, UUIManager::Get()->MatchCardWidgetBPClassRef);
+
+		MatchCardWidgetRef->SetData(*Match);
+		auto* AddedWidget = Cast<UScrollBoxSlot>(MatchHistoryScrollBox->AddChild(MatchCardWidgetRef));
+		AddedWidget->SetPadding(FMargin(40.f, 20.f, 40.f, 20.f));
+
+		count++;
+	}
 }
