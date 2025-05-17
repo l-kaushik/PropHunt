@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Structs/PlayerScoreboardData.h"
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "PropHuntPlayerState.generated.h"
@@ -19,14 +20,19 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	// structs
+	FPlayerScoreboardData GetPlayerScoreboardData();
+
 	// Player Info
 	void SetIsReady(bool InIsReady);
 	void SetIsHost(bool InIsHost);
 	void SetUsername(const FString& InUsername);
+	void SetProfileImage(FImageData InImageData);
 
 	bool GetIsReady() const;
 	bool GetIsHost() const;
 	FString GetUsername() const;
+	FImageData GetProfileImage() const;
 
 
 	// Game Data
@@ -66,23 +72,7 @@ private:
 	bool m_IsHost;
 
 	UPROPERTY(Replicated)
-	FString m_Username;
-
-	// Game Data
-	UPROPERTY(Replicated)
-	int32 m_Kills;
-
-	UPROPERTY(Replicated)
-	int32 m_Assists;
-
-	UPROPERTY(Replicated)
-	int32 m_DamageGiven;
-
-	UPROPERTY(Replicated)
-	int32 m_DamageTaken;
-
-	UPROPERTY(Replicated)
-	double m_LongestHiddenTime;
+	FPlayerScoreboardData m_PlayerScoreboardData;
 
 	// Weapon Data
 
@@ -91,6 +81,7 @@ private:
 
 	UPROPERTY(Replicated)
 	int32 m_CurrentReserveAmmo;
+
 	
 	static const int32 m_MaxAmmoInMagazine;
 	static const int32 m_MaxReserveAmmo;

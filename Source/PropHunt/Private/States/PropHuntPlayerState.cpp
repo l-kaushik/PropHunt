@@ -23,15 +23,16 @@ void APropHuntPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(APropHuntPlayerState, m_IsHost)
 
 	// Game Data
-	DOREPLIFETIME(APropHuntPlayerState, m_Kills);
-	DOREPLIFETIME(APropHuntPlayerState, m_Assists);
-	DOREPLIFETIME(APropHuntPlayerState, m_DamageGiven);
-	DOREPLIFETIME(APropHuntPlayerState, m_DamageTaken);
-	DOREPLIFETIME(APropHuntPlayerState, m_LongestHiddenTime);
+	DOREPLIFETIME(APropHuntPlayerState, m_PlayerScoreboardData);
 
 	// Weapon Data
 	DOREPLIFETIME(APropHuntPlayerState, m_CurrentAmmoInMagazine)
 	DOREPLIFETIME(APropHuntPlayerState, m_CurrentReserveAmmo)
+}
+
+FPlayerScoreboardData APropHuntPlayerState::GetPlayerScoreboardData()
+{
+	return m_PlayerScoreboardData;
 }
 
 void APropHuntPlayerState::SetIsReady(bool InIsReady)
@@ -46,7 +47,12 @@ void APropHuntPlayerState::SetIsHost(bool InIsHost)
 
 void APropHuntPlayerState::SetUsername(const FString& InUsername)
 {
-	m_Username = InUsername;
+	m_PlayerScoreboardData.PlayerData.Username = InUsername;
+}
+
+void APropHuntPlayerState::SetProfileImage(FImageData InImageData)
+{
+	m_PlayerScoreboardData.PlayerData.ProfileImage = InImageData;
 }
 
 bool APropHuntPlayerState::GetIsReady() const
@@ -61,57 +67,62 @@ bool APropHuntPlayerState::GetIsHost() const
 
 FString APropHuntPlayerState::GetUsername() const
 {
-	return m_Username;
+	return m_PlayerScoreboardData.PlayerData.Username;
+}
+
+FImageData APropHuntPlayerState::GetProfileImage() const
+{
+	return m_PlayerScoreboardData.PlayerData.ProfileImage;
 }
 
 void APropHuntPlayerState::AddKill()
 {
-	m_Kills++;
+	m_PlayerScoreboardData.kills++;
 }
 
 void APropHuntPlayerState::AddAssist()
 {
-	m_Assists++;
+	m_PlayerScoreboardData.Assists++;
 }
 
 void APropHuntPlayerState::AddDamageDealt(int32 damageDealt)
 {
-	m_DamageGiven += damageDealt;
+	m_PlayerScoreboardData.DamageGiven += damageDealt;
 }
 
 void APropHuntPlayerState::AddDamageTaken(int32 damageTaken)
 {
-	m_DamageTaken += damageTaken;
+	m_PlayerScoreboardData.DamageTaken += damageTaken;
 }
 
 void APropHuntPlayerState::SetBestHiddenTimer(double hiddenTime)
 {
-	m_LongestHiddenTime = hiddenTime;
+	m_PlayerScoreboardData.HiddenTime = hiddenTime;
 }
 
 int32 APropHuntPlayerState::GetKills() const
 {
-	return m_Kills;
+	return m_PlayerScoreboardData.kills;
 }
 
 int32 APropHuntPlayerState::GetAssists() const
 {
-	return m_Assists;
+	return m_PlayerScoreboardData.Assists;
 }
 
 int32 APropHuntPlayerState::GetDamageGiven() const
 {
-	return m_DamageGiven;
+	return m_PlayerScoreboardData.DamageGiven;
 }
 
 int32 APropHuntPlayerState::GetDamageTaken() const
 {
-	return m_DamageTaken;
+	return m_PlayerScoreboardData.DamageTaken;
 }
 
 double APropHuntPlayerState::GetHiddenTime() const
 {
-	return m_LongestHiddenTime;
+	return m_PlayerScoreboardData.HiddenTime;
 }
 
 void APropHuntPlayerState::ReduceAmmo()
