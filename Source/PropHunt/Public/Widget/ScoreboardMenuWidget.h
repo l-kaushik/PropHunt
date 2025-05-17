@@ -32,6 +32,7 @@ private:
 	void OnGameStatsButtonClicked();
 	void OnTopPerformerButtonClicked();
 	void SwitchScoreboardMenuButtonsProperty(bool GameStatsButtonClicked);
+
 private:
 	// scoreboard menu button
 	UPROPERTY(meta = (BindWidget))

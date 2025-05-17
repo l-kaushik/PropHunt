@@ -60,6 +60,8 @@ void UScoreboardMenuWidget::SetData(FScoreboardData InScoreboardData)
 	}
 
 	// load top performers data
+	TopPerformerWindow->SetPropData(InScoreboardData.BestProp);
+	TopPerformerWindow->SetHunterData(InScoreboardData.BestHunter);
 }
 
 void UScoreboardMenuWidget::OnGameStatsButtonClicked()

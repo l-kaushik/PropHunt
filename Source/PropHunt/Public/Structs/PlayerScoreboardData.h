@@ -11,6 +11,15 @@ struct FPlayerScoreboardData
 {
 	GENERATED_BODY()
 
+	FPlayerScoreboardData()
+	{
+		kills = 0;
+		Assists = 0;
+		DamageGiven = 0;
+		DamageTaken = 0;
+		HiddenTime = 0.f;
+	}
+
 	UPROPERTY(SaveGame)
 	FPlayerData PlayerData;
 

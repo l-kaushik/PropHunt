@@ -10,6 +10,12 @@ struct FImageData
 {
 	GENERATED_BODY()
 
+	FImageData()
+	{
+		Width = 0;
+		Height = 0;
+	}
+
 	UPROPERTY(SaveGame)
 	int32 Width;
 

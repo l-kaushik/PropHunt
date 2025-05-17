@@ -10,6 +10,7 @@
 #include "Utils/WidgetUtils.h"
 #include "Widget/UIManager.h"
 #include "Controller/PropHuntPlayerController.h"
+#include "Structs/ScoreboardData.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -338,30 +339,30 @@ void UMainHud::OnExitGameButtonClicked()
 void UMainHud::FillScoreboardData()
 {
 	auto* GameState = GetWorld()->GetGameState<APropHuntGameState>();
-	LoadDataForGameStatsList(GameState);
+	BuildScoreboardData(GameState);
 }
 
-void UMainHud::LoadDataForGameStatsList(APropHuntGameState* GameState)
+void UMainHud::BuildScoreboardData(APropHuntGameState* GameState)
 {
-	// remove all previous entries
-	ScoreboardMenu->ClearPlayerStatsList();
+	FScoreboardData ScoreboardData;
 
 	for (const auto& PlayerState : GameState->GetPlayerStates())
 	{
-		auto* GameStatsEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UGameStatsEntryWidget>(this, UUIManager::Get()->GameStatsEntryWidgetBPClassRef);
+		FPlayerScoreboardData CurrentPlayerStats = PlayerState->GetPlayerScoreboardData();
+		ScoreboardData.PlayerStats.Add(CurrentPlayerStats);
 
-		// fill up with new player state data
-		GameStatsEntryWidgetRef->SetPlayerName(PlayerState->GetPlayerName());
-		GameStatsEntryWidgetRef->SetKills(FString::FromInt(PlayerState->GetKills()));
-		GameStatsEntryWidgetRef->SetAssists(FString::FromInt(PlayerState->GetAssists()));
-		GameStatsEntryWidgetRef->SetDamageGiven(FString::FromInt(PlayerState->GetDamageGiven()));
-		GameStatsEntryWidgetRef->SetDamageTaken(FString::FromInt(PlayerState->GetDamageTaken()));
+		// best prop
+		if (CurrentPlayerStats.HiddenTime > ScoreboardData.BestProp.HiddenTime)
+		{
+			ScoreboardData.BestProp = CurrentPlayerStats;
+		}
 
-		// add player data to list
-		ScoreboardMenu->AddPlayerStatsToList(GameStatsEntryWidgetRef);
+		// best hunter
+		if (CurrentPlayerStats.kills > ScoreboardData.BestHunter.kills)
+		{
+			ScoreboardData.BestHunter = CurrentPlayerStats;
+		}
 	}
-}
 
-void UMainHud::LoadDataForTopPerformerWindow()
-{
+	ScoreboardMenu->SetData(ScoreboardData);
 }

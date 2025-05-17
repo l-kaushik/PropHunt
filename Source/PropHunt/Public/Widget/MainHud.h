@@ -65,8 +65,7 @@ private:
 	void OnExitGameButtonClicked();
 
 	void FillScoreboardData();
-	void LoadDataForGameStatsList(APropHuntGameState* GameState);
-	void LoadDataForTopPerformerWindow();
+	void BuildScoreboardData(APropHuntGameState* GameState);
 
 	// HUD elements
 	UPROPERTY(meta = (BindWidget))
