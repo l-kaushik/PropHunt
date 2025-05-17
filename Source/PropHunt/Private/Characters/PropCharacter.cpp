@@ -267,6 +267,42 @@ void APropCharacter::AddKillAndAssist()
 	}
 }
 
+void APropCharacter::UpdatePlayerHiddenTimer()
+{
+	if (!bHasStartedHiddenTimer) return;
+
+	auto* MyPlayerState = GetPlayerState<APropHuntPlayerState>();
+
+	// Time elapsed since the player became hidden
+	FTimespan Elapsed = FDateTime::Now() - CurrentHiddenTime;
+
+	// Convert saved hidden time from PlayerState (assume it's stored in seconds)
+	double SavedHiddenTimeSeconds = MyPlayerState->GetHiddenTime();
+
+	// If player has stayed hidden longer, update the state
+	if (Elapsed.GetTotalSeconds() > SavedHiddenTimeSeconds)
+	{
+		MyPlayerState->SetBestHiddenTimer(Elapsed.GetTotalSeconds());
+	}
+
+	// clear timer when player move
+	GetWorld()->GetTimerManager().ClearTimer(PlayerHiddenTimer);
+	bHasStartedHiddenTimer = false;
+}
+
+void APropCharacter::StartPlayerHiddenTimer()
+{
+	GetWorld()->GetTimerManager().SetTimer(
+		PlayerHiddenTimer,
+		[this]() {
+			CurrentHiddenTime = FDateTime::Now();
+			bHasStartedHiddenTimer = true;
+		},
+		5.f,
+		false
+	);
+}
+
 void APropCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -274,6 +310,9 @@ void APropCharacter::Move(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
+		// handle player hidden timer
+		UpdatePlayerHiddenTimer();
+
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -287,6 +326,9 @@ void APropCharacter::Move(const FInputActionValue& Value)
 		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
+
+		// start hidden timer
+		StartPlayerHiddenTimer();
 	}
 }
 

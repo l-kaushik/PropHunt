@@ -135,9 +135,14 @@ private:
 	void AddDamageTaken(float DamageAmount);
 	void UpdateDamageTracker(AActor* DamageCauser, float DamageAmount);
 	void AddKillAndAssist();
+	void UpdatePlayerHiddenTimer();
+	void StartPlayerHiddenTimer();
 
 private:
 	float Health;
 	static const float MAX_HEALTH;
 	TMap<APropHuntPlayerState*, float> DamageTracker;
+	FTimerHandle PlayerHiddenTimer;
+	FDateTime CurrentHiddenTime;
+	bool bHasStartedHiddenTimer = false;
 };

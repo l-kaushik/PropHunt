@@ -34,11 +34,13 @@ public:
 	void AddAssist();
 	void AddDamageDealt(int32 damageDealt);
 	void AddDamageTaken(int32 damageTaken);
+	void SetBestHiddenTimer(double hiddenTime);
 
 	int32 GetKills() const;
 	int32 GetAssists() const;
 	int32 GetDamageGiven() const;
 	int32 GetDamageTaken() const;
+	double GetHiddenTime() const;
 
 
 	// track the current hidden time, and when player move compare with longest hidden time and update accordingly

@@ -84,6 +84,11 @@ void APropHuntPlayerState::AddDamageTaken(int32 damageTaken)
 	m_DamageTaken += damageTaken;
 }
 
+void APropHuntPlayerState::SetBestHiddenTimer(double hiddenTime)
+{
+	m_LongestHiddenTime = hiddenTime;
+}
+
 int32 APropHuntPlayerState::GetKills() const
 {
 	return m_Kills;
@@ -102,6 +107,11 @@ int32 APropHuntPlayerState::GetDamageGiven() const
 int32 APropHuntPlayerState::GetDamageTaken() const
 {
 	return m_DamageTaken;
+}
+
+double APropHuntPlayerState::GetHiddenTime() const
+{
+	return m_LongestHiddenTime;
 }
 
 void APropHuntPlayerState::ReduceAmmo()
