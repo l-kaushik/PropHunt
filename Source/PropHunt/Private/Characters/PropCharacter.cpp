@@ -193,6 +193,9 @@ float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 			// add kill and assist
 			AddKillAndAssist();
 
+			// update hidden time
+			UpdatePlayerHiddenTimer();
+
 			if (auto* GameMode = Cast<APropHuntGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
 			{
 				GameMode->HandlePropDeath(Cast<APropHuntPlayerController>(GetController()));
