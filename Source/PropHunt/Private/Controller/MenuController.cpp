@@ -120,10 +120,11 @@ void AMenuController::LoadSaveGameData()
 	auto& SGMInstance = SaveGameManager::Get();
 	UPropHuntSaveGame* SaveGameInstance = nullptr;
 	FString LastSlotName = SGMInstance.GetLastSaveGameSlotName();
+	auto* MyPlayerState = GetPlayerState<APropHuntPlayerState>();
 
 	if (LastSlotName.IsEmpty())
 	{
-		FString Username = GetPlayerState<APropHuntPlayerState>()->GetPlayerName();
+		FString Username = MyPlayerState->GetPlayerName();
 		// create new save game object using player name
 		SaveGameInstance = SGMInstance.LoadGame(Username);
 		SaveGameInstance->PlayerData.Username = Username;
@@ -137,7 +138,12 @@ void AMenuController::LoadSaveGameData()
 
 	// load profile data
 	MenuWidgetRef->SetProfileData(SaveGameInstance->PlayerData);
-	MenuWidgetRef->SetMatchHistoryData(SaveGameInstance->MatchData);
+	MenuWidgetRef->SetMatchHistoryData(SaveGameInstance->MatchData);  
+
+#if !WITH_EDITOR
+	MyPlayerState->SetPlayerData(SaveGameInstance->PlayerData);
+#endif
+
 }
 
 void AMenuController::ClientReturnToMainMenuWithTextReason_Implementation(const FText& ReturnReason)
@@ -225,7 +231,11 @@ void AMenuController::AddNewPlayerToList(const APropHuntPlayerState* InPlayerSta
 {
 	if (auto* PlayerEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UPlayerEntryWidget>(this, PlayerEntryWidgetBPClassRef))
 	{
+#if WITH_EDITOR
 		PlayerEntryWidgetRef->SetPlayerNameText(InPlayerState->GetPlayerName());
+#else
+		PlayerEntryWidgetRef->SetPlayerNameText(InPlayerState->GetUsername());
+#endif
 		PlayerEntryWidgetRef->SetPingText(FString::FromInt(InPlayerState->GetPingInMilliseconds()));
 		PlayerEntryWidgetRef->SetReadyStatus(InPlayerState->GetIsReady());
 

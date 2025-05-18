@@ -35,6 +35,11 @@ FPlayerScoreboardData APropHuntPlayerState::GetPlayerScoreboardData()
 	return m_PlayerScoreboardData;
 }
 
+void APropHuntPlayerState::SetPlayerData(FPlayerData InPlayerData)
+{
+	m_PlayerScoreboardData.PlayerData = InPlayerData;
+}
+
 void APropHuntPlayerState::SetIsReady(bool InIsReady)
 {
 	m_IsReady = InIsReady;

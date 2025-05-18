@@ -22,6 +22,7 @@ public:
 
 	// structs
 	FPlayerScoreboardData GetPlayerScoreboardData();
+	void SetPlayerData(FPlayerData InPlayerData);
 
 	// Player Info
 	void SetIsReady(bool InIsReady);
