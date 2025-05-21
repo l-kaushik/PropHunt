@@ -23,6 +23,8 @@ class UScoreboardMenuWidget;
 
 class APropHuntGameState;
 
+struct FScoreboardData;
+
 UCLASS()
 class PROPHUNT_API UMainHud : public UUserWidget
 {
@@ -66,6 +68,7 @@ private:
 
 	void FillScoreboardData();
 	void BuildScoreboardData(APropHuntGameState* GameState);
+	void SaveMatchHistoryData(FScoreboardData ScoreboardData, APropHuntGameState* GameState);
 
 	// HUD elements
 	UPROPERTY(meta = (BindWidget))

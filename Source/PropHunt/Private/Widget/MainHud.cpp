@@ -11,6 +11,8 @@
 #include "Widget/UIManager.h"
 #include "Controller/PropHuntPlayerController.h"
 #include "Structs/ScoreboardData.h"
+#include "SaveGame/SaveGameManager.h"
+#include "SaveGame/PropHuntSaveGame.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -349,6 +351,7 @@ void UMainHud::BuildScoreboardData(APropHuntGameState* GameState)
 	for (const auto& PlayerState : GameState->GetPlayerStates())
 	{
 		FPlayerScoreboardData CurrentPlayerStats = PlayerState->GetPlayerScoreboardData();
+		CurrentPlayerStats.PlayerData.Username = PlayerState->GetPlayerName();
 		ScoreboardData.PlayerStats.Add(CurrentPlayerStats);
 
 		// best prop
@@ -365,4 +368,30 @@ void UMainHud::BuildScoreboardData(APropHuntGameState* GameState)
 	}
 
 	ScoreboardMenu->SetData(ScoreboardData);
+
+	// save game
+	SaveMatchHistoryData(ScoreboardData, GameState);
+}
+
+void UMainHud::SaveMatchHistoryData(FScoreboardData ScoreboardData, APropHuntGameState* GameState)
+{
+	auto* PlayerController = GetOwningPlayer<APropHuntPlayerController>();
+	auto* PlayerState = PlayerController->GetPlayerState<APropHuntPlayerState>();
+
+	SaveGameManager& SGM_Instance = SaveGameManager::Get();
+	auto* SaveGameInstance = SGM_Instance.LoadGame(PlayerState->GetPlayerName());
+
+	FMatchData MatchData;
+	MatchData.MatchStartTimeStamp = GameState->GetMatchStartTime();
+	MatchData.MatchEndTimeStamp = FDateTime::Now();
+	MatchData.HostName = GameState->GetMatchHostName();
+	MatchData.MapName = GameState->GetMapInfo().Name;
+	MatchData.ScoreboardData = ScoreboardData;
+
+	// for sake of data completion generating here
+	MatchData.MatchID = FGuid::NewGuid().ToString();
+
+	SaveGameInstance->MatchData.Add(MatchData.MatchID, MatchData);
+
+	SGM_Instance.SaveGame(SaveGameInstance, PlayerState->GetPlayerName());
 }
