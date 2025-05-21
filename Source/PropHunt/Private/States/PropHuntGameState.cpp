@@ -30,6 +30,9 @@ void APropHuntGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(APropHuntGameState, PlayerStates);
 	DOREPLIFETIME(APropHuntGameState, MinPlayerNum);
 	DOREPLIFETIME(APropHuntGameState, bIsPropWon);
+	DOREPLIFETIME(APropHuntGameState, MatchStartTime);
+	DOREPLIFETIME(APropHuntGameState, HostName);
+	DOREPLIFETIME(APropHuntGameState, MapInfo);
 }
 
 // Getters
@@ -72,6 +75,16 @@ int32 APropHuntGameState::GetMinPlayerNum() const
 const FMapInfo& APropHuntGameState::GetMapInfo() const
 {
 	return MapInfo;
+}
+
+const FDateTime APropHuntGameState::GetMatchStartTime() const
+{
+	return MatchStartTime;
+}
+
+const FString& APropHuntGameState::GetMatchHostName() const
+{
+	return HostName;
 }
 
 // Setters
@@ -136,6 +149,16 @@ void APropHuntGameState::SetMinPlayerNum(int32 InMinPlayerNum)
 void APropHuntGameState::SetMapInfo(const FMapInfo& InMapInfo)
 {
 	MapInfo = InMapInfo;
+}
+
+void APropHuntGameState::SetMatchStartTime(const FDateTime& InDateTime)
+{
+	MatchStartTime = InDateTime;
+}
+
+void APropHuntGameState::SetMatchHostName(const FString& InHostName)
+{
+	HostName = InHostName;
 }
 
 // rep notifiers

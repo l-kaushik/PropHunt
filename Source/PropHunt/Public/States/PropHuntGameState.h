@@ -34,6 +34,8 @@ public:
 	bool GetIsPropWon() const;
 	int32 GetMinPlayerNum() const;
 	const FMapInfo& GetMapInfo() const;
+	const FDateTime GetMatchStartTime() const;
+	const FString& GetMatchHostName() const;
 
 	// Setters
 	void AddPlayerController(APropHuntPlayerController* NewController);
@@ -45,6 +47,8 @@ public:
 	void SetIsPropWon(bool InIsPropWon);
 	void SetMinPlayerNum(int32 InMinPlayerNum);
 	void SetMapInfo(const FMapInfo& InMapInfo);
+	void SetMatchStartTime(const FDateTime& InDateTime);
+	void SetMatchHostName(const FString& InHostName);
 
 public:
 	FOnPlayerListUpdated OnPlayerListUpdated;
@@ -80,4 +84,10 @@ private:
 	
 	UPROPERTY(Replicated)
 	FMapInfo MapInfo;
+
+	UPROPERTY(Replicated)
+	FDateTime MatchStartTime;
+
+	UPROPERTY(Replicated)
+	FString HostName;
 };

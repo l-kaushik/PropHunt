@@ -11,6 +11,7 @@ class APropHuntGameState;
 class APropHuntCharacter;
 class APropCharacter;
 class APropHuntPlayerController;
+class UPropHuntGameInstance;
 
 UCLASS(minimalapi)
 class APropHuntGameMode : public AGameModeBase, public IPropHuntGameModeInterface
@@ -61,5 +62,6 @@ protected:
 
 private:
 	APropHuntGameState* MyGameState;
+	UPropHuntGameInstance* MyGameInstance;
 	FTimerHandle GameLoopTimer;
 };

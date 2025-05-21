@@ -37,6 +37,14 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 	Super::PostLogin(NewPlayer);
 
 	auto* PlayerController = Cast<APropHuntPlayerController>(NewPlayer);
+
+	// so for host this returns true
+	if (PlayerController->IsLocalController())
+	{
+		MyGameState->SetMapInfo(MyGameInstance->GetMapInfo());
+		MyGameState->SetMatchHostName(NewPlayer->GetPlayerState<APropHuntPlayerState>()->GetPlayerName());
+		MyGameState->SetMatchStartTime(FDateTime::Now());
+	}
 	
 	SpawnPlayer(PlayerController);
 	MyGameState->AddPlayerController(PlayerController);
@@ -54,9 +62,11 @@ void APropHuntGameMode::InitGameState()
 	Super::InitGameState();
 
 	MyGameState = GetGameState<APropHuntGameState>();
-	if (MyGameState)
+	MyGameInstance = GetGameInstance<UPropHuntGameInstance>();
+
+	if (MyGameState && MyGameInstance)
 	{
-		MyGameState->SetMinPlayerNum(GetGameInstance<UPropHuntGameInstance>()->GetPlayerNum());
+		MyGameState->SetMinPlayerNum(MyGameInstance->GetPlayerNum());
 	}
 }
 
@@ -67,7 +77,7 @@ void APropHuntGameMode::SpawnPlayer(APropHuntPlayerController* PlayerController)
 
 	AActor* SpawnPoint = FindPlayerStart(nullptr);
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().PropSpawnCoordinate);
+	SpawnTransform.SetLocation(MyGameInstance->GetMapInfo().PropSpawnCoordinate);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
@@ -101,7 +111,7 @@ void APropHuntGameMode::StartNextGame()
 {
 	UE_LOG_NON_SHIP(LogPropHuntGameMode, Display, TEXT("StartNextGame called"));
 
-	GetWorld()->ServerTravel(MapManager::GetMapAddressWithListen(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().Name));
+	GetWorld()->ServerTravel(MapManager::GetMapAddressWithListen(MyGameInstance->GetMapInfo().Name));
 }
 
 /* check if number of players is equal to number of players in hub, start/reset the timer after the last joined player basically fail safe when any 1 or more player disconnect between level transition.*/
@@ -153,7 +163,7 @@ void APropHuntGameMode::ChooseHunterCharacter()
 		GetWorldTimerManager().SetTimer(
 			TimerHandle,
 			[this, Hunter]() {
-				Hunter->GetCharacter()->TeleportTo(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().PropSpawnCoordinate, FRotator(), false, false);
+				Hunter->GetCharacter()->TeleportTo(MyGameInstance->GetMapInfo().PropSpawnCoordinate, FRotator(), false, false);
 
 				SetupInitialWidget();
 				StartGameLoopTimer();
@@ -173,7 +183,7 @@ APropHuntCharacter* APropHuntGameMode::SpawnCharacter()
 	UWorld* World = GetWorld();
 
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(GetGameInstance<UPropHuntGameInstance>()->GetMapInfo().HunterSpawnCoordinate);
+	SpawnTransform.SetLocation(MyGameInstance->GetMapInfo().HunterSpawnCoordinate);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
@@ -282,5 +292,5 @@ void APropHuntGameMode::CleanupPlayerExitFromScoreboard()
 {
 	int32 NewMinPlayerNum = MyGameState->GetMinPlayerNum() - 1;
 	MyGameState->SetMinPlayerNum(NewMinPlayerNum);
-	GetGameInstance<UPropHuntGameInstance>()->SetPlayerNum(NewMinPlayerNum);
+	MyGameInstance->SetPlayerNum(NewMinPlayerNum);
 }
