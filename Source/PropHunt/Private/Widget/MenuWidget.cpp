@@ -139,7 +139,8 @@ void UMenuWidget::BindClickEvents()
 	BIND_BUTTON_CLICK(BackButton, &UMenuWidget::OnBackButtonClicked);
 
 	ProfileButton->OnClicked.AddDynamic(this, &UMenuWidget::OnProfileButtonClicked);
-	ChangeProfileImage->OnClicked.AddDynamic(this, &UMenuWidget::OnChangeProfileImageClicked);
+	//ChangeProfileImage->OnClicked.AddDynamic(this, &UMenuWidget::OnChangeProfileImageClicked);
+	ChangeProfileImage->SetIsEnabled(false); // disabled cuz of 64kb limit on profile picture replication
 	Username->OnTextCommitted.AddDynamic(this, &UMenuWidget::OnUsernameCommitted);
 	MatchHistoryScrollBox->OnUserScrolled.AddDynamic(this, &UMenuWidget::OnUserMatchHistoryScrolled);
 }
@@ -397,12 +398,14 @@ void UMenuWidget::OnUserMatchHistoryScrolled(float CurrentOffset)
 
 void UMenuWidget::SaveImageData(UTexture2D* Image)
 {
+	APropHuntPlayerState* PlayerState = MenuController->GetPlayerState<APropHuntPlayerState>();
 	FString username = Username->GetText().ToString();
 	FImageData ImageData;
-	WidgetUtils::ExtractRawDataFromTexture(Image, ImageData);
+	if (!WidgetUtils::ExtractRawDataFromTexture(Image, ImageData)) return;
 	auto* SaveGameInstance = SaveGameManager::Get().LoadGame(username);
 	SaveGameInstance->PlayerData.ProfileImage = ImageData;
 	SaveGameManager::Get().SaveGame(SaveGameInstance, username);
+	PlayerState->SetProfileImage(ImageData);
 }
 
 void UMenuWidget::UpdateOrLoadUsername()
