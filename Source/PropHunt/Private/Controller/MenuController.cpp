@@ -101,7 +101,17 @@ void AMenuController::InitializeMultiplayerSettings()
 	}
 
 	SetupWidgetForMuliplayer();
+	ServerSendProfileData(PropHuntGameInstance->GetPlayerData());
 	OnPlayerListUpdated(PropHuntGameState->GetPlayerStates());	// explicitly calling to update widget for host as well
+}
+
+void AMenuController::ServerSendProfileData_Implementation(const FPlayerData& InPlayerData)
+{
+	auto* PS = GetPlayerState<APropHuntPlayerState>();
+	if (PS)
+	{
+		PS->SetPlayerData(InPlayerData);
+	}
 }
 
 void AMenuController::SetupDisconnectSettings()
@@ -117,10 +127,13 @@ void AMenuController::SetupDisconnectSettings()
 
 void AMenuController::LoadSaveGameData()
 {
+	if (!IsLocalController()) return;
+
 	auto& SGMInstance = SaveGameManager::Get();
 	UPropHuntSaveGame* SaveGameInstance = nullptr;
 	FString LastSlotName = SGMInstance.GetLastSaveGameSlotName();
 	auto* MyPlayerState = GetPlayerState<APropHuntPlayerState>();
+	if (!MyPlayerState) return;
 
 	if (LastSlotName.IsEmpty())
 	{
@@ -138,12 +151,8 @@ void AMenuController::LoadSaveGameData()
 
 	// load profile data
 	MenuWidgetRef->SetProfileData(SaveGameInstance->PlayerData);
-	MenuWidgetRef->SetMatchHistoryData(SaveGameInstance->MatchData);  
-
-#if !WITH_EDITOR
+	MenuWidgetRef->SetMatchHistoryData(SaveGameInstance->MatchData);
 	MyPlayerState->SetPlayerData(SaveGameInstance->PlayerData);
-#endif
-
 }
 
 void AMenuController::ClientReturnToMainMenuWithTextReason_Implementation(const FText& ReturnReason)
@@ -231,15 +240,11 @@ void AMenuController::AddNewPlayerToList(const APropHuntPlayerState* InPlayerSta
 {
 	if (auto* PlayerEntryWidgetRef = WidgetUtils::CreateAndValidateWidget<UPlayerEntryWidget>(this, PlayerEntryWidgetBPClassRef))
 	{
-#if WITH_EDITOR
-		PlayerEntryWidgetRef->SetPlayerNameText(InPlayerState->GetPlayerName());
-#else
 		PlayerEntryWidgetRef->SetPlayerNameText(InPlayerState->GetUsername());
-#endif
 		PlayerEntryWidgetRef->SetPingText(FString::FromInt(InPlayerState->GetPingInMilliseconds()));
 		PlayerEntryWidgetRef->SetReadyStatus(InPlayerState->GetIsReady());
 
-		LobbyWidgetRef->AddPlayerToList(PlayerEntryWidgetRef);;
+		LobbyWidgetRef->AddPlayerToList(PlayerEntryWidgetRef);
 	}
 }
 
@@ -263,6 +268,10 @@ void AMenuController::UpdateStartButtonState(bool IsReady)
 
 void AMenuController::ClientWantsToHost(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatch)
 {
+	// send player profile data to game instance
+	auto* MyPlayerState = GetPlayerState<APropHuntPlayerState>();
+	PropHuntGameInstance->SetPlayerData(MyPlayerState->GetPlayerData());
+
 	ClientWantsToHostOnServer(SessionName, MapInfo, NumPublicConnections, IsLANMatch);
 }
 
@@ -340,6 +349,11 @@ void AMenuController::AddServersToList()
 void AMenuController::ClientWantsToJoin(int32 SessionResultIndex)
 {
 	ShowLoadingScreen("Joining lobby");
+
+	// send player profile data to game instance
+	auto* MyPlayerState = GetPlayerState<APropHuntPlayerState>();
+	PropHuntGameInstance->SetPlayerData(MyPlayerState->GetPlayerData());
+
 	ClientWantsToJoinOnServer(SessionResultIndex);
 }
 

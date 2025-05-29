@@ -34,7 +34,7 @@ public:
 	bool GetIsHost() const;
 	FString GetUsername() const;
 	FImageData GetProfileImage() const;
-
+	const FPlayerData& GetPlayerData() const;
 
 	// Game Data
 	void AddKill();

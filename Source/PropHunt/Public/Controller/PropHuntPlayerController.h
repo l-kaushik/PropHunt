@@ -12,6 +12,7 @@
  */
 
 class UMainHud;
+struct FPlayerData;
 
 UCLASS()
 class PROPHUNT_API APropHuntPlayerController : public APlayerController, public IPropHuntControllerInterface
@@ -71,6 +72,8 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerInitiateLoadingScreen();
 
+	UFUNCTION(Server, Reliable)
+	void ServerSendProfileData(const FPlayerData& InPlayerData);
 
 protected:
 	// stores the refernce of blueprint WB_MainHud class

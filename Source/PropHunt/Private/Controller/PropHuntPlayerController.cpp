@@ -7,8 +7,10 @@
 #include "GameInstance/PropHuntGameInstance.h"
 #include "GameModes/PropHuntGameMode.h"
 #include "States/PropHuntGameState.h"
+#include "States/PropHuntPlayerState.h"
 #include "Utils/MapManager.h"
 #include "Utils/WidgetUtils.h"
+#include "Structs/PlayerData.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -48,6 +50,20 @@ void APropHuntPlayerController::BeginPlay() {
 	}
 
 	PropHuntGameInstance = GetWorld()->GetGameInstance<UPropHuntGameInstance>();
+
+	if (IsLocalPlayerController())
+	{
+		ServerSendProfileData(PropHuntGameInstance->GetPlayerData());
+	}
+}
+
+void APropHuntPlayerController::ServerSendProfileData_Implementation(const FPlayerData& InPlayerData)
+{
+	auto* PS = GetPlayerState<APropHuntPlayerState>();
+	if (PS)
+	{
+		PS->SetPlayerData(InPlayerData);
+	}
 }
 
 void APropHuntPlayerController::SetupPropWidget(bool bIsProp)

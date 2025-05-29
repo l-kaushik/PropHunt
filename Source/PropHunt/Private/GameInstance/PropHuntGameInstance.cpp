@@ -106,6 +106,11 @@ void UPropHuntGameInstance::SetMapInfo(const FMapInfo& InMapInfo)
 	CurrentMapInfo = InMapInfo;
 }
 
+void UPropHuntGameInstance::SetPlayerData(const FPlayerData& InPlayerData)
+{
+	PlayerData = InPlayerData;
+}
+
 int32 UPropHuntGameInstance::GetPlayerNum() const
 {
 	return PlayerNum;
@@ -124,6 +129,11 @@ bool UPropHuntGameInstance::GetIsHost() const
 const FMapInfo& UPropHuntGameInstance::GetMapInfo() const
 {
 	return CurrentMapInfo;
+}
+
+const FPlayerData& UPropHuntGameInstance::GetPlayerData() const
+{
+	return PlayerData;
 }
 
 FString UPropHuntGameInstance::GetLastDisconnectReason() const

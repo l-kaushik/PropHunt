@@ -13,6 +13,7 @@
  */
 
 struct FMapInfo;
+struct FPlayerData;
 class UMenuWidget;
 class ULobbyWidget;
 class UHostWidget;
@@ -78,6 +79,9 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestMapInfo();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSendProfileData(const FPlayerData& InPlayerData);
 
 private:
 	void InitializeVariable();

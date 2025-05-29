@@ -80,6 +80,11 @@ FImageData APropHuntPlayerState::GetProfileImage() const
 	return m_PlayerScoreboardData.PlayerData.ProfileImage;
 }
 
+const FPlayerData& APropHuntPlayerState::GetPlayerData() const
+{
+	return m_PlayerScoreboardData.PlayerData;
+}
+
 void APropHuntPlayerState::AddKill()
 {
 	m_PlayerScoreboardData.kills++;

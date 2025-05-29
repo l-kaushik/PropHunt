@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Structs/MapInfo.h"
+#include "Structs/PlayerData.h"
 #include "Engine/GameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "PropHuntGameInstance.generated.h"
 
 struct FMapInfo;
+struct FPlayerData;
 class UPropHuntSubsystem;
 class FOnlineSessionSearchResult;
 
@@ -23,12 +25,14 @@ public:
 	void SetPlayerNum(int32 InPlayerNum);
 	void SetLastDisconnectReason(const FText& ReturnReason);
 	void SetMapInfo(const FMapInfo& InMapInfo);
+	void SetPlayerData(const FPlayerData& InPlayerData);
 
 	// getters
 	int32 GetPlayerNum() const;
 	bool GetIsMultiplayer() const;
 	bool GetIsHost() const;
 	const FMapInfo& GetMapInfo() const;
+	const FPlayerData& GetPlayerData() const;
 	FString GetLastDisconnectReason() const;
 
 	// session related functions
@@ -84,6 +88,7 @@ private:
 	bool bIsMultiplayer;
 	bool bIsHost;
 	FMapInfo CurrentMapInfo;
+	FPlayerData PlayerData;
 	FName CurrentSessionName;
 	int32 PlayerNum;
 	FString LastDisconnectReason;
