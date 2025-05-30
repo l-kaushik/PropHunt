@@ -28,8 +28,11 @@ void UScoreboardMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	BIND_BUTTON_CLICK(GameStatsButton, &UScoreboardMenuWidget::OnGameStatsButtonClicked);
-	BIND_BUTTON_CLICK(TopPerformerButton, &UScoreboardMenuWidget::OnTopPerformerButtonClicked);
+	//BIND_BUTTON_CLICK(GameStatsButton, &UScoreboardMenuWidget::OnGameStatsButtonClicked);
+	//BIND_BUTTON_CLICK(TopPerformerButton, &UScoreboardMenuWidget::OnTopPerformerButtonClicked);
+
+	GameStatsButton->SetVisibility(ESlateVisibility::Hidden);
+	TopPerformerButton->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UScoreboardMenuWidget::NativePreConstruct()
