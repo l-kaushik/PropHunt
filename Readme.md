@@ -11,6 +11,10 @@
 1. set screen resolution to 50%, ugly graphics but better FPS
 1. use culling, occulsion
 
+1. load client data in game instance before joining the session.
+1. then load data to server's game instance
+1. then when travel to game map, again load data to server's game state
+
 # TODOs
 1. Implement a way to have unique server name or a way to client know that which server is created by whom?
 1. Prevent player joining if player try to join a session with max players.
@@ -44,50 +48,8 @@
 
 5. When host quit the game `MenuGameMode::ReturnToMainMenuHost()` send a reason to `PlayerController::ClientReturnToMainMenuWithTextReason_Implementation()`, but the reason is getting overrite by internal function calling it again.
 
-6. Changing menu background image isn't working.
+6. Changing menu background image isn't working. Maybe: try sending image to GameInstance and then perform RPC to server so data persist and then try changing
 
-# Logs
+7. Profile image cannot be replicated cuz of limit of 64 KB in TArray element size.
 
-1. 17-02-2025 
-- Implemented UIManagerr class to load widget blueprint classes. Using singleton pattern to prevent multiple initialization.
-- Implemented `ShowError` in `WidgetUtils` class. This will create the ErrorBox UI and also log the error.
-
-2. 03-03-2025
-- Added timer for player list in lobby.
-- Implemented data asset, that stores mesh location and collision capsule's height and raidus. Udpating them whenever player changes the mesh.
-
-3.  07-03-2025
-- Implemented data asset, that store static mesh and capsule related data.
-- Upgraded trace fuction to fixed changing to floor mesh.
-- Implemented throbber on session search and also added refresh capability.
-
-4. 9-03-2025
-- Implemented handling of client leaving a session and host leaving a sesson.
-- Implemented a variant of `ShowError` that can take a callback function bind to the ok button.
-
-5. 10-03-2025
-- Implemented better handling of host leaving session or game.
-- Binded functions to GEngine's OnNetworkFailure and OnTravelFailure.
-- Not using previous method now, but code is not removed either.
-
-6. 21-03-2025
-- Added prefix for all switchable props, comparing this when player try to switch to a prop.
-- Implemented camera distance change using mouse wheel.
-- Implemented prop rotation feature, using Q and E.
-- Changed prop switch key to R.
-
-7. 28-04-2025
-- Added damage tracking, kill, and assist system to APropCharacter and updated death handling order.
-- Implemented stat replication and update functions in APropHuntPlayerState (kills, assists, damage).
-- Built dynamic scoreboard population in UMainHud and UGameStatsWidget with player stats display.
-- Fixed GameStats UI offset by switching from UniformGridPanel to GridPanel with manual sizing.
-- Improved network synchronization, gameplay stat tracking, and UI consistency across the game.
-
-8. 29-04-2025
-- Implemented player ready check before host start game and UI updates for Lobby and PlayerEntry widget.
-
-9. 30-04-2025
-- UI Updates for LobbyWidget, PlayerEntryWidget and GameStatsEntryWidget.
-
-10. 1-05-2025
-- Scalable MapManager class along with DataAsset and FMapInfo. Replaced GameConstant class to MapManager without chaging any function or variable access (backward compatibility).
+8. BestProp is not showing in the scoreboard.
