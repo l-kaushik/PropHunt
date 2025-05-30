@@ -194,7 +194,7 @@ float APropCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 			AddKillAndAssist();
 
 			// update hidden time
-			UpdatePlayerHiddenTimer();
+			//UpdatePlayerHiddenTimer();
 
 			if (auto* GameMode = Cast<APropHuntGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
 			{
@@ -272,6 +272,8 @@ void APropCharacter::AddKillAndAssist()
 
 void APropCharacter::UpdatePlayerHiddenTimer()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Start Player Hidden Timer called"));
+
 	if (!bHasStartedHiddenTimer) return;
 
 	auto* MyPlayerState = GetPlayerState<APropHuntPlayerState>();
@@ -295,13 +297,16 @@ void APropCharacter::UpdatePlayerHiddenTimer()
 
 void APropCharacter::StartPlayerHiddenTimer()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Start Player Hidden Timer called"));
+
 	GetWorld()->GetTimerManager().SetTimer(
 		PlayerHiddenTimer,
 		[this]() {
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Start Player Hidden Timer lambda called"));
 			CurrentHiddenTime = FDateTime::Now();
 			bHasStartedHiddenTimer = true;
 		},
-		5.f,
+		3.f,
 		false
 	);
 }
@@ -314,7 +319,8 @@ void APropCharacter::Move(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		// handle player hidden timer
-		UpdatePlayerHiddenTimer();
+		// do this on server to solve replication problems but frequent update isn't good.
+		//UpdatePlayerHiddenTimer();
 
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -331,7 +337,7 @@ void APropCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 
 		// start hidden timer
-		StartPlayerHiddenTimer();
+		//StartPlayerHiddenTimer();
 	}
 }
 
