@@ -347,11 +347,11 @@ void UMainHud::FillScoreboardData()
 void UMainHud::BuildScoreboardData(APropHuntGameState* GameState)
 {
 	FScoreboardData ScoreboardData;
+	ScoreboardData.BestProp.HiddenTime = -1.f;
 
 	for (const auto& PlayerState : GameState->GetPlayerStates())
 	{
 		FPlayerScoreboardData CurrentPlayerStats = PlayerState->GetPlayerScoreboardData();
-		CurrentPlayerStats.PlayerData.Username = PlayerState->GetPlayerName();
 		ScoreboardData.PlayerStats.Add(CurrentPlayerStats);
 
 		// best prop
@@ -365,8 +365,14 @@ void UMainHud::BuildScoreboardData(APropHuntGameState* GameState)
 		{
 			ScoreboardData.BestHunter = CurrentPlayerStats;
 		}
-	}
 
+		// get host's username
+
+		if (GameState->GetMatchHostName().Equals(PlayerState->GetPlayerName()))
+		{
+			GameState->SetMatchHostName(PlayerState->GetUsername());
+		}
+	}
 	ScoreboardMenu->SetData(ScoreboardData);
 
 	// save game
@@ -379,7 +385,7 @@ void UMainHud::SaveMatchHistoryData(FScoreboardData ScoreboardData, APropHuntGam
 	auto* PlayerState = PlayerController->GetPlayerState<APropHuntPlayerState>();
 
 	SaveGameManager& SGM_Instance = SaveGameManager::Get();
-	auto* SaveGameInstance = SGM_Instance.LoadGame(PlayerState->GetPlayerName());
+	auto* SaveGameInstance = SGM_Instance.LoadGame(PlayerState->GetUsername());
 
 	FMatchData MatchData;
 	MatchData.MatchStartTimeStamp = GameState->GetMatchStartTime();
@@ -389,9 +395,13 @@ void UMainHud::SaveMatchHistoryData(FScoreboardData ScoreboardData, APropHuntGam
 	MatchData.ScoreboardData = ScoreboardData;
 
 	// for sake of data completion generating here
-	MatchData.MatchID = FGuid::NewGuid().ToString();
+	FString GUID = FGuid::NewGuid().ToString(EGuidFormats::DigitsWithHyphens); // or Digits for compact
+	FString Timestamp = FDateTime::Now().ToString(TEXT("%Y%m%d_%H%M%S"));      // Safe, sortable
+	FString MatchID = FString::Printf(TEXT("Match_%s_%s"), *GUID, *Timestamp);
 
-	SaveGameInstance->MatchData.Add(MatchData.MatchID, MatchData);
+	MatchData.MatchID = MatchID;
 
-	SGM_Instance.SaveGame(SaveGameInstance, PlayerState->GetPlayerName());
+	SaveGameInstance->MatchData.Add(MatchID, MatchData);
+
+	SGM_Instance.SaveGame(SaveGameInstance, PlayerState->GetUsername());
 }
