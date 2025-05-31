@@ -141,8 +141,11 @@ private:
 private:
 	float Health;
 	static const float MAX_HEALTH;
+	static const int32 MAX_DUPLICATE_PROP = 5;
 	TMap<APropHuntPlayerState*, float> DamageTracker;
 	FTimerHandle PlayerHiddenTimer;
 	FDateTime CurrentHiddenTime;
 	bool bHasStartedHiddenTimer = false;
+	TQueue<ASpawnedProp*> SpawnedPropQueue;
+	int32 SpawnedPropCount = 0;
 };

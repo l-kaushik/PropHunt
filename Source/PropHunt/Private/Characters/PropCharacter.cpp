@@ -433,7 +433,7 @@ void APropCharacter::UpdateMeshMulticast_Implementation(UStaticMesh* PropData) {
 /* Spawn duplicate props */
 
 void APropCharacter::SpawnPropOnServer_Implementation() {
-	
+
 	UWorld* World = GetWorld();
 
 	TSubclassOf<ASpawnedProp> PropClass = ASpawnedProp::StaticClass();
@@ -448,5 +448,18 @@ void APropCharacter::SpawnPropOnServer_Implementation() {
 	if (SpawnedProp && StaticMesh) {
 		SpawnedProp->SetReplicatedMesh(StaticMesh);
 		SpawnedProp->ResetCollision();
+
+		SpawnedPropQueue.Enqueue(SpawnedProp);
+		SpawnedPropCount++;
+	}
+
+	if (SpawnedPropCount > MAX_DUPLICATE_PROP)
+	{
+		ASpawnedProp* ReturnedSpawnedProp = nullptr;
+		if (SpawnedPropQueue.Dequeue(ReturnedSpawnedProp) && IsValid(ReturnedSpawnedProp))
+		{
+			ReturnedSpawnedProp->Destroy();
+			SpawnedPropCount--;
+		}
 	}
 }
