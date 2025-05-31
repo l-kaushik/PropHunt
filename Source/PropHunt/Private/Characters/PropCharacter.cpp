@@ -401,25 +401,25 @@ void APropCharacter::PerformSphereTrace() {
 
 UStaticMesh* APropCharacter::GetTracedObjectMesh(AActor* HitActor) {
 	if (!HitActor) {
-		UE_LOG(LogTemp, Error, TEXT("HitActor is not found while changing pro, returning nullptr"));
+		UE_LOG_NON_SHIP(LogPropHuntCharacter, Error, TEXT("HitActor is not found while changing pro, returning nullptr"));
 		return nullptr;
 	}
 
 	AStaticMeshActor* MeshActor = Cast<AStaticMeshActor>(HitActor);
 	if (!MeshActor) {
-		UE_LOG(LogTemp, Error, TEXT("StaticMeshActor is not found while changing pro, returning nullptr"));
+		UE_LOG_NON_SHIP(LogPropHuntCharacter, Error, TEXT("StaticMeshActor is not found while changing pro, returning nullptr"));
 		return nullptr;
 	}
 
 	UStaticMeshComponent* MeshComp = MeshActor->GetStaticMeshComponent();
 	if (!MeshComp) {
-		UE_LOG(LogTemp, Error, TEXT("StaticMeshComponent is not found while changing pro, returning nullptr"));
+		UE_LOG_NON_SHIP(LogPropHuntCharacter, Error, TEXT("StaticMeshComponent is not found while changing pro, returning nullptr"));
 		return nullptr;
 	}
 
 	UStaticMesh* StaticMesh = MeshComp->GetStaticMesh();
 	if (!StaticMesh) {
-		UE_LOG(LogTemp, Error, TEXT("StaticMesh is not found while changing prop, returning nullptr"));
+		UE_LOG_NON_SHIP(LogPropHuntCharacter, Error, TEXT("StaticMesh is not found while changing prop, returning nullptr"));
 		return nullptr;
 	}
 

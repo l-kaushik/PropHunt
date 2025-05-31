@@ -181,11 +181,9 @@ void UPropHuntGameInstance::FindSessions(int32 MaxSearchResults, bool IsLANQuery
 void UPropHuntGameInstance::StartFindSessions()
 {
 	if (FindSessionSettings.bIsFindingSession) {
-		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("In StartFindSessions bIsFindingSession is true"));
 		return;
 	}
 	FindSessionSettings.bIsFindingSession = true;
-	UE_LOG(LogPropHuntGameInstance, Warning, TEXT("In StartFindSessions sent a search request"));
 
 	PropHuntSubsystem->OnFindSessionsCompleteEvent.Clear();
 	PropHuntSubsystem->OnFindSessionsCompleteEvent.AddUObject(this, &ThisClass::OnFindSessionsCompleted);
@@ -194,12 +192,8 @@ void UPropHuntGameInstance::StartFindSessions()
 
 void UPropHuntGameInstance::OnFindSessionsCompleted(const TArray<FOnlineSessionSearchResult>& SearchResults, bool Successful)
 {
-	UE_LOG(LogPropHuntGameInstance, Display, TEXT("OnFindSessionsCompleted: Find session completed"));
-
 	if (SearchResults.IsEmpty())
 	{
-		UE_LOG(LogPropHuntGameInstance, Warning, TEXT("OnFindSessionsCompleted: Find session result is empty."));
-
 		StopFindSessionLoop();
 	}
 

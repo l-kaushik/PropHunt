@@ -94,7 +94,7 @@ void UPropHuntSubsystem::OnCreateSessionCompleted(FName SessionName, bool Succes
 			UE_LOG(LogPropHuntSubsystem, Warning, TEXT("Failed to get connection string for session '%s'."), *SessionName.ToString());
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("NumOpenPublicConnections: %d"), (SessionInterface->GetNamedSession(SessionName))->NumOpenPublicConnections);
+		UE_LOG(LogPropHuntSubsystem, Display, TEXT("NumOpenPublicConnections: %d"), (SessionInterface->GetNamedSession(SessionName))->NumOpenPublicConnections);
 	}
 	else
 	{
@@ -384,7 +384,7 @@ void UPropHuntSubsystem::OnRegisterPlayerCompleted(FName SessionName, const TArr
 
 		if (Successful)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Open connectiosn after register: %d"), SessionInterface->GetNamedSession(SessionName)->NumOpenPublicConnections)
+			UE_LOG(LogPropHuntSubsystem, Display, TEXT("Open connectiosn after register: %d"), SessionInterface->GetNamedSession(SessionName)->NumOpenPublicConnections)
 		}
 	}
 
@@ -419,7 +419,7 @@ void UPropHuntSubsystem::OnUnregisterPlayerCompleted(FName SessionName, const TA
 
 		if (Successful)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Open connectiosn after unregister: %d"), SessionInterface->GetNamedSession(SessionName)->NumOpenPublicConnections)
+			UE_LOG(LogPropHuntSubsystem, Display, TEXT("Open connection after unregister: %d"), SessionInterface->GetNamedSession(SessionName)->NumOpenPublicConnections)
 		}
 	}
 

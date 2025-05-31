@@ -54,12 +54,10 @@ void ASpawnedProp::SetReplicatedMesh(UStaticMesh* NewMesh)
 }
 
 void ASpawnedProp::ResetCollision(float DelayInSeconds) {
-	UE_LOG(LogTemp, Warning, TEXT("Waiting for 5 seconds"));
 	FTimerHandle TimerHandler;
 	GetWorldTimerManager().SetTimer(
 		TimerHandler,
 		[this]() {
-			UE_LOG(LogTemp, Warning, TEXT("Collision reset"));
 			PropMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			PropMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 		},

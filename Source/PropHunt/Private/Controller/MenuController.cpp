@@ -359,7 +359,7 @@ void AMenuController::ClientWantsToJoin(int32 SessionResultIndex)
 
 void AMenuController::ClientWantsToJoinOnServer_Implementation(int32 SessionResultIndex)
 {
-	UE_LOG(LogPropHuntMenuController, Display, TEXT("Join server button clicked"));
+	UE_LOG_NON_SHIP(LogPropHuntMenuController, Display, TEXT("Join server button clicked"));
 	FString ServerNameStr;
 	FName SessionName(*ServerNameStr);
 	FOnlineSessionSearchResult SessionResult = SearchResults[SessionResultIndex];
@@ -375,7 +375,7 @@ void AMenuController::HostWantsToStartGame()
 
 void AMenuController::ShowLoadingScreen_Implementation(const FString& InMessage = "Loading Map")
 {
-	UE_LOG(LogTemp, Warning, TEXT("Show loading screen called"));
+	UE_LOG_NON_SHIP(LogPropHuntController, Display, TEXT("Show loading screen called"));
 
 	LoadingWidget = WidgetUtils::CreateAndAddWidget<ULoadingScreenWidget>(this, LoadingScreenWidgetBPClassRef);
 	LoadingWidget->SetLoadingMessage(InMessage);
@@ -411,7 +411,7 @@ void AMenuController::HostWantsToQuit()
 
 void AMenuController::ClientWantsToQuit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("One player quit"));
+	UE_LOG_NON_SHIP(LogPropHuntController, Warning, TEXT("One player quit"));
 
 	ClientTravel(MapManager::Map_Menu, ETravelType::TRAVEL_Absolute);
 	PropHuntGameInstance->QuitGameCleanup();

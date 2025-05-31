@@ -159,7 +159,7 @@ void APropHuntPlayerController::ExitClientOnServer_Implementation()
 
 	ShowLoadingScreen("Returning to main menu");
 	ExitClient();
-	UE_LOG(LogTemp, Warning, TEXT("One player quit"));
+	UE_LOG_NON_SHIP(LogPropHuntController, Display, TEXT("One player quit"));
 }
 
 void APropHuntPlayerController::ShowHitMarkerOnClient_Implementation()
@@ -189,8 +189,6 @@ void APropHuntPlayerController::HandleHudWidgetOnClient_Implementation(bool bIsP
 
 void APropHuntPlayerController::ShowLoadingScreen_Implementation(const FString& InMessage = "Loading Map")
 {
-	UE_LOG(LogTemp, Warning, TEXT("Show loading screen called"));
-
 	LoadingWidget = WidgetUtils::CreateAndAddWidget<ULoadingScreenWidget>(this, LoadingScreenWidgetBPClassRef);
 	LoadingWidget->SetLoadingMessage(InMessage);
 }

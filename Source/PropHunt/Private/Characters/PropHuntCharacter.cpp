@@ -104,7 +104,7 @@ APropHuntCharacter::APropHuntCharacter()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to get anim montage for player reload"))
+		UE_LOG(LogPropHuntCharacter, Warning, TEXT("Failed to get anim montage for player reload"))
 	}
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
@@ -283,11 +283,10 @@ void APropHuntCharacter::MulticastReloadAnimation_Implementation()
 	{
 		AnimInstance->OnMontageBlendingOut.AddUniqueDynamic(this, &APropHuntCharacter::OnReloadMontageBlendingOut);
 		float seconds = AnimInstance->Montage_Play(PlayerReloadMontage);
-		UE_LOG(LogTemp, Warning, TEXT("Montage time: %f"), seconds);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to get anim instance"));
+		UE_LOG(LogPropHuntCharacter, Warning, TEXT("Failed to get anim instance"));
 	}
 }
 
@@ -433,7 +432,7 @@ void APropHuntCharacter::FireMulticast_Implementation() {
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load fire anim or weapon is missing! Check the asset path."));
+		UE_LOG(LogPropHuntCharacter, Error, TEXT("Failed to load fire anim or weapon is missing! Check the asset path."));
 	}
 }
 
@@ -443,6 +442,6 @@ void APropHuntCharacter::HitFxMulticast_Implementation(FVector ImpactPoint) {
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load particle system! Check the asset path."));
+		UE_LOG(LogPropHuntCharacter, Error, TEXT("Failed to load particle system! Check the asset path."));
 	}
 }

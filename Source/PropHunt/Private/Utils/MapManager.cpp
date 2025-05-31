@@ -71,7 +71,5 @@ void MapManager::LoadMapVariables()
 {
     Map_Menu = *MapDataAsset->GetAllMaps()["MenuMap"].MapPath;
     Map_Warehouse = *MapDataAsset->GetAllMaps()["WarehouseMap"].MapPath;
-
-    UE_LOG(LogTemp, Warning, TEXT("MapManager: %s, %s"), Map_Menu, Map_Warehouse);
 }
 
