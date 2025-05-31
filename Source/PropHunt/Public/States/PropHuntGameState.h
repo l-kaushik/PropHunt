@@ -42,6 +42,7 @@ public:
 	void AddMenuController(AMenuController* NewController);
 	void RemoveMenuController(AMenuController* ExistingController);
 	void RemovePlayerController(APropHuntPlayerController* ExistingController);
+	void RemoveHunter(APropHuntPlayerController* ExistingControlller);
 	void AddHunter(APropHuntPlayerController* NewHunter);
 	void SetHasGameStarted(bool InHasGameStarted);
 	void SetIsPropWon(bool InIsPropWon);

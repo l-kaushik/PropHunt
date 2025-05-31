@@ -39,6 +39,7 @@ public:
 
 	void TrySetupPropWidget(bool bIsProp);
 	void SetIsProp(bool bIsProp);
+	bool GetIsProp();
 	void UpdateWeaponUI(int32 InCurrentAmmoInMagazine, int32 InCurrentReserverAmmo);
 	bool GetIsHost();
 

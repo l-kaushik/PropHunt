@@ -54,7 +54,22 @@ void APropHuntGameMode::PostLogin(APlayerController* NewPlayer)
 void APropHuntGameMode::Logout(AController* ExistingPlayer)
 {
 	Super::Logout(ExistingPlayer);
-	MyGameState->RemovePlayerController(Cast<APropHuntPlayerController>(ExistingPlayer));
+
+	auto* PlayerController = Cast<APropHuntPlayerController>(ExistingPlayer);
+
+	MyGameState->RemovePlayerController(PlayerController);
+
+	if (!PlayerController->GetIsProp())
+	{
+		MyGameState->RemoveHunter(PlayerController);
+	}
+
+	if ((MyGameState->GetPlayerControllerList().Num() < 2)
+		|| MyGameState->GetHunterList().IsEmpty())
+	{
+		// since bIsPropWon doesn't matter anymore, passing false by default
+		EndTheGame(false);
+	}
 }
 
 void APropHuntGameMode::InitGameState()

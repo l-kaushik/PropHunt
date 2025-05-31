@@ -111,6 +111,11 @@ void APropHuntPlayerController::SetIsProp(bool bIsProp)
 	m_bIsProp = bIsProp;
 }
 
+bool APropHuntPlayerController::GetIsProp()
+{
+	return m_bIsProp;
+}
+
 void APropHuntPlayerController::UpdateWeaponUI(int32 InCurrentAmmoInMagazine, int32 InCurrentReserverAmmo)
 {
 	MainHudRef->UpdateWeaponUI(InCurrentAmmoInMagazine, InCurrentReserverAmmo);

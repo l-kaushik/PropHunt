@@ -125,6 +125,14 @@ void APropHuntGameState::RemovePlayerController(APropHuntPlayerController* Exist
 	}
 }
 
+void APropHuntGameState::RemoveHunter(APropHuntPlayerController* ExistingControlller)
+{
+	if (ExistingControlller)
+	{
+		HunterList.Remove(ExistingControlller);
+	}
+}
+
 void APropHuntGameState::AddHunter(APropHuntPlayerController* NewHunter) {
 	if (NewHunter) {
 		HunterList.AddUnique(NewHunter);
