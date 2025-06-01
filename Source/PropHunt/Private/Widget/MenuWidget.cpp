@@ -35,6 +35,8 @@
 #include "Components/ScrollBox.h"
 #include "Components/ScrollBoxSlot.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
+
 
 void UMenuWidget::AddServerToList(UUserWidget* ServerEntry)
 {
@@ -117,6 +119,11 @@ void UMenuWidget::NativeConstruct()
 	BindClickEvents();
 
 	SetBackgroundImage();
+
+	if (MenuSound)
+	{
+		UGameplayStatics::PlaySound2D(this, MenuSound);
+	}
 }
 
 void UMenuWidget::NativePreConstruct()

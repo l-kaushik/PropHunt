@@ -101,6 +101,10 @@ private:
 	UFUNCTION()
 	void OnUserMatchHistoryScrolled(float CurrentOffset);
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* MenuSound;
+
 private:
 	// instance variables
 	EMenuState MenuState;
