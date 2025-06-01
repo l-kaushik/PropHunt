@@ -64,4 +64,5 @@ private:
 	APropHuntGameState* MyGameState;
 	UPropHuntGameInstance* MyGameInstance;
 	FTimerHandle GameLoopTimer;
+	bool IsGameEnded = false;
 };

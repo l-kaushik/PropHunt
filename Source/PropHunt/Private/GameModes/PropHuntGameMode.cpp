@@ -64,6 +64,9 @@ void APropHuntGameMode::Logout(AController* ExistingPlayer)
 		MyGameState->RemoveHunter(PlayerController);
 	}
 
+	// skip EndGame call if game is already ended
+	if (IsGameEnded) return;
+
 	if ((MyGameState->GetPlayerControllerList().Num() < 2)
 		|| MyGameState->GetHunterList().IsEmpty())
 	{
@@ -105,7 +108,7 @@ void APropHuntGameMode::SpawnPlayer(APropHuntPlayerController* PlayerController)
 
 void APropHuntGameMode::EndTheGame(bool bIsPropWon)
 {
-
+	IsGameEnded = true;
 	/*
 	* change the current win screen to a leader board kind of system, that shows player kill count, person with most hidden time, and then give the host permission to start the game or quit the game.
 	*/
