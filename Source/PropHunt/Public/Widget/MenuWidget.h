@@ -27,6 +27,7 @@ class UButton;
 class UEditableText;
 class UScrollBox;
 class UTextBlock;
+class UOptionWidget;
 
 struct FPlayerData;
 struct FMatchHistoryMap;
@@ -52,6 +53,8 @@ private:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 
+	void PlayBackgroundMusic();
+
 	void BindClickEvents();
 
 	void InitializeComponents();
@@ -65,6 +68,8 @@ private:
 	void SwitchSessionButtonsProperty(bool HostButtonClicked = true);
 	void OnBackButtonInPlayGameMenuClicked();
 	void OnBackButtonInProfileMenuClicked();
+	void OnBackButtonInOptionMenuClicked();
+	void ShowMainMenuElements();
 
 	void SaveImageData(UTexture2D* Image);
 	void UpdateOrLoadUsername();
@@ -176,6 +181,13 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* MatchHistoryLabel;
+
+	// Option menu
+	UPROPERTY(meta = (BindWidget))
+	UOverlay* OptionMenuOverlay;
+
+	UPROPERTY(meta = (BindWidget))
+	UOptionWidget* OptionWidget;
 
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
