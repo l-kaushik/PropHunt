@@ -61,6 +61,10 @@ public:
 
 	UPROPERTY()
 	TSubclassOf<class UOptionWidget> OptionWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class USelectionBox> SelectionBoxWidgetBPClassRef;
+
 private:
 	// Private constructor to enforce singleton
 	UUIManager();

@@ -17,6 +17,7 @@
 #include "Widget/ScoreboardMenuWidget.h"
 #include "Widget/MatchCardWidget.h"
 #include "Widget/OptionWidget.h"
+#include "Widget/Components/SelectionBox.h"
 
 UUIManager* UUIManager::Get()
 {
@@ -47,6 +48,7 @@ void UUIManager::InitializeWidgets()
 	LOAD_WIDGET_BP(ScoreboardMenuWidgetBPClassRef, UScoreboardMenuWidget, "WB_ScoreboardMenu");
 	LOAD_WIDGET_BP(MatchCardWidgetBPClassRef, UMatchCardWidget, "WB_MatchCard");
 	LOAD_WIDGET_BP(OptionWidgetBPClassRef, UOptionWidget, "WB_OptionWidget");
+	LOAD_WIDGET_BP(SelectionBoxWidgetBPClassRef, USelectionBox, "WB_SelectionBox");
 
 }
 
