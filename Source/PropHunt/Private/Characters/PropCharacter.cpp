@@ -71,6 +71,11 @@ APropCharacter::APropCharacter()
 	Health = MAX_HEALTH;
 }
 
+void APropCharacter::SetCameraSensitivity(float NewSensitivity)
+{
+	CameraSensitivity = NewSensitivity;
+}
+
 // Called when the game starts or when spawned
 void APropCharacter::BeginPlay()
 {
@@ -349,8 +354,8 @@ void APropCharacter::Look(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		AddControllerYawInput(LookAxisVector.X * CameraSensitivity);
+		AddControllerPitchInput(LookAxisVector.Y * CameraSensitivity);
 	}
 }
 

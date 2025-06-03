@@ -47,6 +47,8 @@ public:
 	void ExitGame();
 	void ExitClient();
 
+	void SetCameraSensitivity(float NewSensitivity);
+
 public:
 	UFUNCTION(Client, Reliable)
 	void ShowLoadingScreen(const FString& InMessage);

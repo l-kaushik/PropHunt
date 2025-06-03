@@ -11,6 +11,8 @@
 #include "Utils/MapManager.h"
 #include "Utils/WidgetUtils.h"
 #include "Structs/PlayerData.h"
+#include "Characters/PropCharacter.h"
+#include "Characters/PropHuntCharacter.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -206,5 +208,21 @@ void APropHuntPlayerController::ServerInitiateLoadingScreen_Implementation()
 	for (const auto& Controller : GameState->GetPlayerControllerList())
 	{
 		Controller->ShowLoadingScreen("Travelling to server...");
+	}
+}
+
+void APropHuntPlayerController::SetCameraSensitivity(float NewSensitivity)
+{
+	// call prop character class
+	if (m_bIsProp)
+	{
+		auto* PropCharacter = Cast<APropCharacter>(GetCharacter());
+		PropCharacter->SetCameraSensitivity(NewSensitivity);
+	}
+	// call hunter character class
+	else
+	{
+		auto* PropCharacter = Cast<APropHuntCharacter>(GetCharacter());
+		PropCharacter->SetCameraSensitivity(NewSensitivity);
 	}
 }

@@ -75,6 +75,7 @@ class PROPHUNT_API APropCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APropCharacter();
+	void SetCameraSensitivity(float NewSensitivity);
 
 protected:
 	// Called when the game starts or when spawned
@@ -148,4 +149,6 @@ private:
 	bool bHasStartedHiddenTimer = false;
 	TQueue<ASpawnedProp*> SpawnedPropQueue;
 	int32 SpawnedPropCount = 0;
+
+	float CameraSensitivity = 1.0f;
 };

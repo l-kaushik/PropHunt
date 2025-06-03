@@ -10,6 +10,7 @@ class UMasterButton;
 class UWidgetSwitcher;
 class USlider;
 class USelectionBox;
+class UTextBlock;
 
 UCLASS()
 class PROPHUNT_API UOptionWidget : public UUserWidget
@@ -25,6 +26,9 @@ protected:
 	void BindClickEvent();
 	void BindSliderEvents();
 	void BindSelectionBoxEvents();
+	void UpdateSliderLabelValue(USlider* SliderObject, UTextBlock* LabelObject);
+
+protected:
 
 	UFUNCTION()
 	void OnGameplayButtonClicked();
@@ -72,13 +76,22 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	USlider* CameraSensitivitySlider;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CamerSensitivityValueLabel;
+
 	// Audio Settings
 
 	UPROPERTY(meta = (BindWidget))
 	USlider* MusicVolumeSlider;
 
 	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MusicValueLabel;
+
+	UPROPERTY(meta = (BindWidget))
 	USlider* SFXVolumeSlider;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* SFXValueLabel;
 
 	// Video Settings
 
@@ -96,5 +109,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	USelectionBox* AntiAliasingSelectionBox;
+
+	// utility
+
+	class APropHuntPlayerController* PlayerController;
 
 };
