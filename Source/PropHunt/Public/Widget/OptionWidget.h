@@ -9,6 +9,7 @@
 class UMasterButton;
 class UWidgetSwitcher;
 class USlider;
+class USelectionBox;
 
 UCLASS()
 class PROPHUNT_API UOptionWidget : public UUserWidget
@@ -22,6 +23,8 @@ public:
 protected:
 	void InitializeLabels();
 	void BindClickEvent();
+	void BindSliderEvents();
+	void BindSelectionBoxEvents();
 
 	UFUNCTION()
 	void OnGameplayButtonClicked();
@@ -31,6 +34,21 @@ protected:
 
 	UFUNCTION()
 	void OnVideoButtonClicked();
+
+	UFUNCTION()
+	void OnCameraSensitivityChanged(float NewValue);
+
+	UFUNCTION()
+	void OnMusicVolumeChanged(float NewValue);
+
+	UFUNCTION()
+	void OnSFXVolumeChanged(float NewValue);
+
+	void OnOverallGraphicsChanged(const FString& NewOption);
+	void OnTextureQualityChanged(const FString& NewOption);
+	void OnShadowQualityChanged(const FString& NewOption);
+	void OnViewDistanceChanged(const FString& NewOption);
+	void OnAntiAliasingChanged(const FString& NewOption);
 
 private:
 
@@ -51,12 +69,32 @@ private:
 
 	// Gameplay settings
 
-
+	UPROPERTY(meta = (BindWidget))
+	USlider* CameraSensitivitySlider;
 
 	// Audio Settings
 
+	UPROPERTY(meta = (BindWidget))
+	USlider* MusicVolumeSlider;
 
+	UPROPERTY(meta = (BindWidget))
+	USlider* SFXVolumeSlider;
 
 	// Video Settings
-	
+
+	UPROPERTY(meta = (BindWidget))
+	USelectionBox* OverallGraphicsSelectionBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USelectionBox* TextureQualitySelectionBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USelectionBox* ShadowQualitySelectionBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USelectionBox* ViewDistanceSelectionBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USelectionBox* AntiAliasingSelectionBox;
+
 };

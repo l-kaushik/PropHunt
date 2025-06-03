@@ -33,9 +33,9 @@ void USelectionBox::SetOptions(const TArray<FString>& InOptions)
 	SelectableOptions.Append(InOptions);
 }
 
-void USelectionBox::NotifySelectionChanged()
+void USelectionBox::NotifySelectionChanged(const FString& SelectedItem)
 {
-	OnSelectionChanged.Broadcast();
+	OnSelectionChanged.Broadcast(SelectedItem);
 }
 
 void USelectionBox::SetSelectOptions(const FString& InOption)
@@ -43,7 +43,7 @@ void USelectionBox::SetSelectOptions(const FString& InOption)
 	if (SelectableOptions.Contains(InOption))
 	{
 		SelectionText->SetText(FText::FromString(InOption));
-		NotifySelectionChanged();
+		NotifySelectionChanged(InOption);
 	}
 }
 

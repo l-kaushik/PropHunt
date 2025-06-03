@@ -9,7 +9,7 @@
 class UTextBlock;
 class UMasterButton;
 
-DECLARE_MULTICAST_DELEGATE(FOnSelectionChanged);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectionChanged, const FString&);
 
 UCLASS()
 class PROPHUNT_API USelectionBox : public UUserWidget
@@ -25,7 +25,7 @@ public:
 	// event dispatcher
 	FOnSelectionChanged OnSelectionChanged;
 
-	void NotifySelectionChanged();
+	void NotifySelectionChanged(const FString& SelectedItem);
 protected:
 	void SetSelectOptions(const FString& InOption);
 
