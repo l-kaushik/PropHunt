@@ -4,6 +4,7 @@
 #include "Widget/MainHud.h"
 #include "Widget/UIManager.h"
 #include "Widget/LoadingScreenWidget.h"
+#include "Widget/PauseMenu.h"
 #include "GameInstance/PropHuntGameInstance.h"
 #include "GameModes/PropHuntGameMode.h"
 #include "States/PropHuntGameState.h"
@@ -57,6 +58,14 @@ void APropHuntPlayerController::BeginPlay() {
 	{
 		ServerSendProfileData(PropHuntGameInstance->GetPlayerData());
 	}
+}
+
+void APropHuntPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &APropHuntPlayerController::TogglePauseMenu);
+	InputComponent->BindKey(EKeys::P, IE_Pressed, this, &APropHuntPlayerController::TogglePauseMenu);
 }
 
 void APropHuntPlayerController::ServerSendProfileData_Implementation(const FPlayerData& InPlayerData)
@@ -181,6 +190,13 @@ void APropHuntPlayerController::UpdateHealthOnClient_Implementation(float NewHea
 
 void APropHuntPlayerController::ShowWinScreenOnClient_Implementation()
 {
+	// prevent multiple calls when other player leaves
+	if (bIsGameEnded) return;
+
+	// handle pause menu before showing win screen
+	bIsGameEnded = true;
+	if(bIsPauseMenuVisible) HidePauseMenu();
+
 	MainHudRef->ShowWinScreen(PropHuntGameInstance->GetIsHost());
 
 	FInputModeUIOnly InputMode;
@@ -225,4 +241,53 @@ void APropHuntPlayerController::SetCameraSensitivity(float NewSensitivity)
 		auto* PropCharacter = Cast<APropHuntCharacter>(GetCharacter());
 		PropCharacter->SetCameraSensitivity(NewSensitivity);
 	}
+}
+
+void APropHuntPlayerController::TogglePauseMenu()
+{
+	UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("Toggle PauseMenu called"));
+
+	if (bIsGameEnded) return;
+
+	// create pause menu
+	if (!PauseMenuWidget)
+	{
+		UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("Attempted to create PauseMenu"));
+		PauseMenuWidget = WidgetUtils::CreateAndValidateWidget<UPauseMenu>(this, UUIManager::Get()->PauseMenuWidgetBPClassRef);
+		
+		if (!PauseMenuWidget) return;
+		UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("PauseMenu is created successfully"));
+	}
+
+	if (bIsPauseMenuVisible)
+	{
+		HidePauseMenu();
+	}
+	else
+	{
+		ShowPauseMenu();
+	}
+}
+
+void APropHuntPlayerController::ShowPauseMenu()
+{
+	UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("PauseMenu is visible"));
+	bIsPauseMenuVisible = true;
+	PauseMenuWidget->AddToViewport();
+
+	FInputModeUIOnly InputMode;
+	InputMode.SetWidgetToFocus(PauseMenuWidget->TakeWidget());
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	SetInputMode(InputMode);
+
+	SetShowMouseCursor(true);
+}
+
+void APropHuntPlayerController::HidePauseMenu()
+{
+	UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("PauseMenu is hidden"));
+	bIsPauseMenuVisible = false;
+	PauseMenuWidget->RemoveFromParent();
+	SetShowMouseCursor(false);
+	SetInputMode(FInputModeGameOnly());
 }

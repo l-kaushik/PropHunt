@@ -65,6 +65,9 @@ public:
 	UPROPERTY()
 	TSubclassOf<class USelectionBox> SelectionBoxWidgetBPClassRef;
 
+	UPROPERTY()
+	TSubclassOf<class UPauseMenu> PauseMenuWidgetBPClassRef;
+
 private:
 	// Private constructor to enforce singleton
 	UUIManager();
