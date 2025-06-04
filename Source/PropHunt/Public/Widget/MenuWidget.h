@@ -110,6 +110,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	USoundBase* MenuSound;
 
+	UPROPERTY()
+	UAudioComponent* MenuMusicComponent;
+
 private:
 	// instance variables
 	EMenuState MenuState;

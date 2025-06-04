@@ -135,10 +135,10 @@ void UMenuWidget::PlayBackgroundMusic()
 {
 	if (!MenuSound) return;
 
-	UAudioComponent* MusicComponent = UGameplayStatics::SpawnSound2D(this, MenuSound, 1.0f, 1.0f, 0.0f, nullptr, true);
-	if (MusicComponent)
+	MenuMusicComponent = UGameplayStatics::SpawnSound2D(this, MenuSound, 1.0f, 1.0f, 0.0f, nullptr, true);
+	if (MenuMusicComponent)
 	{
-		MusicComponent->Play();
+		MenuMusicComponent->Play();
 	}
 }
 
