@@ -61,7 +61,24 @@ void UPauseMenu::OnOptionButtonClicked()
 void UPauseMenu::OnQuitGameButtonClicked()
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Quit Game button clicked"));
-	UKismetSystemLibrary::QuitGame(GetWorld(), GetOwningPlayer(), EQuitPreference::Quit, true);
+
+	if (PlayerController)
+	{
+		if (PlayerController->GetIsHost())
+		{
+			PlayerController->ExitGame();
+		}
+		else
+		{
+			PlayerController->ExitClient();
+		}
+
+		UKismetSystemLibrary::QuitGame(GetWorld(), PlayerController, EQuitPreference::Quit, true);
+	}
+	else
+	{
+		UE_LOG_NON_SHIP(LogPropHuntWidget, Warning, TEXT("Failed to get game controller in OnExitGameButtonClicked"));
+	}
 }
 
 void UPauseMenu::OnBackButtonClicked()
