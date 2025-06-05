@@ -12,6 +12,7 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 
 void UOptionWidget::NativeConstruct()
 {
@@ -128,12 +129,34 @@ void UOptionWidget::OnMusicVolumeChanged(float NewValue)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Music Volume changed to %f"), NewValue);
 	MusicValueLabel->SetText(FText::AsNumber(int32(NewValue)));
+
+	UGameplayStatics::SetSoundMixClassOverride(
+		this,
+		SoundMixModifier,
+		SoundClassForMusic,
+		(NewValue / 100.f),
+		1.f,
+		0.1f
+		);
+
+	UGameplayStatics::PushSoundMixModifier(this, SoundMixModifier);
 }
 
 void UOptionWidget::OnSFXVolumeChanged(float NewValue)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("SFX Volume changed to %f"), NewValue);
 	SFXValueLabel->SetText(FText::AsNumber(int32(NewValue)));
+
+	UGameplayStatics::SetSoundMixClassOverride(
+		this,
+		SoundMixModifier,
+		SoundClassForSFX,
+		(NewValue / 100.f),
+		1.f,
+		0.1f
+		);
+
+	UGameplayStatics::PushSoundMixModifier(this, SoundMixModifier);
 }
 
 void UOptionWidget::OnOverallGraphicsChanged(const FString& NewOption)

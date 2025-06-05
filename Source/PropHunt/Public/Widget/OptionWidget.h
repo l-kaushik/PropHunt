@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "Sound/SoundMix.h"
+
+
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "OptionWidget.generated.h"
@@ -53,6 +56,16 @@ protected:
 	void OnShadowQualityChanged(const FString& NewOption);
 	void OnViewDistanceChanged(const FString& NewOption);
 	void OnAntiAliasingChanged(const FString& NewOption);
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundMix* SoundMixModifier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundClass* SoundClassForMusic;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundClass* SoundClassForSFX;
 
 private:
 
@@ -111,7 +124,6 @@ private:
 	USelectionBox* AntiAliasingSelectionBox;
 
 	// utility
-
 	class APropHuntPlayerController* PlayerController;
 
 };
