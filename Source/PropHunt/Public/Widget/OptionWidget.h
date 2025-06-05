@@ -23,10 +23,10 @@ public:
 
 protected:
 	void InitializeLabels();
+	void InitializeSliders();
 	void BindClickEvent();
 	void BindSliderEvents();
 	void BindSelectionBoxEvents();
-	void UpdateSliderLabelValue(USlider* SliderObject, UTextBlock* LabelObject);
 
 protected:
 

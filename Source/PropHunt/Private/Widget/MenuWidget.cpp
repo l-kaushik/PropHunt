@@ -121,7 +121,11 @@ void UMenuWidget::NativeConstruct()
 
 	BindClickEvents();
 	SetBackgroundImage();
+
+#if !WITH_EDITOR
 	PlayBackgroundMusic();
+#endif
+
 }
 
 void UMenuWidget::NativePreConstruct()

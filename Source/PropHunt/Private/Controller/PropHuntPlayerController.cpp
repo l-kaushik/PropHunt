@@ -229,34 +229,29 @@ void APropHuntPlayerController::ServerInitiateLoadingScreen_Implementation()
 
 void APropHuntPlayerController::SetCameraSensitivity(float NewSensitivity)
 {
-	// call prop character class
-	if (m_bIsProp)
+	// set sensi for one is available right now
+
+	if(auto* PropCharacter = Cast<APropCharacter>(GetCharacter()))
 	{
-		auto* PropCharacter = Cast<APropCharacter>(GetCharacter());
 		PropCharacter->SetCameraSensitivity(NewSensitivity);
 	}
-	// call hunter character class
-	else
+
+	if (auto* PropHuntCharacter = Cast<APropHuntCharacter>(GetCharacter()))
 	{
-		auto* PropCharacter = Cast<APropHuntCharacter>(GetCharacter());
-		PropCharacter->SetCameraSensitivity(NewSensitivity);
+		PropHuntCharacter->SetCameraSensitivity(NewSensitivity);
 	}
 }
 
 void APropHuntPlayerController::TogglePauseMenu()
 {
-	UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("Toggle PauseMenu called"));
-
 	if (bIsGameEnded) return;
 
 	// create pause menu
 	if (!PauseMenuWidget)
 	{
-		UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("Attempted to create PauseMenu"));
 		PauseMenuWidget = WidgetUtils::CreateAndValidateWidget<UPauseMenu>(this, UUIManager::Get()->PauseMenuWidgetBPClassRef);
 		
 		if (!PauseMenuWidget) return;
-		UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("PauseMenu is created successfully"));
 	}
 
 	if (bIsPauseMenuVisible)
@@ -271,7 +266,6 @@ void APropHuntPlayerController::TogglePauseMenu()
 
 void APropHuntPlayerController::ShowPauseMenu()
 {
-	UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("PauseMenu is visible"));
 	bIsPauseMenuVisible = true;
 	PauseMenuWidget->AddToViewport();
 
@@ -285,9 +279,9 @@ void APropHuntPlayerController::ShowPauseMenu()
 
 void APropHuntPlayerController::HidePauseMenu()
 {
-	UE_LOG_NON_SHIP(LogTemp, Warning, TEXT("PauseMenu is hidden"));
 	bIsPauseMenuVisible = false;
 	PauseMenuWidget->RemoveFromParent();
 	SetShowMouseCursor(false);
 	SetInputMode(FInputModeGameOnly());
+	PauseMenuWidget = nullptr;
 }

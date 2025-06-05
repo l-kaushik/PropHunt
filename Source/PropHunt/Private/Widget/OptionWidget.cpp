@@ -24,13 +24,10 @@ void UOptionWidget::NativeConstruct()
 	BindSliderEvents();
 	BindSelectionBoxEvents();
 
-	// load settings
-	CameraSensitivitySlider->SetValue(0.5);
-	MusicVolumeSlider->SetValue(0.5);
-	SFXVolumeSlider->SetValue(0.5);
-	UpdateSliderLabelValue(CameraSensitivitySlider, CamerSensitivityValueLabel);
-	UpdateSliderLabelValue(MusicVolumeSlider, MusicValueLabel);
-	UpdateSliderLabelValue(SFXVolumeSlider, SFXValueLabel);
+	// load values
+	CameraSensitivitySlider->SetValue(50.f);
+	MusicVolumeSlider->SetValue(50.f);
+	SFXVolumeSlider->SetValue(50.f);
 }
 
 void UOptionWidget::NativePreConstruct()
@@ -38,6 +35,7 @@ void UOptionWidget::NativePreConstruct()
 	Super::NativePreConstruct();
 
 	InitializeLabels();
+	InitializeSliders();
 }
 
 void UOptionWidget::InitializeLabels()
@@ -45,6 +43,16 @@ void UOptionWidget::InitializeLabels()
 	GameplayButton->SetLabel("Gameplay");
 	AudioButton->SetLabel("Audio");
 	VideoButton->SetLabel("Video");
+}
+
+void UOptionWidget::InitializeSliders()
+{
+	CameraSensitivitySlider->SetMinValue(1.f);
+	CameraSensitivitySlider->SetMaxValue(100.f);
+	MusicVolumeSlider->SetMinValue(0.f);
+	MusicVolumeSlider->SetMaxValue(100.f);
+	SFXVolumeSlider->SetMinValue(0.f);
+	SFXVolumeSlider->SetMaxValue(100.f);
 }
 
 void UOptionWidget::BindClickEvent()
@@ -56,24 +64,33 @@ void UOptionWidget::BindClickEvent()
 
 void UOptionWidget::BindSliderEvents()
 {
+	CameraSensitivitySlider->OnValueChanged.RemoveDynamic(this, &UOptionWidget::OnCameraSensitivityChanged);
 	CameraSensitivitySlider->OnValueChanged.AddDynamic(this, &UOptionWidget::OnCameraSensitivityChanged);
+
+	MusicVolumeSlider->OnValueChanged.RemoveDynamic(this, &UOptionWidget::OnMusicVolumeChanged);
 	MusicVolumeSlider->OnValueChanged.AddDynamic(this, &UOptionWidget::OnMusicVolumeChanged);
+
+	SFXVolumeSlider->OnValueChanged.RemoveDynamic(this, &UOptionWidget::OnSFXVolumeChanged);
 	SFXVolumeSlider->OnValueChanged.AddDynamic(this, &UOptionWidget::OnSFXVolumeChanged);
+
 }
 
 void UOptionWidget::BindSelectionBoxEvents()
 {
+	OverallGraphicsSelectionBox->OnSelectionChanged.RemoveAll(this);
 	OverallGraphicsSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnOverallGraphicsChanged);
-	TextureQualitySelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnTextureQualityChanged);
-	ShadowQualitySelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnShadowQualityChanged);
-	ViewDistanceSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnViewDistanceChanged);
-	AntiAliasingSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnAntiAliasingChanged);
-}
 
-void UOptionWidget::UpdateSliderLabelValue(USlider* SliderObject, UTextBlock* LabelObject)
-{
-	int32 Value = SliderObject->GetValue() * 100;
-	LabelObject->SetText(FText::AsNumber(Value));
+	TextureQualitySelectionBox->OnSelectionChanged.RemoveAll(this);
+	TextureQualitySelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnTextureQualityChanged);
+
+	ShadowQualitySelectionBox->OnSelectionChanged.RemoveAll(this);
+	ShadowQualitySelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnShadowQualityChanged);
+
+	ViewDistanceSelectionBox->OnSelectionChanged.RemoveAll(this);
+	ViewDistanceSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnViewDistanceChanged);
+
+	AntiAliasingSelectionBox->OnSelectionChanged.RemoveAll(this);
+	AntiAliasingSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnAntiAliasingChanged);
 }
 
 void UOptionWidget::OnGameplayButtonClicked()
@@ -96,27 +113,27 @@ void UOptionWidget::OnVideoButtonClicked()
 
 void UOptionWidget::OnCameraSensitivityChanged(float NewValue)
 {
-	float NewSens = NewValue / 0.5;
-	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Camera Sensitivity changed to %f"), NewSens);
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Camera Sensitivity changed to %f"), NewValue);
 
-	UpdateSliderLabelValue(CameraSensitivitySlider, CamerSensitivityValueLabel);
+	CamerSensitivityValueLabel->SetText(FText::AsNumber(int32(NewValue)));
 
 	// NOTE: when changed in main menu, value is not set for ingame character so when actual player load re set the value on it.
 
 	if (!PlayerController) return;
-	PlayerController->SetCameraSensitivity(NewSens);
+	// on 50 use default sens
+	PlayerController->SetCameraSensitivity(NewValue/50);
 }
 
 void UOptionWidget::OnMusicVolumeChanged(float NewValue)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Music Volume changed to %f"), NewValue);
-	UpdateSliderLabelValue(MusicVolumeSlider, MusicValueLabel);
+	MusicValueLabel->SetText(FText::AsNumber(int32(NewValue)));
 }
 
 void UOptionWidget::OnSFXVolumeChanged(float NewValue)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("SFX Volume changed to %f"), NewValue);
-	UpdateSliderLabelValue(SFXVolumeSlider, SFXValueLabel);
+	SFXValueLabel->SetText(FText::AsNumber(int32(NewValue)));
 }
 
 void UOptionWidget::OnOverallGraphicsChanged(const FString& NewOption)
