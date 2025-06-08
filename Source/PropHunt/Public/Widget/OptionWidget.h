@@ -25,11 +25,14 @@ public:
 	virtual void NativePreConstruct() override;
 
 protected:
+	void LoadGameSettings();
 	void InitializeLabels();
 	void InitializeSliders();
 	void BindClickEvent();
 	void BindSliderEvents();
 	void BindSelectionBoxEvents();
+	void ApplyOtherSettings();
+	void UpdateOtherSettings();
 
 protected:
 

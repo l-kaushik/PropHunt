@@ -13,6 +13,21 @@
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameUserSettings.h"
+
+#define APPLY_GAME_SETTING_DEFAULT(UserObject, SetFunctionName) \
+do { \
+	auto* GameSettings = UGameUserSettings::GetGameUserSettings(); \
+	if (GameSettings) { \
+		if (OverallGraphicsSelectionBox->GetSelectedOptionIndex() != 0) { \
+			OverallGraphicsSelectionBox->SetActiveOption(0); \
+		} \
+		GameSettings->SetFunctionName(UserObject->GetSelectedOptionIndex()); \
+		GameSettings->ApplySettings(false); \
+		GameSettings->SaveSettings(); \
+	} \
+} while(0)
+
 
 void UOptionWidget::NativeConstruct()
 {
@@ -29,6 +44,8 @@ void UOptionWidget::NativeConstruct()
 	CameraSensitivitySlider->SetValue(50.f);
 	MusicVolumeSlider->SetValue(50.f);
 	SFXVolumeSlider->SetValue(50.f);
+
+	LoadGameSettings();
 }
 
 void UOptionWidget::NativePreConstruct()
@@ -37,6 +54,13 @@ void UOptionWidget::NativePreConstruct()
 
 	InitializeLabels();
 	InitializeSliders();
+}
+
+void UOptionWidget::LoadGameSettings()
+{
+	// load required settings from save game
+
+	UpdateOtherSettings();
 }
 
 void UOptionWidget::InitializeLabels()
@@ -92,6 +116,25 @@ void UOptionWidget::BindSelectionBoxEvents()
 
 	AntiAliasingSelectionBox->OnSelectionChanged.RemoveAll(this);
 	AntiAliasingSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnAntiAliasingChanged);
+}
+
+void UOptionWidget::ApplyOtherSettings()
+{
+	APPLY_GAME_SETTING_DEFAULT(TextureQualitySelectionBox, SetTextureQuality);
+	APPLY_GAME_SETTING_DEFAULT(ShadowQualitySelectionBox, SetShadowQuality);
+	APPLY_GAME_SETTING_DEFAULT(ViewDistanceSelectionBox, SetViewDistanceQuality);
+	APPLY_GAME_SETTING_DEFAULT(AntiAliasingSelectionBox, SetAntiAliasingQuality);
+}
+
+void UOptionWidget::UpdateOtherSettings()
+{
+	auto* GameSettings = UGameUserSettings::GetGameUserSettings();
+	if (!GameSettings) return;
+
+	TextureQualitySelectionBox->SetActiveOptionTextOnly(GameSettings->GetTextureQuality());
+	ShadowQualitySelectionBox->SetActiveOptionTextOnly(GameSettings->GetShadowQuality());
+	ViewDistanceSelectionBox->SetActiveOptionTextOnly(GameSettings->GetViewDistanceQuality());
+	AntiAliasingSelectionBox->SetActiveOptionTextOnly(GameSettings->GetAntiAliasingQuality());
 }
 
 void UOptionWidget::OnGameplayButtonClicked()
@@ -162,24 +205,51 @@ void UOptionWidget::OnSFXVolumeChanged(float NewValue)
 void UOptionWidget::OnOverallGraphicsChanged(const FString& NewOption)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Overall Graphics changed to %s"), *NewOption);
+
+	auto* GameSettings = UGameUserSettings::GetGameUserSettings();
+
+	GameSettings->SetOverallScalabilityLevel(OverallGraphicsSelectionBox->GetSelectedOptionIndex() - 1);
+
+	GameSettings->ApplySettings(false);
+	GameSettings->SaveSettings();
+
+
+	// on custom, set apply other settings
+
+	if (OverallGraphicsSelectionBox->GetSelectedOptionIndex() == 0)
+	{
+		ApplyOtherSettings();
+	}
+	else
+	{
+		UpdateOtherSettings();
+	}
 }
 
 void UOptionWidget::OnTextureQualityChanged(const FString& NewOption)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Texture Quality changed to %s"), *NewOption);
+
+	APPLY_GAME_SETTING_DEFAULT(TextureQualitySelectionBox, SetTextureQuality);
 }
 
 void UOptionWidget::OnShadowQualityChanged(const FString& NewOption)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Shadow Quality changed to %s"), *NewOption);
+
+	APPLY_GAME_SETTING_DEFAULT(ShadowQualitySelectionBox, SetShadowQuality);
 }
 
 void UOptionWidget::OnViewDistanceChanged(const FString& NewOption)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("View Distance changed to %s"), *NewOption);
-}
+
+	APPLY_GAME_SETTING_DEFAULT(ViewDistanceSelectionBox, SetViewDistanceQuality);
+} 
 
 void UOptionWidget::OnAntiAliasingChanged(const FString& NewOption)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Anti Aliasing changed to %s"), *NewOption);
+	
+	APPLY_GAME_SETTING_DEFAULT(AntiAliasingSelectionBox, SetAntiAliasingQuality);
 }

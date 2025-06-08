@@ -33,9 +33,32 @@ void USelectionBox::SetOptions(const TArray<FString>& InOptions)
 	SelectableOptions.Append(InOptions);
 }
 
+void USelectionBox::SetActiveOption(int32 OptionIndex)
+{
+	if ((OptionIndex >= 0) && (OptionIndex < SelectableOptions.Num()))
+	{
+		SetActiveOptionTextOnly(OptionIndex);
+		NotifySelectionChanged(SelectableOptions[OptionIndex]);
+	}
+}
+
+void USelectionBox::SetActiveOptionTextOnly(int32 OptionIndex)
+{
+	if ((OptionIndex >= 0) && (OptionIndex < SelectableOptions.Num()))
+	{
+		SelectionText->SetText(FText::FromString(SelectableOptions[OptionIndex]));
+		CurrentOption = OptionIndex;
+	}
+}
+
 void USelectionBox::NotifySelectionChanged(const FString& SelectedItem)
 {
 	OnSelectionChanged.Broadcast(SelectedItem);
+}
+
+int32 USelectionBox::GetSelectedOptionIndex() const
+{
+	return CurrentOption;
 }
 
 void USelectionBox::SetSelectOptions(const FString& InOption)

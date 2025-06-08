@@ -21,11 +21,15 @@ public:
 	void NativePreConstruct() override;
 
 	void SetOptions(const TArray<FString>& InOptions);
+	void SetActiveOption(int32 OptionIndex);
+	void SetActiveOptionTextOnly(int32 OptionIndex);
 
 	// event dispatcher
 	FOnSelectionChanged OnSelectionChanged;
 
 	void NotifySelectionChanged(const FString& SelectedItem);
+	int32 GetSelectedOptionIndex() const;
+
 protected:
 	void SetSelectOptions(const FString& InOption);
 
