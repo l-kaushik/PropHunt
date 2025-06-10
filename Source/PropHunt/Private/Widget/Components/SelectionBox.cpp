@@ -25,7 +25,7 @@ void USelectionBox::NativePreConstruct()
 	RightArrowButton->SetLabel(">");
 
 	if(SelectionText && SelectableOptions.Num() > 0)
-		SetSelectOptions(SelectableOptions[CurrentOption]);
+		SetActiveOption(SelectableOptions[CurrentOption]);
 }
 
 void USelectionBox::SetOptions(const TArray<FString>& InOptions)
@@ -51,7 +51,7 @@ void USelectionBox::SetActiveOptionTextOnly(int32 OptionIndex)
 	}
 }
 
-void USelectionBox::NotifySelectionChanged(const FString& SelectedItem)
+void USelectionBox::NotifySelectionChanged(const FString& SelectedItem) const
 {
 	OnSelectionChanged.Broadcast(SelectedItem);
 }
@@ -61,12 +61,26 @@ int32 USelectionBox::GetSelectedOptionIndex() const
 	return CurrentOption;
 }
 
-void USelectionBox::SetSelectOptions(const FString& InOption)
+const FString& USelectionBox::GetSelectedOptionString() const
+{
+	return SelectableOptions[CurrentOption];
+}
+
+void USelectionBox::SetActiveOption(const FString& InOption)
+{
+	if (SelectableOptions.Contains(InOption))
+	{
+		SetActiveOptionTextOnly(InOption);
+		NotifySelectionChanged(InOption);
+	}
+}
+
+void USelectionBox::SetActiveOptionTextOnly(const FString& InOption)
 {
 	if (SelectableOptions.Contains(InOption))
 	{
 		SelectionText->SetText(FText::FromString(InOption));
-		NotifySelectionChanged(InOption);
+		CurrentOption = SelectableOptions.Find(InOption);
 	}
 }
 
@@ -76,7 +90,7 @@ void USelectionBox::OnLeftArrowButtonClicked()
 	if (SelectableOptions.Num() > 0)
 	{
 		CurrentOption = (CurrentOption - 1 + SelectableOptions.Num()) % SelectableOptions.Num();
-		SetSelectOptions(SelectableOptions[CurrentOption]);
+		SetActiveOption(SelectableOptions[CurrentOption]);
 	}
 }
 
@@ -86,6 +100,6 @@ void USelectionBox::OnRightArrowButtonClicked()
 	if (SelectableOptions.Num() > 0)
 	{
 		CurrentOption = (CurrentOption + 1) % SelectableOptions.Num();
-		SetSelectOptions(SelectableOptions[CurrentOption]);
+		SetActiveOption(SelectableOptions[CurrentOption]);
 	}
 }

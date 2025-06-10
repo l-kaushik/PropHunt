@@ -33,6 +33,7 @@ protected:
 	void BindSelectionBoxEvents();
 	void ApplyOtherSettings();
 	void UpdateOtherSettings();
+	void ApplyHardwareDetectedGraphics();
 
 protected:
 
@@ -54,11 +55,18 @@ protected:
 	UFUNCTION()
 	void OnSFXVolumeChanged(float NewValue);
 
+	UFUNCTION()
+	void OnScreenPercentageValueChanged(float NewValue);
+
+	UFUNCTION()
+	void OnScreenPercentageSliderMouseEnd();
+
 	void OnOverallGraphicsChanged(const FString& NewOption);
 	void OnTextureQualityChanged(const FString& NewOption);
 	void OnShadowQualityChanged(const FString& NewOption);
 	void OnViewDistanceChanged(const FString& NewOption);
 	void OnAntiAliasingChanged(const FString& NewOption);
+	void OnAntiAliasingMethodChanged(const FString& NewOption);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
@@ -125,6 +133,15 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	USelectionBox* AntiAliasingSelectionBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USelectionBox* AntiAliasingMethodSelectionBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USlider* ScreenPercentageSlider;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ScreenPercentagValueLabel;
 
 	// utility
 	class APropHuntPlayerController* PlayerController;

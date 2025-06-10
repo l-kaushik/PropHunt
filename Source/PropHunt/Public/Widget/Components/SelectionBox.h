@@ -22,16 +22,18 @@ public:
 
 	void SetOptions(const TArray<FString>& InOptions);
 	void SetActiveOption(int32 OptionIndex);
+	void SetActiveOption(const FString& InOption);
 	void SetActiveOptionTextOnly(int32 OptionIndex);
+	void SetActiveOptionTextOnly(const FString& InOption);
 
 	// event dispatcher
 	FOnSelectionChanged OnSelectionChanged;
 
-	void NotifySelectionChanged(const FString& SelectedItem);
+	void NotifySelectionChanged(const FString& SelectedItem) const;
 	int32 GetSelectedOptionIndex() const;
+	const FString& GetSelectedOptionString() const;
 
 protected:
-	void SetSelectOptions(const FString& InOption);
 
 	UFUNCTION()
 	void OnLeftArrowButtonClicked();

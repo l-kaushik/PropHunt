@@ -7,6 +7,8 @@
 #include "Macros/WidgetMacros.h"
 #include "Utils/WidgetUtils.h"
 #include "Utils/PropHuntLog.h"
+#include "SaveGame/SaveGameManager.h"
+#include "SaveGame/PropHuntSaveGame.h"
 #include "Controller/PropHuntPlayerController.h"
 
 #include "Components/WidgetSwitcher.h"
@@ -28,6 +30,15 @@ do { \
 	} \
 } while(0)
 
+#define SAVE_GAME_SETTING(MemberName, ObjectValue) \
+do { \
+	SaveGameManager SGM_Instance = SaveGameManager::Get(); \
+	auto& SlotName = SGM_Instance.GetLastSaveGameSlotName(); \
+	auto* SaveGameInstance = SGM_Instance.LoadGame(SlotName); \
+	SaveGameInstance->Settings.MemberName = ObjectValue; \
+	SGM_Instance.SaveGame(SaveGameInstance, SlotName); \
+} while(0)
+
 
 void UOptionWidget::NativeConstruct()
 {
@@ -41,10 +52,6 @@ void UOptionWidget::NativeConstruct()
 	BindSelectionBoxEvents();
 
 	// load values
-	CameraSensitivitySlider->SetValue(50.f);
-	MusicVolumeSlider->SetValue(50.f);
-	SFXVolumeSlider->SetValue(50.f);
-
 	LoadGameSettings();
 }
 
@@ -58,9 +65,28 @@ void UOptionWidget::NativePreConstruct()
 
 void UOptionWidget::LoadGameSettings()
 {
-	// load required settings from save game
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Loading game settings..."));
 
-	UpdateOtherSettings();
+	// load required settings from save game
+	SaveGameManager SGM_Instance = SaveGameManager::Get();
+	auto* SaveGameInstance = SGM_Instance.LoadGame(SGM_Instance.GetLastSaveGameSlotName());
+	FSettingsData Settings = SaveGameInstance->Settings;
+
+	// that means running first time, detect and apply settings
+	if (Settings.OverallGraphics.IsEmpty())
+	{
+		ApplyHardwareDetectedGraphics();
+	}
+	else
+	{
+		CameraSensitivitySlider->SetValue(Settings.CameraSensitivity);
+		MusicVolumeSlider->SetValue(Settings.MusicVolume);
+		SFXVolumeSlider->SetValue(Settings.SFXVolume);
+		ScreenPercentageSlider->SetValue(Settings.ScreenPercentage);
+		UpdateOtherSettings();
+		OverallGraphicsSelectionBox->SetActiveOptionTextOnly(Settings.OverallGraphics);
+		AntiAliasingMethodSelectionBox->SetActiveOptionTextOnly(Settings.AntiAliasingMethod);
+	}
 }
 
 void UOptionWidget::InitializeLabels()
@@ -98,6 +124,11 @@ void UOptionWidget::BindSliderEvents()
 	SFXVolumeSlider->OnValueChanged.RemoveDynamic(this, &UOptionWidget::OnSFXVolumeChanged);
 	SFXVolumeSlider->OnValueChanged.AddDynamic(this, &UOptionWidget::OnSFXVolumeChanged);
 
+	ScreenPercentageSlider->OnValueChanged.RemoveDynamic(this, &UOptionWidget::OnScreenPercentageValueChanged);
+	ScreenPercentageSlider->OnValueChanged.AddDynamic(this, &UOptionWidget::OnScreenPercentageValueChanged);
+
+	ScreenPercentageSlider->OnMouseCaptureEnd.RemoveDynamic(this, &UOptionWidget::OnScreenPercentageSliderMouseEnd);
+	ScreenPercentageSlider->OnMouseCaptureEnd.AddDynamic(this, &UOptionWidget::OnScreenPercentageSliderMouseEnd);
 }
 
 void UOptionWidget::BindSelectionBoxEvents()
@@ -116,6 +147,9 @@ void UOptionWidget::BindSelectionBoxEvents()
 
 	AntiAliasingSelectionBox->OnSelectionChanged.RemoveAll(this);
 	AntiAliasingSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnAntiAliasingChanged);
+
+	AntiAliasingMethodSelectionBox->OnSelectionChanged.RemoveAll(this);
+	AntiAliasingMethodSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnAntiAliasingMethodChanged);
 }
 
 void UOptionWidget::ApplyOtherSettings()
@@ -135,6 +169,19 @@ void UOptionWidget::UpdateOtherSettings()
 	ShadowQualitySelectionBox->SetActiveOptionTextOnly(GameSettings->GetShadowQuality());
 	ViewDistanceSelectionBox->SetActiveOptionTextOnly(GameSettings->GetViewDistanceQuality());
 	AntiAliasingSelectionBox->SetActiveOptionTextOnly(GameSettings->GetAntiAliasingQuality());
+}
+
+void UOptionWidget::ApplyHardwareDetectedGraphics()
+{
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Detecting and applying suitable graphic settings..."));
+
+	auto* GameSettings = UGameUserSettings::GetGameUserSettings();
+	GameSettings->RunHardwareBenchmark();
+	GameSettings->ApplyHardwareBenchmarkResults();
+
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Scalability level: %d"), GameSettings->GetOverallScalabilityLevel());
+	UpdateOtherSettings();
+	OverallGraphicsSelectionBox->SetActiveOption(0);
 }
 
 void UOptionWidget::OnGameplayButtonClicked()
@@ -166,6 +213,8 @@ void UOptionWidget::OnCameraSensitivityChanged(float NewValue)
 	if (!PlayerController) return;
 	// on 50 use default sens
 	PlayerController->SetCameraSensitivity(NewValue/50);
+
+	SAVE_GAME_SETTING(CameraSensitivity, NewValue);
 }
 
 void UOptionWidget::OnMusicVolumeChanged(float NewValue)
@@ -183,6 +232,7 @@ void UOptionWidget::OnMusicVolumeChanged(float NewValue)
 		);
 
 	UGameplayStatics::PushSoundMixModifier(this, SoundMixModifier);
+	SAVE_GAME_SETTING(MusicVolume, NewValue);
 }
 
 void UOptionWidget::OnSFXVolumeChanged(float NewValue)
@@ -200,6 +250,24 @@ void UOptionWidget::OnSFXVolumeChanged(float NewValue)
 		);
 
 	UGameplayStatics::PushSoundMixModifier(this, SoundMixModifier);
+	SAVE_GAME_SETTING(SFXVolume, NewValue);
+}
+
+void UOptionWidget::OnScreenPercentageValueChanged(float NewValue)
+{
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("ScreenPercentage changed to %f"), NewValue);
+
+	ScreenPercentagValueLabel->SetText(FText::AsNumber(int32(NewValue)));
+}
+
+void UOptionWidget::OnScreenPercentageSliderMouseEnd()
+{
+	int32 ScreenPercent = FMath::RoundToInt32(ScreenPercentageSlider->GetValue());
+	FString Command = FString::Printf(TEXT("r.ScreenPercentage %d"), ScreenPercent);
+
+	GetWorld()->GetFirstPlayerController()->ConsoleCommand(*Command);
+
+	SAVE_GAME_SETTING(ScreenPercentage, ScreenPercent);
 }
 
 void UOptionWidget::OnOverallGraphicsChanged(const FString& NewOption)
@@ -211,8 +279,6 @@ void UOptionWidget::OnOverallGraphicsChanged(const FString& NewOption)
 	GameSettings->SetOverallScalabilityLevel(OverallGraphicsSelectionBox->GetSelectedOptionIndex() - 1);
 
 	GameSettings->ApplySettings(false);
-	GameSettings->SaveSettings();
-
 
 	// on custom, set apply other settings
 
@@ -224,6 +290,8 @@ void UOptionWidget::OnOverallGraphicsChanged(const FString& NewOption)
 	{
 		UpdateOtherSettings();
 	}
+
+	SAVE_GAME_SETTING(OverallGraphics, OverallGraphicsSelectionBox->GetSelectedOptionString());
 }
 
 void UOptionWidget::OnTextureQualityChanged(const FString& NewOption)
@@ -252,4 +320,16 @@ void UOptionWidget::OnAntiAliasingChanged(const FString& NewOption)
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Anti Aliasing changed to %s"), *NewOption);
 	
 	APPLY_GAME_SETTING_DEFAULT(AntiAliasingSelectionBox, SetAntiAliasingQuality);
+}
+
+void UOptionWidget::OnAntiAliasingMethodChanged(const FString& NewOption)
+{
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Anti Aliasing method changed to %s"), *NewOption);
+
+	int32 AAMIndex = AntiAliasingMethodSelectionBox->GetSelectedOptionIndex();
+	FString Command = FString::Printf(TEXT("r.AntiAliasingMethod %d"), AAMIndex);
+
+	GetWorld()->GetFirstPlayerController()->ConsoleCommand(*Command);
+
+	SAVE_GAME_SETTING(AntiAliasingMethod, AAMIndex);
 }
