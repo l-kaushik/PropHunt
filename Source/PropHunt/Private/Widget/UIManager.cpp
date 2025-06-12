@@ -19,6 +19,7 @@
 #include "Widget/OptionWidget.h"
 #include "Widget/Components/SelectionBox.h"
 #include "Widget/PauseMenu.h"
+#include "Widget/HelpWidget.h"
 
 UUIManager* UUIManager::Get()
 {
@@ -51,5 +52,6 @@ void UUIManager::InitializeWidgets()
 	LOAD_WIDGET_BP(OptionWidgetBPClassRef, UOptionWidget, "WB_OptionWidget");
 	LOAD_WIDGET_BP(SelectionBoxWidgetBPClassRef, USelectionBox, "WB_SelectionBox");
 	LOAD_WIDGET_BP(PauseMenuWidgetBPClassRef, UPauseMenu, "WB_PauseMenu");
+	LOAD_WIDGET_BP(HelpWidgetBPClassRef, UHelpWidget, "WB_HelpWidget");
 }
 

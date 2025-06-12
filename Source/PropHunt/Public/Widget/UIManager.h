@@ -68,6 +68,9 @@ public:
 	UPROPERTY()
 	TSubclassOf<class UPauseMenu> PauseMenuWidgetBPClassRef;
 
+	UPROPERTY()
+	TSubclassOf<class UHelpWidget> HelpWidgetBPClassRef;
+
 private:
 	// Private constructor to enforce singleton
 	UUIManager();

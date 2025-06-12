@@ -7,6 +7,7 @@
 #include "Widget/Components/Button/MasterButton.h"
 #include "Widget/MatchCardWidget.h"
 #include "Widget/OptionWidget.h"
+#include "Widget/HelpWidget.h"
 #include "Controller/MenuController.h"
 #include "Utils/WidgetUtils.h"
 #include "Utils/PropHuntLog.h"
@@ -154,6 +155,7 @@ void UMenuWidget::BindClickEvents()
 {
 	BIND_BUTTON_CLICK(PlayGameButton, &UMenuWidget::OnPlayGameButtonClicked);
 	BIND_BUTTON_CLICK(OptionsButton, &UMenuWidget::OnOptionsButtonClicked);
+	BIND_BUTTON_CLICK(HowToPlayButton, &UMenuWidget::OnHowToPlayButtonClicked);
 	BIND_BUTTON_CLICK(QuitGameButton, &UMenuWidget::OnQuitGameButtonClicked);
 
 	BIND_BUTTON_CLICK(HostGameButton, &UMenuWidget::OnHostGameButonClicked);
@@ -174,6 +176,7 @@ void UMenuWidget::InitializeComponents()
 	// Initialize MenuVBox components
 	WidgetUtils::InitializeContainerBox(MainMenuVBox, PlayGameButton);
 	WidgetUtils::InitializeContainerBox(MainMenuVBox, OptionsButton);
+	WidgetUtils::InitializeContainerBox(MainMenuVBox, HowToPlayButton);
 	WidgetUtils::InitializeContainerBox(MainMenuVBox, QuitGameButton);
 
 	// Initialize SessionButton border components
@@ -192,6 +195,7 @@ void UMenuWidget::InitializeComponents()
 	// Initialize all UMasterButtons
 	InitializeMenuButton(PlayGameButton, "Play Game");
 	InitializeMenuButton(OptionsButton, "Options");
+	InitializeMenuButton(HowToPlayButton, "How To Play");
 	InitializeMenuButton(QuitGameButton, "Quit Game");
 	InitializeMenuButton(HostGameButton, "Host Game");
 	InitializeMenuButton(JoinGameButton, "Join Game");
@@ -208,6 +212,7 @@ void UMenuWidget::SetupInitialProperties()
 	PlayGameMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
 	ProfileSectionOverlay->SetVisibility(ESlateVisibility::Hidden);
 	OptionMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
+	HelpMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
 
 	FLinearColor BroderBoxColor(0.5f, 0.5f, 0.5f, 0.1f);	// light grey
 
@@ -308,6 +313,11 @@ void UMenuWidget::OnBackButtonInOptionMenuClicked()
 	OptionMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UMenuWidget::OnBackButtonInHowToPlayMenuClicked()
+{
+	HelpMenuOverlay->SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UMenuWidget::ShowMainMenuElements()
 {
 	BackButton->SetVisibility(ESlateVisibility::Hidden);
@@ -337,6 +347,17 @@ void UMenuWidget::OnOptionsButtonClicked()
 	MainMenuVBox->SetVisibility(ESlateVisibility::Hidden);
 	ProfileButton->SetVisibility(ESlateVisibility::Hidden);
 	OptionMenuOverlay->SetVisibility(ESlateVisibility::Visible);
+	BackButton->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMenuWidget::OnHowToPlayButtonClicked()
+{
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("HowToPlay button clicked!"));
+
+	MenuState = EMenuState::HelpMenu;
+	MainMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+	ProfileButton->SetVisibility(ESlateVisibility::Hidden);
+	HelpMenuOverlay->SetVisibility(ESlateVisibility::Visible);
 	BackButton->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -371,6 +392,9 @@ void UMenuWidget::OnBackButtonClicked()
 		break;
 	case EMenuState::OptionMenu:
 		OnBackButtonInOptionMenuClicked();
+		break;
+	case EMenuState::HelpMenu:
+		OnBackButtonInHowToPlayMenuClicked();
 		break;
 	case EMenuState::ProfileMenu:
 		OnBackButtonInProfileMenuClicked();

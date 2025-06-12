@@ -28,6 +28,7 @@ class UEditableText;
 class UScrollBox;
 class UTextBlock;
 class UOptionWidget;
+class UHelpWidget;
 
 struct FPlayerData;
 struct FMatchHistoryMap;
@@ -69,6 +70,7 @@ private:
 	void OnBackButtonInPlayGameMenuClicked();
 	void OnBackButtonInProfileMenuClicked();
 	void OnBackButtonInOptionMenuClicked();
+	void OnBackButtonInHowToPlayMenuClicked();
 	void ShowMainMenuElements();
 
 	void SaveImageData(UTexture2D* Image);
@@ -81,6 +83,9 @@ private:
 	
 	UFUNCTION()
 	void OnOptionsButtonClicked();
+
+	UFUNCTION()
+	void OnHowToPlayButtonClicked();
 
 	UFUNCTION()
 	void OnQuitGameButtonClicked();
@@ -134,6 +139,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* OptionsButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UMasterButton* HowToPlayButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* QuitGameButton;
@@ -191,6 +199,13 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UOptionWidget* OptionWidget;
+	
+	// Help menu
+	UPROPERTY(meta = (BindWidget))
+	UOverlay* HelpMenuOverlay;
+
+	UPROPERTY(meta = (BindWidget))
+	UHelpWidget* HelpWidget;
 
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
