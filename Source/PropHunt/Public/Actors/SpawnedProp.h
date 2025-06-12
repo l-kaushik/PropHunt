@@ -35,5 +35,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void SetReplicatedMesh(UStaticMesh* NewMesh);
 	void ResetCollision(float DelayInSeconds = 5.0f);
+	void Remove();
 
+private:
+	FTimerHandle TimerHandler;
 };

@@ -273,6 +273,8 @@ void AMenuController::ClientWantsToHost(const FName& SessionName, const FMapInfo
 	PropHuntGameInstance->SetPlayerData(MyPlayerState->GetPlayerData());
 
 	ClientWantsToHostOnServer(SessionName, MapInfo, NumPublicConnections, IsLANMatch);
+
+	ShowLoadingScreen("Hosting Session");
 }
 
 void AMenuController::ClientWantsToHostOnServer_Implementation(const FName& SessionName, const FMapInfo& MapInfo, int32 NumPublicConnections, bool IsLANMatch)

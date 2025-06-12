@@ -162,14 +162,14 @@ void APropCharacter::ChangeCameraDistance(float Offset)
 
 void APropCharacter::RotateLeftOnServer_Implementation()
 {
-	RotatePropMulticast(5.0f);
+	RotatePropMulticast(-5.0f);
 	UE_LOG_NON_SHIP(LogPropCharacter, Warning, TEXT("Rotated left"));
 }
 
 void APropCharacter::RotateRightOnServer_Implementation()
 {
-	RotatePropMulticast(-5.0f);
-	UE_LOG_NON_SHIP(LogPropCharacter, Warning, TEXT("Rotated left"));
+	RotatePropMulticast(5.0f);
+	UE_LOG_NON_SHIP(LogPropCharacter, Warning, TEXT("Rotated right"));
 }
 
 void APropCharacter::RotatePropMulticast_Implementation(float Offset)
@@ -463,7 +463,7 @@ void APropCharacter::SpawnPropOnServer_Implementation() {
 		ASpawnedProp* ReturnedSpawnedProp = nullptr;
 		if (SpawnedPropQueue.Dequeue(ReturnedSpawnedProp) && IsValid(ReturnedSpawnedProp))
 		{
-			ReturnedSpawnedProp->Destroy();
+			ReturnedSpawnedProp->Remove();
 			SpawnedPropCount--;
 		}
 	}

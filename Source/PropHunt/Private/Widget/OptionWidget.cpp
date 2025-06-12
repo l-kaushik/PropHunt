@@ -50,9 +50,6 @@ void UOptionWidget::NativeConstruct()
 	BindClickEvent();
 	BindSliderEvents();
 	BindSelectionBoxEvents();
-
-	// load values
-	LoadGameSettings();
 }
 
 void UOptionWidget::NativePreConstruct()
@@ -83,9 +80,10 @@ void UOptionWidget::LoadGameSettings()
 		MusicVolumeSlider->SetValue(Settings.MusicVolume);
 		SFXVolumeSlider->SetValue(Settings.SFXVolume);
 		ScreenPercentageSlider->SetValue(Settings.ScreenPercentage);
+		OnScreenPercentageSliderMouseEnd();
+		AntiAliasingMethodSelectionBox->SetActiveOption(Settings.AntiAliasingMethod);
 		UpdateOtherSettings();
 		OverallGraphicsSelectionBox->SetActiveOptionTextOnly(Settings.OverallGraphics);
-		AntiAliasingMethodSelectionBox->SetActiveOptionTextOnly(Settings.AntiAliasingMethod);
 	}
 }
 

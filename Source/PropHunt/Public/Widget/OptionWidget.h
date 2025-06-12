@@ -24,8 +24,9 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 
-protected:
 	void LoadGameSettings();
+
+protected:
 	void InitializeLabels();
 	void InitializeSliders();
 	void BindClickEvent();
@@ -145,5 +146,4 @@ private:
 
 	// utility
 	class APropHuntPlayerController* PlayerController;
-
 };
