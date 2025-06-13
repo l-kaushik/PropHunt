@@ -1,6 +1,7 @@
 # credits
 
-1. Profile photo from @pikisuperstar at freepik.com
+1. Profile photo from @pikisuperstar at freepik.
+1. Main Menu background music by royaltyuserecords from pixabay.
 
 # notes
 1. Can change texture LOD bias to reduce vram usage

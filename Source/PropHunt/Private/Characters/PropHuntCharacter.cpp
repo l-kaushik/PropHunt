@@ -111,6 +111,11 @@ APropHuntCharacter::APropHuntCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void APropHuntCharacter::SetCameraSensitivity(float NewSensitivity)
+{
+	CameraSensitivity = NewSensitivity;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -187,8 +192,8 @@ void APropHuntCharacter::Look(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		AddControllerYawInput(LookAxisVector.X * CameraSensitivity);
+		AddControllerPitchInput(LookAxisVector.Y * CameraSensitivity);
 	}
 }
 

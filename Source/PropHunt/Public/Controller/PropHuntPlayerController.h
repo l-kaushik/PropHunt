@@ -12,6 +12,7 @@
  */
 
 class UMainHud;
+class UPauseMenu;
 struct FPlayerData;
 
 UCLASS()
@@ -25,6 +26,7 @@ public:
 	APropHuntPlayerController();
 
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 
 public:
 	// PropHuntControllerInterface implementations
@@ -46,6 +48,14 @@ public:
 	void StartNewGame();
 	void ExitGame();
 	void ExitClient();
+
+	void SetCameraSensitivity(float NewSensitivity);
+
+	void TogglePauseMenu();
+
+protected:
+	void ShowPauseMenu();
+	void HidePauseMenu();
 
 public:
 	UFUNCTION(Client, Reliable)
@@ -90,4 +100,8 @@ private:
 
 	TSubclassOf<class ULoadingScreenWidget> LoadingScreenWidgetBPClassRef;
 	class ULoadingScreenWidget* LoadingWidget;
+
+	UPauseMenu* PauseMenuWidget;
+	bool bIsPauseMenuVisible = false;
+	bool bIsGameEnded = false;
 };

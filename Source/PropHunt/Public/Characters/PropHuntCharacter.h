@@ -58,7 +58,7 @@ class APropHuntCharacter : public ACharacter
 
 public:
 	APropHuntCharacter();
-	
+	void SetCameraSensitivity(float NewSensitivity);
 
 protected:
 
@@ -151,5 +151,7 @@ private:
 
 	bool IsShooting;
 	bool IsReloading;
+
+	float CameraSensitivity = 1.0f;
 };
 

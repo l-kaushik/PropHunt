@@ -16,6 +16,10 @@
 #include "Widget/TopPerformersWidget.h"
 #include "Widget/ScoreboardMenuWidget.h"
 #include "Widget/MatchCardWidget.h"
+#include "Widget/OptionWidget.h"
+#include "Widget/Components/SelectionBox.h"
+#include "Widget/PauseMenu.h"
+#include "Widget/HelpWidget.h"
 
 UUIManager* UUIManager::Get()
 {
@@ -32,18 +36,22 @@ void UUIManager::InitializeWidgets()
 {
 	FString BasePath = "/Game/Widgets/";
 
-	HostWidgetBPClassRef = GlobalUtils::LoadBlueprint<UHostWidget>(BasePath + FString("WB_Host"));
-	JoinGameWidgetBPClassRef = GlobalUtils::LoadBlueprint<UJoinGameWidget>(BasePath + FString("WB_JoinGame"));
-	UIErrorBoxBPClassRef = GlobalUtils::LoadBlueprint<UUIErrorBox>(BasePath + FString("ErrorBox/WB_UIErrorBox"));
-	MenuWidgetBPClassRef = GlobalUtils::LoadBlueprint<UMenuWidget>(BasePath + FString("WB_Menu"));
-	LobbyWidgetBPClassRef = GlobalUtils::LoadBlueprint<ULobbyWidget>(BasePath + FString("WB_Lobby"));
-	PlayerEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UPlayerEntryWidget>(BasePath + FString("WB_PlayerEntry"));
-	ServerEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UServerEntryWidget>(BasePath + FString("WB_ServerEntry"));
-	LoadingScreenWidgetBPClassRef = GlobalUtils::LoadBlueprint<ULoadingScreenWidget>(BasePath + FString("WB_LoadingScreen"));
-	GameStatsWidgetBPClassRef = GlobalUtils::LoadBlueprint<UGameStatsWidget>(BasePath + FString("WB_GameStats"));
-	GameStatsEntryWidgetBPClassRef = GlobalUtils::LoadBlueprint<UGameStatsEntryWidget>(BasePath + FString("WB_GameStatsEntry"));
-	TopPerformersWidgetBPClassRef = GlobalUtils::LoadBlueprint<UTopPerformersWidget>(BasePath + FString("WB_TopPerformers"));
-	ScoreboardMenuWidgetBPClassRef = GlobalUtils::LoadBlueprint<UScoreboardMenuWidget>(BasePath + FString("WB_ScoreboardMenu"));
-	MatchCardWidgetBPClassRef = GlobalUtils::LoadBlueprint<UMatchCardWidget>(BasePath + FString("WB_MatchCard"));
+	LOAD_WIDGET_BP(HostWidgetBPClassRef, UHostWidget, "WB_Host");
+	LOAD_WIDGET_BP(JoinGameWidgetBPClassRef, UJoinGameWidget, "WB_JoinGame");
+	LOAD_WIDGET_BP(UIErrorBoxBPClassRef, UUIErrorBox, "ErrorBox/WB_UIErrorBox");
+	LOAD_WIDGET_BP(MenuWidgetBPClassRef, UMenuWidget, "WB_Menu");
+	LOAD_WIDGET_BP(LobbyWidgetBPClassRef, ULobbyWidget, "WB_Lobby");
+	LOAD_WIDGET_BP(PlayerEntryWidgetBPClassRef, UPlayerEntryWidget, "WB_PlayerEntry");
+	LOAD_WIDGET_BP(ServerEntryWidgetBPClassRef, UServerEntryWidget, "WB_ServerEntry");
+	LOAD_WIDGET_BP(LoadingScreenWidgetBPClassRef, ULoadingScreenWidget, "WB_LoadingScreen");
+	LOAD_WIDGET_BP(GameStatsWidgetBPClassRef, UGameStatsWidget, "WB_GameStats");
+	LOAD_WIDGET_BP(GameStatsEntryWidgetBPClassRef, UGameStatsEntryWidget, "WB_GameStatsEntry");
+	LOAD_WIDGET_BP(TopPerformersWidgetBPClassRef, UTopPerformersWidget, "WB_TopPerformers");
+	LOAD_WIDGET_BP(ScoreboardMenuWidgetBPClassRef, UScoreboardMenuWidget, "WB_ScoreboardMenu");
+	LOAD_WIDGET_BP(MatchCardWidgetBPClassRef, UMatchCardWidget, "WB_MatchCard");
+	LOAD_WIDGET_BP(OptionWidgetBPClassRef, UOptionWidget, "WB_OptionWidget");
+	LOAD_WIDGET_BP(SelectionBoxWidgetBPClassRef, USelectionBox, "WB_SelectionBox");
+	LOAD_WIDGET_BP(PauseMenuWidgetBPClassRef, UPauseMenu, "WB_PauseMenu");
+	LOAD_WIDGET_BP(HelpWidgetBPClassRef, UHelpWidget, "WB_HelpWidget");
 }
 

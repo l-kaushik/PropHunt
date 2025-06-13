@@ -54,13 +54,18 @@ void ASpawnedProp::SetReplicatedMesh(UStaticMesh* NewMesh)
 }
 
 void ASpawnedProp::ResetCollision(float DelayInSeconds) {
-	FTimerHandle TimerHandler;
 	GetWorldTimerManager().SetTimer(
 		TimerHandler,
 		[this]() {
+			if (!IsValid(PropMesh)) return;
 			PropMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			PropMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 		},
 		DelayInSeconds,
 		false);
+}
+
+void ASpawnedProp::Remove() {
+	GetWorldTimerManager().ClearTimer(TimerHandler);
+	Destroy();
 }

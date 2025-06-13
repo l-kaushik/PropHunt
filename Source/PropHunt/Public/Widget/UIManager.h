@@ -6,9 +6,9 @@
 #include "UObject/NoExportTypes.h"
 #include "UIManager.generated.h"
 
-/**
- * 
- */
+#define LOAD_WIDGET_BP(WidgetClassRef, WidgetType, WidgetName) \
+    WidgetClassRef = GlobalUtils::LoadBlueprint<WidgetType>(BasePath + FString(WidgetName));
+
 UCLASS()
 class PROPHUNT_API UUIManager : public UObject
 {
@@ -58,6 +58,19 @@ public:
 
 	UPROPERTY()
 	TSubclassOf<class UMatchCardWidget> MatchCardWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UOptionWidget> OptionWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class USelectionBox> SelectionBoxWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UPauseMenu> PauseMenuWidgetBPClassRef;
+
+	UPROPERTY()
+	TSubclassOf<class UHelpWidget> HelpWidgetBPClassRef;
+
 private:
 	// Private constructor to enforce singleton
 	UUIManager();

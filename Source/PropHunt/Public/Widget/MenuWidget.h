@@ -27,6 +27,8 @@ class UButton;
 class UEditableText;
 class UScrollBox;
 class UTextBlock;
+class UOptionWidget;
+class UHelpWidget;
 
 struct FPlayerData;
 struct FMatchHistoryMap;
@@ -52,6 +54,8 @@ private:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 
+	void PlayBackgroundMusic();
+
 	void BindClickEvents();
 
 	void InitializeComponents();
@@ -65,6 +69,9 @@ private:
 	void SwitchSessionButtonsProperty(bool HostButtonClicked = true);
 	void OnBackButtonInPlayGameMenuClicked();
 	void OnBackButtonInProfileMenuClicked();
+	void OnBackButtonInOptionMenuClicked();
+	void OnBackButtonInHowToPlayMenuClicked();
+	void ShowMainMenuElements();
 
 	void SaveImageData(UTexture2D* Image);
 	void UpdateOrLoadUsername();
@@ -76,6 +83,9 @@ private:
 	
 	UFUNCTION()
 	void OnOptionsButtonClicked();
+
+	UFUNCTION()
+	void OnHowToPlayButtonClicked();
 
 	UFUNCTION()
 	void OnQuitGameButtonClicked();
@@ -101,6 +111,13 @@ private:
 	UFUNCTION()
 	void OnUserMatchHistoryScrolled(float CurrentOffset);
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* MenuSound;
+
+	UPROPERTY()
+	UAudioComponent* MenuMusicComponent;
+
 private:
 	// instance variables
 	EMenuState MenuState;
@@ -122,6 +139,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* OptionsButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UMasterButton* HowToPlayButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* QuitGameButton;
@@ -172,6 +192,20 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* MatchHistoryLabel;
+
+	// Option menu
+	UPROPERTY(meta = (BindWidget))
+	UOverlay* OptionMenuOverlay;
+
+	UPROPERTY(meta = (BindWidget))
+	UOptionWidget* OptionWidget;
+	
+	// Help menu
+	UPROPERTY(meta = (BindWidget))
+	UOverlay* HelpMenuOverlay;
+
+	UPROPERTY(meta = (BindWidget))
+	UHelpWidget* HelpWidget;
 
 	// Utility components
 	UPROPERTY(meta = (BindWidget))
