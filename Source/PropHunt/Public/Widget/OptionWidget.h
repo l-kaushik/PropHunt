@@ -24,7 +24,7 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 
-	void LoadGameSettings();
+	void LoadGameSettings(bool IsInMainMenu = false);
 
 protected:
 	void InitializeLabels();

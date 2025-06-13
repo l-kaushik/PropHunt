@@ -9,6 +9,7 @@
 class UMasterButton;
 class UVerticalBox;
 class UOptionWidget;
+class UHelpWidget;
 
 UCLASS()
 class PROPHUNT_API UPauseMenu : public UUserWidget
@@ -28,6 +29,9 @@ protected:
 
 	UFUNCTION()
 	void OnOptionButtonClicked();
+
+	UFUNCTION()
+	void OnHowToPlayButtonClicked();
 
 	UFUNCTION()
 	void OnQuitGameButtonClicked();
@@ -50,7 +54,13 @@ private:
 	UMasterButton* OptionButton;
 
 	UPROPERTY(meta = (BindWidget))
+	UMasterButton* HowToPlayButton;
+
+	UPROPERTY(meta = (BindWidget))
 	UOptionWidget* OptionWidget;
+
+	UPROPERTY(meta = (BindWidget))
+	UHelpWidget* HelpWidget;
 
 	UPROPERTY(meta = (BindWidget))
 	UMasterButton* QuitGameButton;

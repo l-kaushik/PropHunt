@@ -3,6 +3,7 @@
 
 #include "Widget/PauseMenu.h"
 #include "Widget/OptionWidget.h"
+#include "Widget/HelpWidget.h"
 #include "Widget/Components/Button/MasterButton.h"
 #include "Macros/WidgetMacros.h"
 #include "Utils/PropHuntLog.h"
@@ -29,10 +30,12 @@ void UPauseMenu::NativePreConstruct()
 
 	ResumeButton->SetLabel("Resume");
 	OptionButton->SetLabel("Options");
+	HowToPlayButton->SetLabel("How To Play");
 	QuitGameButton->SetLabel("Quit Game");
 	BackButton->SetLabel("X");
 
 	OptionWidget->SetVisibility(ESlateVisibility::Hidden);
+	HelpWidget->SetVisibility(ESlateVisibility::Hidden);
 	BackButton->SetVisibility(ESlateVisibility::Hidden);
 }
 
@@ -40,6 +43,7 @@ void UPauseMenu::BindClickEvents()
 {
 	BIND_BUTTON_CLICK(ResumeButton, &UPauseMenu::OnResumeButtonClicked);
 	BIND_BUTTON_CLICK(OptionButton, &UPauseMenu::OnOptionButtonClicked);
+	BIND_BUTTON_CLICK(HowToPlayButton, &UPauseMenu::OnHowToPlayButtonClicked);
 	BIND_BUTTON_CLICK(QuitGameButton, &UPauseMenu::OnQuitGameButtonClicked);
 	BIND_BUTTON_CLICK(BackButton, &UPauseMenu::OnBackButtonClicked);
 }
@@ -55,6 +59,14 @@ void UPauseMenu::OnOptionButtonClicked()
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Option button clicked"));
 	PauseMenuVBox->SetVisibility(ESlateVisibility::Hidden);
 	OptionWidget->SetVisibility(ESlateVisibility::Visible);
+	BackButton->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPauseMenu::OnHowToPlayButtonClicked()
+{
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("How to play button clicked"));
+	PauseMenuVBox->SetVisibility(ESlateVisibility::Hidden);
+	HelpWidget->SetVisibility(ESlateVisibility::Visible);
 	BackButton->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -86,6 +98,7 @@ void UPauseMenu::OnBackButtonClicked()
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Back button clicked"));
 	PauseMenuVBox->SetVisibility(ESlateVisibility::Visible);
 	OptionWidget->SetVisibility(ESlateVisibility::Hidden);
+	HelpWidget->SetVisibility(ESlateVisibility::Hidden);
 	BackButton->SetVisibility(ESlateVisibility::Hidden);
 }
 

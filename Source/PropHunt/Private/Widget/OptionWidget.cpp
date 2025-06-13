@@ -16,6 +16,7 @@
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/GameUserSettings.h"
+#include "Async/Async.h"
 
 #define APPLY_GAME_SETTING_DEFAULT(UserObject, SetFunctionName) \
 do { \
@@ -50,6 +51,9 @@ void UOptionWidget::NativeConstruct()
 	BindClickEvent();
 	BindSliderEvents();
 	BindSelectionBoxEvents();
+
+	// load UI Values
+	LoadGameSettings(false);
 }
 
 void UOptionWidget::NativePreConstruct()
@@ -60,7 +64,7 @@ void UOptionWidget::NativePreConstruct()
 	InitializeSliders();
 }
 
-void UOptionWidget::LoadGameSettings()
+void UOptionWidget::LoadGameSettings(bool IsInMainMenu)
 {
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Loading game settings..."));
 
@@ -80,9 +84,14 @@ void UOptionWidget::LoadGameSettings()
 		MusicVolumeSlider->SetValue(Settings.MusicVolume);
 		SFXVolumeSlider->SetValue(Settings.SFXVolume);
 		ScreenPercentageSlider->SetValue(Settings.ScreenPercentage);
-		OnScreenPercentageSliderMouseEnd();
-		AntiAliasingMethodSelectionBox->SetActiveOption(Settings.AntiAliasingMethod);
+
+		if (IsInMainMenu) {
+			OnScreenPercentageSliderMouseEnd();
+			AntiAliasingMethodSelectionBox->SetActiveOption(Settings.AntiAliasingMethod);
+		}
+
 		UpdateOtherSettings();
+		AntiAliasingMethodSelectionBox->SetActiveOptionTextOnly(Settings.AntiAliasingMethod);
 		OverallGraphicsSelectionBox->SetActiveOptionTextOnly(Settings.OverallGraphics);
 	}
 }
@@ -177,9 +186,6 @@ void UOptionWidget::ApplyHardwareDetectedGraphics()
 	GameSettings->RunHardwareBenchmark();
 	GameSettings->ApplyHardwareBenchmarkResults();
 
-	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("Scalability level: %d"), GameSettings->GetOverallScalabilityLevel());
-	UpdateOtherSettings();
-	OverallGraphicsSelectionBox->SetActiveOption(0);
 }
 
 void UOptionWidget::OnGameplayButtonClicked()

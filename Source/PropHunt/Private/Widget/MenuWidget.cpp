@@ -124,7 +124,7 @@ void UMenuWidget::NativeConstruct()
 	SetBackgroundImage();
 
 	// load game settings
-	OptionWidget->LoadGameSettings();
+	OptionWidget->LoadGameSettings(true);
 
 #if !WITH_EDITOR
 	PlayBackgroundMusic();
