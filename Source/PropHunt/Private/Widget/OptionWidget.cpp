@@ -93,7 +93,7 @@ void UOptionWidget::LoadGameSettings(bool IsInMainMenu)
 
 		UpdateOtherSettings();
 		AntiAliasingMethodSelectionBox->SetActiveOptionTextOnly(Settings.AntiAliasingMethod);
-		OverallGraphicsSelectionBox->SetActiveOptionTextOnly(Settings.OverallGraphics);
+		OverallGraphicsSelectionBox->SetActiveOption(Settings.OverallGraphics);
 	}
 }
 
