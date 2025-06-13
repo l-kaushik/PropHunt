@@ -76,7 +76,8 @@ void UOptionWidget::LoadGameSettings(bool IsInMainMenu)
 	// that means running first time, detect and apply settings
 	if (Settings.OverallGraphics.IsEmpty())
 	{
-		ApplyHardwareDetectedGraphics();
+		//ApplyHardwareDetectedGraphics();
+		OverallGraphicsSelectionBox->SetActiveOption(2);
 	}
 	else
 	{
@@ -151,6 +152,9 @@ void UOptionWidget::BindSelectionBoxEvents()
 
 	ViewDistanceSelectionBox->OnSelectionChanged.RemoveAll(this);
 	ViewDistanceSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnViewDistanceChanged);
+
+	VSyncSelectionBox->OnSelectionChanged.RemoveAll(this);
+	VSyncSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnVSyncChanged);
 
 	AntiAliasingSelectionBox->OnSelectionChanged.RemoveAll(this);
 	AntiAliasingSelectionBox->OnSelectionChanged.AddUObject(this, &UOptionWidget::OnAntiAliasingChanged);
@@ -317,7 +321,17 @@ void UOptionWidget::OnViewDistanceChanged(const FString& NewOption)
 	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("View Distance changed to %s"), *NewOption);
 
 	APPLY_GAME_SETTING_DEFAULT(ViewDistanceSelectionBox, SetViewDistanceQuality);
-} 
+}
+void UOptionWidget::OnVSyncChanged(const FString& NewOption)
+{
+	UE_LOG_NON_SHIP(LogPropHuntWidget, Display, TEXT("VSync changed to %s"), *NewOption);
+
+	auto* GameSetting = UGameUserSettings::GetGameUserSettings();
+
+	GameSetting->SetVSyncEnabled((VSyncSelectionBox->GetSelectedOptionIndex() == 1));
+	GameSetting->ApplySettings(false);
+	GameSetting->SaveSettings();
+}
 
 void UOptionWidget::OnAntiAliasingChanged(const FString& NewOption)
 {

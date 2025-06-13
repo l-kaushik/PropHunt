@@ -66,6 +66,7 @@ protected:
 	void OnTextureQualityChanged(const FString& NewOption);
 	void OnShadowQualityChanged(const FString& NewOption);
 	void OnViewDistanceChanged(const FString& NewOption);
+	void OnVSyncChanged(const FString& NewOption);
 	void OnAntiAliasingChanged(const FString& NewOption);
 	void OnAntiAliasingMethodChanged(const FString& NewOption);
 
@@ -131,6 +132,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	USelectionBox* ViewDistanceSelectionBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USelectionBox* VSyncSelectionBox;
 
 	UPROPERTY(meta = (BindWidget))
 	USelectionBox* AntiAliasingSelectionBox;
